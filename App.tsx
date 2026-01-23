@@ -136,7 +136,7 @@ const App: React.FC = () => {
       {/* Header Section */}
       <header className="max-w-7xl mx-auto mb-12 text-center fade-in">
         <h1 className="text-5xl md:text-6xl font-bold serif-title text-[#5c4033] mb-6 tracking-tight">
-          大藏經 <span className="text-[#8b7355]">诵读认领</span>
+          名著<span className="text-[#8b7355]">诵读认领</span>
         </h1>
         <div className="w-24 h-1 bg-[#8b7355] mx-auto mb-6 rounded-full opacity-30"></div>
       </header>
@@ -178,7 +178,7 @@ const App: React.FC = () => {
                 <thead className="bg-[#fcfaf7]">
                   <tr className="text-xs uppercase tracking-widest text-[#8b7355] font-bold">
                     <th className="p-5 border-b border-[#ede3d4]">卷编号</th>
-                    <th className="p-5 border-b border-[#ede3d4]">经文名称</th>
+                    <th className="p-5 border-b border-[#ede3d4]">名称</th>
                     <th className="p-5 border-b border-[#ede3d4]">状态</th>
                     <th className="p-5 border-b border-[#ede3d4]">在线阅读</th>
                     <th className="p-5 border-b border-[#ede3d4] text-center">操作</th>
@@ -222,7 +222,7 @@ const App: React.FC = () => {
                   {filteredVolumes.length === 0 && (
                     <tr>
                       <td colSpan={5} className="p-20 text-center text-gray-400 font-serif italic text-lg">
-                        未找到符合条件的经文。
+                        未找到符合条件的。
                       </td>
                     </tr>
                   )}
@@ -241,7 +241,7 @@ const App: React.FC = () => {
               <svg className="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M15 19l-7-7 7-7" />
               </svg> 
-              返回大藏经列表
+              返回名著列表
             </button>
             
             <h2 className="text-4xl font-bold serif-title text-[#5c4033] mb-10 border-b-2 border-[#ede3d4] pb-6">诵读认领申请</h2>
