@@ -1,8 +1,6 @@
-
 import { Volume, VolumeStatus, ClaimRequest } from './types';
 import { INITIAL_VOLUMES } from './data';
 
-// Incremented version to v12 for 般若部 sutras
 const DB_KEY = 'longzang_tripitaka_volumes_v12';
 
 export const dbService = {
@@ -11,23 +9,21 @@ export const dbService = {
       const data = localStorage.getItem(DB_KEY);
       let volumes: Volume[] = data ? JSON.parse(data) : [...INITIAL_VOLUMES];
 
-      // Fetch claims from SheetDB
       try {
         const response = await fetch('https://book-reading-tracker-no-email.onrender.com/api/claims');
         if (response.ok) {
-          const claimsData = await response.json();
-          const claims = claimsData.data || claimsData; // SheetDB returns data in different formats
-
-          // Update volumes based on claims
+          const claims = await response.json();
+          
           volumes = volumes.map(volume => {
-            const claim = claims.find((c: any) => c.volumeId === volume.id);
+            // Match volumeId from SheetDB (string/number) to volume.id
+            const claim = claims.find((c: any) => String(c.volumeId) === String(volume.id));
             if (claim) {
               return {
                 ...volume,
                 status: VolumeStatus.CLAIMED,
                 claimerName: claim.name,
                 claimerPhone: claim.phone,
-                plannedDays: claim.plannedDays,
+                plannedDays: parseInt(claim.plannedDays),
                 claimedAt: claim.claimedAt,
                 expectedCompletionDate: claim.expectedCompletionDate
               };
@@ -36,17 +32,14 @@ export const dbService = {
           });
         }
       } catch (error) {
-        console.warn('Failed to fetch claims from SheetDB, using local data only:', error);
+        console.warn('Failed to fetch from SheetDB:', error);
       }
 
-      // Auto-completion logic
       const now = new Date();
       let modified = false;
-
       volumes = volumes.map(v => {
         if (v.status === VolumeStatus.CLAIMED && v.expectedCompletionDate) {
-          const expectedDate = new Date(v.expectedCompletionDate);
-          if (now >= expectedDate) {
+          if (now >= new Date(v.expectedCompletionDate)) {
             modified = true;
             return { ...v, status: VolumeStatus.COMPLETED };
           }
@@ -54,20 +47,17 @@ export const dbService = {
         return v;
       });
 
-      if (modified) {
-        localStorage.setItem(DB_KEY, JSON.stringify(volumes));
-      }
-
+      if (modified) localStorage.setItem(DB_KEY, JSON.stringify(volumes));
       return volumes;
     } catch (e) {
-      console.error("Failed to load volumes from storage:", e);
       return [...INITIAL_VOLUMES];
     }
   },
 
-  claimVolume: (request: ClaimRequest): Volume | null => {
-    const volumes = dbService.getVolumes();
-    const index = volumes.findIndex(v => v.id === request.volumeId);
+  // FIXED: Properly implemented async function with all logic inside
+  claimVolume: async (request: ClaimRequest): Promise<Volume | null> => {
+    const volumes = await dbService.getVolumes(); 
+    const index = volumes.findIndex(v => String(v.id) === String(request.volumeId));
     
     if (index === -1) return null;
     if (volumes[index].status !== VolumeStatus.UNCLAIMED) {
@@ -76,7 +66,7 @@ export const dbService = {
 
     const claimedAt = new Date();
     const expectedCompletionDate = new Date(claimedAt);
-    expectedCompletionDate.setDate(claimedAt.getDate() + request.plannedDays);
+    expectedCompletionDate.setDate(claimedAt.getDate() + (request.plannedDays || 7));
 
     const updatedVolume: Volume = {
       ...volumes[index],
@@ -91,7 +81,7 @@ export const dbService = {
     volumes[index] = updatedVolume;
     localStorage.setItem(DB_KEY, JSON.stringify(volumes));
     return updatedVolume;
-  },
+  }, // Added missing comma here
 
   reset: () => {
     localStorage.removeItem(DB_KEY);
