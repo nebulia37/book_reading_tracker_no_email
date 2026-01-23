@@ -11,7 +11,6 @@ export interface Volume {
   volumeTitle: string;
   status: VolumeStatus;
   claimerName?: string;
-  claimerEmail?: string;
   claimerPhone?: string;
   plannedDays?: number;
   claimedAt?: string;
@@ -22,7 +21,6 @@ export interface Volume {
 export interface ClaimRequest {
   volumeId: number;
   name: string;
-  email: string;
   phone: string;
   plannedDays: number;
   readingUrl: string; // Added readingUrl to request

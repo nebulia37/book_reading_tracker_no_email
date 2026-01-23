@@ -1,7 +1,6 @@
 import { fileURLToPath } from 'url';
 import path from 'path';
 import express from 'express';
-import nodemailer from 'nodemailer';
 import cors from 'cors';
 import fs from 'fs';
 import 'dotenv/config';
@@ -26,20 +25,12 @@ if (!fs.existsSync(DB_FILE)) {
   fs.writeFileSync(DB_FILE, JSON.stringify([], null, 2));
 }
 
-const transporter = nodemailer.createTransport({
-  service: 'gmail',
-  auth: {
-    user: process.env.EMAIL_USER,
-    pass: process.env.EMAIL_PASS,
-  },
-});
-
 app.post('/api/claim', async (req, res) => {
   console.log("Received claim data:", req.body);
-  const { volumeId, name, email, phone, plannedDays, readingUrl } = req.body;
+  const { volumeId, name, phone, plannedDays, readingUrl } = req.body;
 
-  if (!email || !name) {
-    return res.status(400).json({ error: 'Email and Name are required.' });
+  if (!name) {
+    return res.status(400).json({ error: 'Name is required.' });
   }
 
   try {
@@ -49,27 +40,13 @@ app.post('/api/claim', async (req, res) => {
 
     const dbData = JSON.parse(fs.readFileSync(DB_FILE, 'utf8'));
     const newClaim = {
-      volumeId, name, email, phone, plannedDays, readingUrl,
+      volumeId, name, phone, plannedDays, readingUrl,
       claimedAt: claimedAt.toISOString(),
       expectedCompletionDate: expectedDate.toISOString(),
       status: 'claimed'
     };
     dbData.push(newClaim);
     fs.writeFileSync(DB_FILE, JSON.stringify(dbData, null, 2));
-
-    const emailBody = `尊敬的 ${name}：\n\n您已成功认领经文诵读。详情如下：\n经文链接：${readingUrl}\n预计完成天数：${plannedDays}天\n预计截止：${expectedDate.toLocaleDateString()}\n\n随喜赞叹。`;
-
-    const mailOptions = {
-      from: process.env.EMAIL_USER,
-      to: email,
-      subject: `【认领成功】大正新脩大藏經 诵读确认函 - ${name}`,
-      text: emailBody,
-    };
-
-    if (process.env.EMAIL_USER && process.env.EMAIL_PASS) {
-      await transporter.sendMail(mailOptions);
-      console.log("Email sent successfully!");
-    }
 
     res.json({ success: true, claim: newClaim });
   } catch (error) {

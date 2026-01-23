@@ -29,26 +29,3 @@ export async function generateBlessingMessage(volumeTitle: string, claimerName: 
     return "佛光普照，功德无量。愿此次诵持，能利乐有情，同证菩提。";
   }
 }
-
-export async function generateEmailBody(volume: Volume) {
-  try {
-    const response = await ai.models.generateContent({
-      model: 'gemini-3-flash-preview',
-      contents: `Generate a formal confirmation email in Chinese (Simplified) for a Buddhist scripture reading claim. 
-      Details:
-      - Recipient: ${volume.claimerName}
-      - Volume: ${volume.volumeNumber} ${volume.volumeTitle}
-      - Planned Days: ${volume.plannedDays} days
-      - Deadline: ${new Date(volume.expectedCompletionDate!).toLocaleDateString()}
-      - Digital Link: ${volume.readingUrl}
-      
-      Structure the email with a respectful salutation, a confirmation section, the significance of the Taishō Tripiṭaka, and a formal closing. The language should be elegant and dignified.`,
-      config: {
-        temperature: 0.6,
-      }
-    });
-    return response.text || `尊敬的 ${volume.claimerName} 同修：\n\n您已成功认领《${volume.volumeTitle}》的诵读任务。\n计划天数：${volume.plannedDays}天\n预计截止：${new Date(volume.expectedCompletionDate!).toLocaleDateString()}\n阅读地址：${volume.readingUrl}\n\n愿您在法宝中获得深厚加持。`;
-  } catch (error) {
-    return `尊敬的 ${volume.claimerName} 同修：\n\n您已成功认领《${volume.volumeTitle}》。\n计划天数：${volume.plannedDays}天\n预计完成：${new Date(volume.expectedCompletionDate!).toLocaleDateString()}\n阅读链接：${volume.readingUrl}\n\n阿弥陀佛，随喜赞叹。`;
-  }
-}

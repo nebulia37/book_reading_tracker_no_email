@@ -54,7 +54,6 @@ export const dbService = {
       ...volumes[index],
       status: VolumeStatus.CLAIMED,
       claimerName: request.name,
-      claimerEmail: request.email,
       claimerPhone: request.phone,
       plannedDays: request.plannedDays,
       claimedAt: claimedAt.toISOString(),

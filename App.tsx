@@ -2,7 +2,7 @@
 import React, { useState, useEffect, useMemo } from 'react';
 import { Volume, VolumeStatus, AppView, ClaimRequest } from './types';
 import { dbService } from './dbService';
-import { generateBlessingMessage, generateEmailBody } from './geminiService';
+import { generateBlessingMessage } from './geminiService';
 
 
 
@@ -13,13 +13,12 @@ const App: React.FC = () => {
   const [filterStatus, setFilterStatus] = useState<VolumeStatus | 'all'>('all');
   const [selectedVolume, setSelectedVolume] = useState<Volume | null>(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
-  const [successData, setSuccessData] = useState<{ volume: Volume; blessing: string; emailBody: string; sentViaBackend: boolean } | null>(null);
+  const [successData, setSuccessData] = useState<{ volume: Volume; blessing: string; sentViaBackend: boolean } | null>(null);
   const [copyFeedback, setCopyFeedback] = useState(false);
 
   // Form State
   const [formData, setFormData] = useState({
     name: '',
-    email: '',
     phone: '',
     plannedDays: 7
   });
@@ -38,7 +37,6 @@ const App: React.FC = () => {
 
   const handleClaimClick = (volume: Volume) => {
     setSelectedVolume(volume);
-    setFormData(prev => ({ ...prev, email: '' }));
     setView('claim');
   };
 
@@ -73,12 +71,11 @@ const App: React.FC = () => {
       // Immediate functional state update for UI reactivity
       setVolumes(prev => prev.map(v => v.id === updated.id ? updated : v));
 
-      const [blessing, emailBody] = await Promise.all([
-        generateBlessingMessage(updated.volumeTitle, updated.claimerName || '同修'),
-        generateEmailBody(updated)
+      const [blessing] = await Promise.all([
+        generateBlessingMessage(updated.volumeTitle, updated.claimerName || '同修')
       ]);
 
-      setSuccessData({ volume: updated, blessing, emailBody, sentViaBackend });
+      setSuccessData({ volume: updated, blessing, sentViaBackend });
       setView('success');
     }
   } catch (error: any) {
@@ -107,9 +104,6 @@ const App: React.FC = () => {
           大藏經 <span className="text-[#8b7355]">诵读认领</span>
         </h1>
         <div className="w-24 h-1 bg-[#8b7355] mx-auto mb-6 rounded-full opacity-30"></div>
-        <p className="text-[#8b7355] text-xl font-serif italic max-w-3xl mx-auto leading-relaxed">
-          “诸供养中，法供养最。愿以此功德，同证菩提位。”
-        </p>
       </header>
 
       <main className="max-w-7xl mx-auto sutra-card rounded-3xl overflow-hidden fade-in" style={{ animationDelay: '0.1s' }}>
@@ -121,7 +115,7 @@ const App: React.FC = () => {
               <div className="relative w-full md:w-96">
                 <input 
                   type="text" 
-                  placeholder="搜索经文名称或卷号..." 
+                  placeholder="搜索名称或卷号..." 
                   value={searchTerm}
                   onChange={(e) => setSearchTerm(e.target.value)}
                   className="w-full pl-10 pr-4 py-2 rounded-xl border border-gray-200 focus:outline-none focus:ring-2 focus:ring-[#8b7355] transition-all"
@@ -151,7 +145,6 @@ const App: React.FC = () => {
                     <th className="p-5 border-b border-[#ede3d4]">卷编号</th>
                     <th className="p-5 border-b border-[#ede3d4]">经文名称</th>
                     <th className="p-5 border-b border-[#ede3d4]">状态</th>
-                    <th className="p-5 border-b border-[#ede3d4]">认领人 / 进度</th>
                     <th className="p-5 border-b border-[#ede3d4]">在线阅读</th>
                     <th className="p-5 border-b border-[#ede3d4] text-center">操作</th>
                   </tr>
@@ -162,18 +155,6 @@ const App: React.FC = () => {
                       <td className="p-5 font-mono font-bold text-[#5c4033]">{vol.volumeNumber}</td>
                       <td className="p-5 font-bold text-[#5c4033] serif-title text-lg">{vol.volumeTitle}</td>
                       <td className="p-5">{getStatusBadge(vol.status)}</td>
-                      <td className="p-5">
-                        {vol.claimerName ? (
-                          <div className="flex flex-col text-sm">
-                            <span className="font-bold text-gray-800">{vol.claimerName}</span>
-                            <span className="text-gray-400 text-xs mt-0.5 font-medium">
-                              {vol.status === VolumeStatus.COMPLETED ? '功德圆满' : `截止: ${new Date(vol.expectedCompletionDate!).toLocaleDateString()}`}
-                            </span>
-                          </div>
-                        ) : (
-                          <span className="text-gray-300 text-sm">—</span>
-                        )}
-                      </td>
                       <td className="p-5">
                         <a 
                           href={vol.readingUrl} 
@@ -198,9 +179,6 @@ const App: React.FC = () => {
                             <span className="bg-gray-100 text-gray-400 px-6 py-2 rounded-xl text-sm font-bold cursor-not-allowed">
                               已认领
                             </span>
-                            {vol.status === VolumeStatus.CLAIMED && (
-                              <span className="text-[10px] text-gray-400 mt-1 font-bold">由 {vol.claimerName} 诵读中</span>
-                            )}
                           </div>
                         )}
                       </td>
@@ -208,7 +186,7 @@ const App: React.FC = () => {
                   ))}
                   {filteredVolumes.length === 0 && (
                     <tr>
-                      <td colSpan={6} className="p-20 text-center text-gray-400 font-serif italic text-lg">
+                      <td colSpan={5} className="p-20 text-center text-gray-400 font-serif italic text-lg">
                         未找到符合条件的经文。
                       </td>
                     </tr>
@@ -251,32 +229,18 @@ const App: React.FC = () => {
                 </div>
               </div>
 
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
                 <div>
-                  <label className="block text-sm font-bold text-gray-700 mb-2">您的姓名 / 法名</label>
+                  <label className="block text-sm font-bold text-gray-700 mb-2">您的姓名</label>
                   <input 
                     required 
                     type="text" 
                     value={formData.name} 
                     onChange={(e) => setFormData({...formData, name: e.target.value})} 
                     className="w-full px-5 py-4 rounded-2xl border border-gray-200 focus:ring-4 focus:ring-[#8b73551a] outline-none transition-all text-lg" 
-                    placeholder="常随 / 悟德" 
+                    placeholder="" 
                   />
                 </div>
-                <div>
-                  <label className="block text-sm font-bold text-gray-700 mb-2">接收电子邮箱</label>
-                  <input 
-                    required 
-                    type="email" 
-                    value={formData.email} 
-                    onChange={(e) => setFormData({...formData, email: e.target.value})} 
-                    className="w-full px-5 py-4 rounded-2xl border border-gray-200 focus:ring-4 focus:ring-[#8b73551a] outline-none transition-all text-lg text-blue-800 font-medium" 
-                    placeholder="example@email.com" 
-                  />
-                </div>
-              </div>
-
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
                 <div>
                   <label className="block text-sm font-bold text-gray-700 mb-2">联系手机</label>
                   <input 
@@ -313,7 +277,7 @@ const App: React.FC = () => {
                   {isSubmitting ? (
                     <div className="flex items-center">
                       <svg className="animate-spin h-6 w-6 mr-3 text-gray-400" viewBox="0 0 24 24"><circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle><path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path></svg>
-                      正在虔诚递交...
+                      正在递交...
                     </div>
                   ) : '发起诵读认领誓愿'}
                 </button>
@@ -331,11 +295,6 @@ const App: React.FC = () => {
             </div>
             
             <h2 className="text-5xl font-bold serif-title text-[#5c4033] mb-6">认领誓愿已成</h2>
-            
-            <div className="inline-flex items-center px-6 py-3 bg-emerald-50 text-emerald-700 rounded-full text-sm font-bold mb-10 shadow-sm">
-              <svg className="w-5 h-5 mr-3" fill="currentColor" viewBox="0 0 20 20"><path d="M2.003 5.884L10 9.882l7.997-3.998A2 2 0 0016 4H4a2 2 0 00-1.997 1.884z" /><path d="M18 8.118l-8 4-8-4V14a2 2 0 002 2h12a2 2 0 002-2V8.118z" /></svg>
-              确认函已飞往您的信箱：{successData.volume.claimerEmail}
-            </div>
 
             <div className="bg-[#fcfaf7] border-2 border-[#ede3d4] rounded-3xl p-10 mb-12 shadow-sm relative overflow-hidden text-left">
               <div className="absolute top-0 right-0 p-8 opacity-5">
@@ -382,7 +341,7 @@ const App: React.FC = () => {
            <svg className="w-6 h-6 text-[#8b7355]" fill="currentColor" viewBox="0 0 24 24"><path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/></svg>
            <div className="w-12 h-px bg-[#8b7355]"></div>
         </div>
-        <p className="text-gray-400 text-sm mb-2">© {new Date().getFullYear()} 大正新脩大藏經 协作诵读平台</p>
+        <p className="text-gray-400 text-sm mb-2">© {new Date().getFullYear()}  阅读平台</p>
         <div className="flex flex-col space-y-2 mt-4">
           <p className="font-serif text-[#8b7355] opacity-50 italic">愿以此功德，普及于一切。我等与众生，皆共成佛道。</p>
           <button 

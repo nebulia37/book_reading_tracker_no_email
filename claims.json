@@ -1,1 +1,12 @@
-[]
+[
+  {
+    "volumeId": 1001,
+    "name": "明",
+    "phone": "13823218921",
+    "plannedDays": 7,
+    "readingUrl": "https://w1.xianmijingzang.com/wap/tripitaka/id/43/subid/67/",
+    "claimedAt": "2026-01-23T00:51:30.925Z",
+    "expectedCompletionDate": "2026-01-30T00:51:30.925Z",
+    "status": "claimed"
+  }
+]
