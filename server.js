@@ -67,10 +67,12 @@ app.post('/api/claim', async (req, res) => {
         }
 
         console.log('Posting to SheetDB:', process.env.SHEETDB_API_URL);
+        console.log('Data being sent:', JSON.stringify(newClaim, null, 2));
+
         const sheetResponse = await fetch(process.env.SHEETDB_API_URL, {
           method: 'POST',
           headers,
-          body: JSON.stringify({ data: [newClaim] })
+          body: JSON.stringify({ data: newClaim })  // Single object, not array
         });
 
         const responseText = await sheetResponse.text();
@@ -78,9 +80,9 @@ app.post('/api/claim', async (req, res) => {
         console.log('SheetDB response:', responseText);
 
         if (sheetResponse.ok) {
-          console.log("Success: Saved to Google Sheets!");
+          console.log("✓ Success: Saved to Google Sheets!");
         } else {
-          console.warn('SheetDB save failed:', sheetResponse.status, responseText);
+          console.error('✗ SheetDB save failed:', sheetResponse.status, responseText);
         }
       } else {
         console.warn('SheetDB not configured, claim saved locally only');
