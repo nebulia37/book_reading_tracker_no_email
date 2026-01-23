@@ -26,35 +26,40 @@ if (!fs.existsSync(DB_FILE)) {
 }
 
 app.post('/api/claim', async (req, res) => {
-  console.log("Received claim data:", req.body);
-  const { volumeId, name, phone, plannedDays, readingUrl } = req.body;
-
-  if (!name) {
-    return res.status(400).json({ error: 'Name is required.' });
-  }
+  const { volumeId, name, email, phone, plannedDays, readingUrl } = req.body;
 
   try {
-    const claimedAt = new Date();
-    const expectedDate = new Date();
-    expectedDate.setDate(claimedAt.getDate() + (plannedDays || 7));
-
-    const dbData = JSON.parse(fs.readFileSync(DB_FILE, 'utf8'));
+    const claimedAt = new Date().toISOString();
+    
+    // Prepare the data to match your Google Sheet headers
     const newClaim = {
-      volumeId, name, phone, plannedDays, readingUrl,
-      claimedAt: claimedAt.toISOString(),
-      expectedCompletionDate: expectedDate.toISOString(),
-      status: 'claimed'
+      volumeId, name, email, phone, plannedDays, readingUrl,
+      claimedAt
     };
-    dbData.push(newClaim);
-    fs.writeFileSync(DB_FILE, JSON.stringify(dbData, null, 2));
 
-    res.json({ success: true, claim: newClaim });
+    // Send data to SheetDB instead of saving to claims.json
+    const response = await fetch('YOUR_SHEETDB_API_URL', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ data: [newClaim] }) // SheetDB expects an array inside "data"
+    });
+
+    if (response.ok) {
+      console.log("Success: Saved to Google Sheets!");
+      res.json({ success: true, claim: newClaim });
+    } else {
+      throw new Error('Failed to save to SheetDB');
+    }
   } catch (error) {
-    console.error('Backend Error:', error);
-    res.status(500).json({ error: 'Internal server error' });
+    console.error('SheetDB Error:', error);
+    res.status(500).json({ error: 'Failed to record claim.' });
   }
 });
 
 app.listen(PORT, () => {
   console.log(`\nServer Active at http://localhost:${PORT}`);
 });
+
+app.use(cors({
+  origin: 'https://resonant-faloodeh-ad9c48.netlify.app' // Replace with your actual Netlify URL
+}));

@@ -4,7 +4,7 @@ import { Volume, VolumeStatus, AppView, ClaimRequest } from './types';
 import { dbService } from './dbService';
 import { generateBlessingMessage } from './geminiService';
 
-
+const API_BASE_URL = import.meta.env.VITE_API_URL;
 
 const App: React.FC = () => {
   const [view, setView] = useState<AppView>('home');
@@ -53,8 +53,8 @@ const App: React.FC = () => {
       readingUrl: selectedVolume.readingUrl,
       ...formData
     };
-  
-    const response = await fetch('http://localhost:3001/api/claim', {
+
+    const response = await fetch(`${API_BASE_URL}/api/claim`, {
     method: 'POST',
     headers: { 
     'Content-Type': 'application/json',
