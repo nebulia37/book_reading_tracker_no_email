@@ -20,6 +20,8 @@ export interface Volume {
 
 export interface ClaimRequest {
   volumeId: number;
+  volumeNumber: string;
+  volumeTitle: string;
   name: string;
   phone: string;
   plannedDays: number;

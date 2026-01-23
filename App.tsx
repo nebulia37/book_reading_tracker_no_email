@@ -56,6 +56,8 @@ const updated = await dbService.claimVolume(claimRequest); // MUST add 'awai
   try {
     const claimRequest: ClaimRequest = {
       volumeId: selectedVolume.id,
+      volumeNumber: selectedVolume.volumeNumber,
+      volumeTitle: selectedVolume.volumeTitle,
       readingUrl: selectedVolume.readingUrl,
       ...formData
     };
@@ -74,7 +76,9 @@ const updated = await dbService.claimVolume(claimRequest); // MUST add 'awai
     const updated = dbService.claimVolume(claimRequest);
     
     if (updated) {
-      // Immediate functional state update for UI reactivity
+      // For now, update local state directly instead of reloading from SheetDB
+      // const refreshedVolumes = await dbService.getVolumes();
+      // setVolumes(refreshedVolumes);
       setVolumes(prev => prev.map(v => v.id === updated.id ? updated : v));
 
       const [blessing] = await Promise.all([
@@ -319,7 +323,16 @@ const updated = await dbService.claimVolume(claimRequest); // MUST add 'awai
                 </div>
                 <div>
                   <label className="text-xs text-gray-400 uppercase font-bold tracking-widest block mb-2">圆满截止日期</label>
-                  <p className="font-bold text-blue-600 text-2xl">{new Date(successData.volume.expectedCompletionDate!).toLocaleDateString()}</p>
+                  <p className="font-bold text-blue-600 text-2xl">
+                    {(() => {
+                      try {
+                        const date = new Date(successData.volume.expectedCompletionDate!);
+                        return isNaN(date.getTime()) ? '日期计算中...' : date.toLocaleDateString();
+                      } catch {
+                        return '日期计算中...';
+                      }
+                    })()}
+                  </p>
                 </div>
               </div>
               

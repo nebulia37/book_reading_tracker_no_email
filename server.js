@@ -26,7 +26,7 @@ if (!fs.existsSync(DB_FILE)) {
 }
 
 app.post('/api/claim', async (req, res) => {
-  const { volumeId, name, phone, plannedDays, readingUrl } = req.body;
+  const { volumeId, volumeNumber, volumeTitle, name, phone, plannedDays, readingUrl } = req.body;
 
   if (!name) {
     return res.status(400).json({ error: 'Name is required.' });
@@ -40,6 +40,8 @@ app.post('/api/claim', async (req, res) => {
     // Prepare the data to match your Google Sheet headers
     const newClaim = {
       volumeId, 
+      volumeNumber,
+      volumeTitle,
       name, 
       phone, 
       plannedDays, 
