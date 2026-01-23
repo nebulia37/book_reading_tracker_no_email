@@ -30,8 +30,57 @@ const App: React.FC = () => {
 
   useEffect(() => {
     const loadVolumes = async () => {
+      // Load initial volumes from local data
       const loadedVolumes = await dbService.getVolumes();
       setVolumes(loadedVolumes);
+
+      // Fetch claims from Google Sheets via backend
+      try {
+        if (API_BASE_URL) {
+          console.log('Fetching claims from Google Sheets...');
+          const response = await fetch(`${API_BASE_URL}/api/claims`);
+
+          if (response.ok) {
+            const sheetData = await response.json();
+            console.log('Google Sheets data:', sheetData);
+
+            // SheetDB returns data in format { data: [...] } or just [...]
+            const claims = Array.isArray(sheetData) ? sheetData : (sheetData.data || []);
+
+            if (claims.length > 0) {
+              console.log(`Syncing ${claims.length} claims from Google Sheets...`);
+
+              // Sync each claim with dbService
+              claims.forEach((claim: any) => {
+                if (claim.volumeId && claim.name && claim.phone) {
+                  const claimRequest: ClaimRequest = {
+                    volumeId: parseInt(claim.volumeId),
+                    volumeNumber: claim.volumeNumber || '',
+                    volumeTitle: claim.volumeTitle || '',
+                    readingUrl: claim.readingUrl || '',
+                    name: claim.name,
+                    phone: claim.phone,
+                    plannedDays: parseInt(claim.plannedDays) || 7
+                  };
+                  dbService.claimVolume(claimRequest);
+                }
+              });
+
+              // Reload volumes to reflect synced claims
+              const syncedVolumes = await dbService.getVolumes();
+              setVolumes(syncedVolumes);
+              console.log('✓ Claims synced from Google Sheets');
+            } else {
+              console.log('No claims found in Google Sheets');
+            }
+          } else {
+            console.warn('Failed to fetch claims from backend:', response.status);
+          }
+        }
+      } catch (error) {
+        console.error('Error syncing claims from Google Sheets:', error);
+        // Continue with local data even if sync fails
+      }
     };
     loadVolumes();
   }, []);
@@ -314,7 +363,7 @@ const App: React.FC = () => {
                       <svg className="animate-spin h-6 w-6 mr-3 text-gray-400" viewBox="0 0 24 24"><circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle><path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path></svg>
                       正在递交...
                     </div>
-                  ) : '发起诵读认领誓愿'}
+                  ) : '发起诵读认领'}
                 </button>
               </div>
             </form>
