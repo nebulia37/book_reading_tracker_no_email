@@ -16,6 +16,11 @@ const App: React.FC = () => {
   const [successData, setSuccessData] = useState<{ volume: Volume; blessing: string; sentViaBackend: boolean } | null>(null);
   const [copyFeedback, setCopyFeedback] = useState(false);
 
+  // Debug: Log API URL on mount
+  useEffect(() => {
+    console.log('API_BASE_URL:', API_BASE_URL);
+  }, []);
+
   // Form State
   const [formData, setFormData] = useState({
     name: '',
@@ -60,6 +65,9 @@ const App: React.FC = () => {
         ...formData
       };
 
+      console.log('Submitting claim to:', `${API_BASE_URL}/api/claim`);
+      console.log('Claim data:', claimRequest);
+
       // Submit to backend
       const response = await fetch(`${API_BASE_URL}/api/claim`, {
         method: 'POST',
@@ -70,24 +78,39 @@ const App: React.FC = () => {
         body: JSON.stringify(claimRequest)
       });
 
+      console.log('Response status:', response.status);
+      console.log('Response ok:', response.ok);
+
       if (!response.ok) {
-        throw new Error('Failed to submit claim');
+        const errorText = await response.text();
+        console.error('Backend error response:', errorText);
+        throw new Error(`Backend returned ${response.status}: ${errorText}`);
       }
 
+      const responseData = await response.json();
+      console.log('Backend response:', responseData);
       sentViaBackend = true;
 
       // Update Local state via dbService
+      console.log('Updating local state via dbService...');
       const updated = dbService.claimVolume(claimRequest);
+      console.log('Updated volume:', updated);
 
       if (updated) {
         // Update volumes list
         setVolumes(prev => prev.map(v => v.id === updated.id ? updated : v));
 
         // Generate blessing message
+        console.log('Generating blessing message...');
         const blessing = await generateBlessingMessage(updated.volumeTitle, updated.claimerName || '同修');
+        console.log('Blessing:', blessing);
 
         setSuccessData({ volume: updated, blessing, sentViaBackend });
+        console.log('Switching to success view');
         setView('success');
+      } else {
+        console.error('Updated volume is null/undefined');
+        throw new Error('Failed to update local volume data');
       }
     } catch (error: any) {
       console.error('Claim error:', error);
