@@ -26,21 +26,36 @@ if (!fs.existsSync(DB_FILE)) {
 }
 
 app.post('/api/claim', async (req, res) => {
-  const { volumeId, name, email, phone, plannedDays, readingUrl } = req.body;
+  const { volumeId, name, phone, plannedDays, readingUrl } = req.body;
+
+  if (!name) {
+    return res.status(400).json({ error: 'Name is required.' });
+  }
 
   try {
     const claimedAt = new Date().toISOString();
+    const expectedDate = new Date();
+    expectedDate.setDate(new Date().getDate() + (plannedDays || 7));
     
     // Prepare the data to match your Google Sheet headers
     const newClaim = {
-      volumeId, name, email, phone, plannedDays, readingUrl,
-      claimedAt
+      volumeId, 
+      name, 
+      phone, 
+      plannedDays, 
+      readingUrl,
+      claimedAt,
+      expectedCompletionDate: expectedDate.toISOString(),
+      status: 'claimed'
     };
 
     // Send data to SheetDB instead of saving to claims.json
-    const response = await fetch('YOUR_SHEETDB_API_URL', {
+    const response = await fetch(process.env.SHEETDB_API_URL, {
       method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
+      headers: { 
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${process.env.SHEETDB_API_KEY}`
+      },
       body: JSON.stringify({ data: [newClaim] }) // SheetDB expects an array inside "data"
     });
 
@@ -48,6 +63,8 @@ app.post('/api/claim', async (req, res) => {
       console.log("Success: Saved to Google Sheets!");
       res.json({ success: true, claim: newClaim });
     } else {
+      const errorText = await response.text();
+      console.error('SheetDB Error Response:', errorText);
       throw new Error('Failed to save to SheetDB');
     }
   } catch (error) {
@@ -55,6 +72,18 @@ app.post('/api/claim', async (req, res) => {
     res.status(500).json({ error: 'Failed to record claim.' });
   }
 });
+
+// server.js - Add this to let the frontend see the claims
+app.get('/api/claims', async (req, res) => {
+  try {
+    const response = await fetch('YOUR_SHEETDB_API_URL');
+    const data = await response.json();
+    res.json(data); // Send the Google Sheet data back to the frontend
+  } catch (error) {
+    res.status(500).json({ error: "Failed to fetch from SheetDB" });
+  }
+});
+
 
 app.listen(PORT, () => {
   console.log(`\nServer Active at http://localhost:${PORT}`);

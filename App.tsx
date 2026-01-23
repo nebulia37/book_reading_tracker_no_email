@@ -24,7 +24,11 @@ const App: React.FC = () => {
   });
 
   useEffect(() => {
-    setVolumes(dbService.getVolumes());
+    const loadVolumes = async () => {
+      const loadedVolumes = await dbService.getVolumes();
+      setVolumes(loadedVolumes);
+    };
+    loadVolumes();
   }, []);
 
   const filteredVolumes = useMemo(() => {

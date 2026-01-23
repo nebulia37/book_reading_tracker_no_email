@@ -6,10 +6,38 @@ import { INITIAL_VOLUMES } from './data';
 const DB_KEY = 'longzang_tripitaka_volumes_v12';
 
 export const dbService = {
-  getVolumes: (): Volume[] => {
+  getVolumes: async (): Promise<Volume[]> => {
     try {
       const data = localStorage.getItem(DB_KEY);
       let volumes: Volume[] = data ? JSON.parse(data) : [...INITIAL_VOLUMES];
+
+      // Fetch claims from SheetDB
+      try {
+        const response = await fetch('https://book-reading-tracker-no-email.onrender.com/api/claims');
+        if (response.ok) {
+          const claimsData = await response.json();
+          const claims = claimsData.data || claimsData; // SheetDB returns data in different formats
+
+          // Update volumes based on claims
+          volumes = volumes.map(volume => {
+            const claim = claims.find((c: any) => c.volumeId === volume.id);
+            if (claim) {
+              return {
+                ...volume,
+                status: VolumeStatus.CLAIMED,
+                claimerName: claim.name,
+                claimerPhone: claim.phone,
+                plannedDays: claim.plannedDays,
+                claimedAt: claim.claimedAt,
+                expectedCompletionDate: claim.expectedCompletionDate
+              };
+            }
+            return volume;
+          });
+        }
+      } catch (error) {
+        console.warn('Failed to fetch claims from SheetDB, using local data only:', error);
+      }
 
       // Auto-completion logic
       const now = new Date();
