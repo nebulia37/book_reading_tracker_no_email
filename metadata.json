@@ -1,0 +1,5 @@
+{
+  "name": "Taishō Tripiṭaka Reading Claim Tracker",
+  "description": "A collaborative platform for tracking the reading and recitation of the Taishō Tripiṭaka. Users can claim specific volumes, track their progress, and access online texts with automated confirmation workflows.",
+  "requestFramePermissions": []
+}
