@@ -45,59 +45,57 @@ const App: React.FC = () => {
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
-    // Inside handleSubmit (around line 70)
-const updated = await dbService.claimVolume(claimRequest); // MUST add 'awai
-  e.preventDefault();
-  if (!selectedVolume) return;
+    e.preventDefault();
+    if (!selectedVolume) return;
 
-  setIsSubmitting(true);
-  let sentViaBackend = false;
+    setIsSubmitting(true);
+    let sentViaBackend = false;
 
-  try {
-    const claimRequest: ClaimRequest = {
-      volumeId: selectedVolume.id,
-      volumeNumber: selectedVolume.volumeNumber,
-      volumeTitle: selectedVolume.volumeTitle,
-      readingUrl: selectedVolume.readingUrl,
-      ...formData
-    };
+    try {
+      const claimRequest: ClaimRequest = {
+        volumeId: selectedVolume.id,
+        volumeNumber: selectedVolume.volumeNumber,
+        volumeTitle: selectedVolume.volumeTitle,
+        readingUrl: selectedVolume.readingUrl,
+        ...formData
+      };
 
-    const response = await fetch(`${API_BASE_URL}/api/claim`, {
-    method: 'POST',
-    headers: { 
-    'Content-Type': 'application/json',
-    'Accept': 'application/json' 
-    },
-    body: JSON.stringify(claimRequest)
-   });
+      // Submit to backend
+      const response = await fetch(`${API_BASE_URL}/api/claim`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Accept': 'application/json'
+        },
+        body: JSON.stringify(claimRequest)
+      });
 
-   if (!response.ok) {
-     throw new Error('Failed to submit claim');
-   }
-  
-   
-    // Update Local state via dbService
-    const updated = dbService.claimVolume(claimRequest);
-    
-    if (updated) {
-      // For now, update local state directly instead of reloading from SheetDB
-      // const refreshedVolumes = await dbService.getVolumes();
-      // setVolumes(refreshedVolumes);
-      setVolumes(prev => prev.map(v => v.id === updated.id ? updated : v));
+      if (!response.ok) {
+        throw new Error('Failed to submit claim');
+      }
 
-      const [blessing] = await Promise.all([
-        generateBlessingMessage(updated.volumeTitle, updated.claimerName || '同修')
-      ]);
+      sentViaBackend = true;
 
-      setSuccessData({ volume: updated, blessing, sentViaBackend });
-      setView('success');
+      // Update Local state via dbService
+      const updated = dbService.claimVolume(claimRequest);
+
+      if (updated) {
+        // Update volumes list
+        setVolumes(prev => prev.map(v => v.id === updated.id ? updated : v));
+
+        // Generate blessing message
+        const blessing = await generateBlessingMessage(updated.volumeTitle, updated.claimerName || '同修');
+
+        setSuccessData({ volume: updated, blessing, sentViaBackend });
+        setView('success');
+      }
+    } catch (error: any) {
+      console.error('Claim error:', error);
+      alert(error.message || '认领失败，请重试。');
+    } finally {
+      setIsSubmitting(false);
     }
-  } catch (error: any) {
-    alert(error.message || '认领失败，请重试。');
-  } finally {
-    setIsSubmitting(false);
-  }
-}; // <--- Fixed the closing brace for the main function
+  };
 
   const getStatusBadge = (status: VolumeStatus) => {
     switch (status) {

@@ -88,22 +88,35 @@ app.post('/api/claim', async (req, res) => {
 // server.js - Add this to let the frontend see the claims
 app.get('/api/claims', async (req, res) => {
   try {
-    const response = await fetch('YOUR_SHEETDB_API_URL');
+    if (!process.env.SHEETDB_API_URL) {
+      return res.json({ data: [] }); // Return empty array if not configured
+    }
+
+    const headers = {
+      'Content-Type': 'application/json'
+    };
+
+    if (process.env.SHEETDB_API_KEY) {
+      headers['Authorization'] = `Bearer ${process.env.SHEETDB_API_KEY}`;
+    }
+
+    const response = await fetch(process.env.SHEETDB_API_URL, { headers });
+
+    if (!response.ok) {
+      throw new Error(`SheetDB responded with status: ${response.status}`);
+    }
+
     const data = await response.json();
     res.json(data); // Send the Google Sheet data back to the frontend
   } catch (error) {
-    res.status(500).json({ error: "Failed to fetch from SheetDB" });
+    console.error('Error fetching from SheetDB:', error);
+    res.status(500).json({ error: "Failed to fetch from SheetDB", details: error.message });
   }
 });
 
 
 app.listen(PORT, () => {
   console.log(`\nServer Active at http://localhost:${PORT}`);
+  console.log(`CORS enabled for all origins`);
+  console.log(`SheetDB configured: ${!!process.env.SHEETDB_API_URL}`);
 });
-
-// Change this to your actual Netlify URL
-app.use(cors({
-  origin: 'https://your-site-name.netlify.app' 
-}));
-
-app.use(express.json());
