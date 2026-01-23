@@ -70,6 +70,10 @@ const updated = await dbService.claimVolume(claimRequest); // MUST add 'awai
     },
     body: JSON.stringify(claimRequest)
    });
+
+   if (!response.ok) {
+     throw new Error('Failed to submit claim');
+   }
   
    
     // Update Local state via dbService

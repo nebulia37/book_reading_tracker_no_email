@@ -26,6 +26,7 @@ if (!fs.existsSync(DB_FILE)) {
 }
 
 app.post('/api/claim', async (req, res) => {
+  console.log("Received claim data:", req.body);
   const { volumeId, volumeNumber, volumeTitle, name, phone, plannedDays, readingUrl } = req.body;
 
   if (!name) {
@@ -51,24 +52,33 @@ app.post('/api/claim', async (req, res) => {
       status: 'claimed'
     };
 
-    // Send data to SheetDB instead of saving to claims.json
-    const response = await fetch(process.env.SHEETDB_API_URL, {
-      method: 'POST',
-      headers: { 
-        'Content-Type': 'application/json',
-        'Authorization': `Bearer ${process.env.SHEETDB_API_KEY}`
-      },
-      body: JSON.stringify({ data: [newClaim] }) // SheetDB expects an array inside "data"
-    });
+    console.log("Sending to SheetDB:", newClaim);
 
-    if (response.ok) {
-      console.log("Success: Saved to Google Sheets!");
-      res.json({ success: true, claim: newClaim });
-    } else {
-      const errorText = await response.text();
-      console.error('SheetDB Error Response:', errorText);
-      throw new Error('Failed to save to SheetDB');
+    // Send data to SheetDB (don't fail if SheetDB is not configured)
+    try {
+      if (process.env.SHEETDB_API_URL && process.env.SHEETDB_API_KEY) {
+        const sheetResponse = await fetch(process.env.SHEETDB_API_URL, {
+          method: 'POST',
+          headers: { 
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${process.env.SHEETDB_API_KEY}`
+          },
+          body: JSON.stringify({ data: [newClaim] })
+        });
+
+        if (sheetResponse.ok) {
+          console.log("Success: Saved to Google Sheets!");
+        } else {
+          console.warn('SheetDB save failed, but continuing with local claim');
+        }
+      } else {
+        console.warn('SheetDB not configured, claim saved locally only');
+      }
+    } catch (sheetError) {
+      console.warn('SheetDB error:', sheetError.message, '- claim saved locally only');
     }
+
+    res.json({ success: true, claim: newClaim });
   } catch (error) {
     console.error('SheetDB Error:', error);
     res.status(500).json({ error: 'Failed to record claim.' });
