@@ -60,6 +60,9 @@ app.listen(PORT, () => {
   console.log(`\nServer Active at http://localhost:${PORT}`);
 });
 
+// Change this to your actual Netlify URL
 app.use(cors({
-  origin: 'https://resonant-faloodeh-ad9c48.netlify.app' // Replace with your actual Netlify URL
+  origin: 'https://your-site-name.netlify.app' 
 }));
+
+app.use(express.json());
