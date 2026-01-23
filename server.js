@@ -56,20 +56,31 @@ app.post('/api/claim', async (req, res) => {
 
     // Send data to SheetDB (don't fail if SheetDB is not configured)
     try {
-      if (process.env.SHEETDB_API_URL && process.env.SHEETDB_API_KEY) {
+      if (process.env.SHEETDB_API_URL) {
+        const headers = {
+          'Content-Type': 'application/json'
+        };
+
+        // Add Authorization header only if API key is provided
+        if (process.env.SHEETDB_API_KEY) {
+          headers['Authorization'] = `Bearer ${process.env.SHEETDB_API_KEY}`;
+        }
+
+        console.log('Posting to SheetDB:', process.env.SHEETDB_API_URL);
         const sheetResponse = await fetch(process.env.SHEETDB_API_URL, {
           method: 'POST',
-          headers: { 
-            'Content-Type': 'application/json',
-            'Authorization': `Bearer ${process.env.SHEETDB_API_KEY}`
-          },
+          headers,
           body: JSON.stringify({ data: [newClaim] })
         });
+
+        const responseText = await sheetResponse.text();
+        console.log('SheetDB response status:', sheetResponse.status);
+        console.log('SheetDB response:', responseText);
 
         if (sheetResponse.ok) {
           console.log("Success: Saved to Google Sheets!");
         } else {
-          console.warn('SheetDB save failed, but continuing with local claim');
+          console.warn('SheetDB save failed:', sheetResponse.status, responseText);
         }
       } else {
         console.warn('SheetDB not configured, claim saved locally only');
