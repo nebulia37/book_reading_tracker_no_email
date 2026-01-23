@@ -45,6 +45,8 @@ const App: React.FC = () => {
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
+    // Inside handleSubmit (around line 70)
+const updated = await dbService.claimVolume(claimRequest); // MUST add 'awai
   e.preventDefault();
   if (!selectedVolume) return;
 

@@ -56,8 +56,22 @@ export const dbService = {
 
   // FIXED: Properly implemented async function with all logic inside
   claimVolume: async (request: ClaimRequest): Promise<Volume | null> => {
-    const volumes = await dbService.getVolumes(); 
-    const index = volumes.findIndex(v => String(v.id) === String(request.volumeId));
+    claimVolume: async (request: ClaimRequest): Promise<Volume | null> => {
+  // 1. You MUST await here. If you miss 'await', volumes is a Promise object.
+  const volumesData = await dbService.getVolumes(); 
+
+  // 2. Safety check: If SheetDB or LocalStorage returned an object by mistake, 
+  // ensure we are working with the array inside it.
+  const volumes = Array.isArray(volumesData) ? volumesData : (volumesData as any).volumes || [];
+
+  if (!Array.isArray(volumes)) {
+    console.error("Volumes is not an array!", volumes);
+    return null;
+  }
+
+  // 3. Match using string conversion to avoid type mismatches from SheetDB
+  const index = volumes.findIndex(v => String(v.id) === String(request.volumeId));
+  
     
     if (index === -1) return null;
     if (volumes[index].status !== VolumeStatus.UNCLAIMED) {
