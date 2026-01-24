@@ -29,6 +29,9 @@ const SUPABASE_ANON_KEY = process.env.SUPABASE_ANON_KEY;
 const DINGTALK_WEBHOOK = process.env.DINGTALK_WEBHOOK;
 const DINGTALK_SECRET = process.env.DINGTALK_SECRET;
 
+// /view 页面访问密码
+const VIEW_ACCESS_CODE = process.env.VIEW_ACCESS_CODE || 'admin123';
+
 // 发送钉钉通知
 async function sendDingTalkNotification(claim) {
   if (!DINGTALK_WEBHOOK || !DINGTALK_SECRET) {
@@ -207,8 +210,42 @@ app.get('/api/claims', async (req, res) => {
 });
 
 
-// 公开的认领记录页面 - 可分享给中国的同修查看
+// 认领记录页面 - 需要访问码
 app.get('/view', async (req, res) => {
+  // 检查访问码
+  const code = req.query.code;
+  if (code !== VIEW_ACCESS_CODE) {
+    return res.status(401).send(`
+      <!DOCTYPE html>
+      <html lang="zh-CN">
+      <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>访问受限</title>
+        <style>
+          body { font-family: -apple-system, sans-serif; background: #fdfbf7; display: flex; justify-content: center; align-items: center; min-height: 100vh; margin: 0; }
+          .box { background: white; padding: 40px; border-radius: 16px; box-shadow: 0 4px 20px rgba(0,0,0,0.1); text-align: center; max-width: 400px; }
+          h2 { color: #5c4033; margin-bottom: 20px; }
+          p { color: #666; margin-bottom: 20px; }
+          input { width: 100%; padding: 12px; border: 1px solid #ddd; border-radius: 8px; font-size: 16px; margin-bottom: 15px; }
+          button { width: 100%; padding: 12px; background: #8b7355; color: white; border: none; border-radius: 8px; font-size: 16px; cursor: pointer; }
+          button:hover { background: #5c4033; }
+        </style>
+      </head>
+      <body>
+        <div class="box">
+          <h2>🔒 请输入访问码</h2>
+          <p>此页面需要访问码才能查看</p>
+          <form onsubmit="window.location.href='/view?code='+document.getElementById('code').value; return false;">
+            <input type="password" id="code" placeholder="请输入访问码" autofocus>
+            <button type="submit">确认</button>
+          </form>
+        </div>
+      </body>
+      </html>
+    `);
+  }
+
   try {
     const supabase = getSupabaseClient();
     let claims = [];
@@ -322,7 +359,7 @@ app.get('/view', async (req, res) => {
       </div>
     </div>
     ${tableHtml}
-    <div class="refresh"><a href="/view">🔄 刷新数据</a></div>
+    <div class="refresh"><a href="/view?code=${code}">🔄 刷新数据</a></div>
     <p class="update-time">最后更新: ${new Date().toLocaleString('zh-CN')}</p>
   </div>
 </body>
