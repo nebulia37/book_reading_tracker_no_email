@@ -214,6 +214,85 @@ app.get('/api/claims', async (req, res) => {
 
 
 // 认领记录页面 - 需要访问码
+
+
+// CSV export for /view
+app.get('/view.csv', async (req, res) => {
+  const code = req.query.code;
+  if (code !== VIEW_ACCESS_CODE) {
+    return res.status(401).send('Unauthorized');
+  }
+
+  try {
+    const supabase = getSupabaseClient();
+    let claims = [];
+
+    if (supabase) {
+      const { data } = await supabase.from('claims').select('*').order('claimedAt', { ascending: false });
+      claims = data || [];
+    }
+
+    const now = new Date();
+    claims = claims.map(c => ({
+      ...c,
+      displayStatus: c.expectedCompletionDate && now >= new Date(c.expectedCompletionDate) ? '\u5df2\u5b8c\u6210' : '\u5df2\u8ba4\u9886'
+    }));
+
+    const headers = [
+      'volumeId',
+      'part',
+      'scroll',
+      'volumeNumber',
+      'volumeTitle',
+      'name',
+      'phone',
+      'plannedDays',
+      'claimedAt',
+      'expectedCompletionDate',
+      'status',
+      'readingUrl',
+      'remarks'
+    ];
+
+    const escapeValue = (value) => {
+      const raw = value === null || value === undefined ? '' : String(value);
+      if (raw.includes('"') || raw.includes(',') || raw.includes('
+') || raw.includes('
+')) {
+        return `"${raw.replace(/"/g, '""')}"`;
+      }
+      return raw;
+    };
+
+    const lines = [headers.join(',')];
+    claims.forEach(c => {
+      const row = [
+        c.volumeId || '',
+        c.part || '',
+        c.scroll || '',
+        c.volumeNumber || '',
+        c.volumeTitle || '',
+        c.name || '',
+        c.phone || '',
+        c.plannedDays || '',
+        c.claimedAt || '',
+        c.expectedCompletionDate || '',
+        c.displayStatus || '',
+        c.readingUrl || '',
+        c.remarks || ''
+      ];
+      lines.push(row.map(escapeValue).join(','));
+    });
+
+    res.setHeader('Content-Type', 'text/csv; charset=utf-8');
+    res.setHeader('Content-Disposition', 'attachment; filename="claims.csv"');
+    res.send(lines.join('
+'));
+  } catch (error) {
+    console.error('Error exporting CSV:', error);
+    res.status(500).send('Failed to export CSV');
+  }
+});
 app.get('/view', async (req, res) => {
   // 检查访问码
   const code = req.query.code;
@@ -262,7 +341,7 @@ app.get('/view', async (req, res) => {
     const now = new Date();
     claims = claims.map(c => ({
       ...c,
-      displayStatus: c.expectedCompletionDate && now >= new Date(c.expectedCompletionDate) ? '已完成' : '已认领'
+      displayStatus: c.expectedCompletionDate && now >= new Date(c.expectedCompletionDate) ? '\u5df2\u5b8c\u6210' : '\u5df2\u8ba4\u9886'
     }));
 
     const inProgressCount = claims.filter(c => c.displayStatus === '已认领').length;
@@ -316,7 +395,6 @@ app.get('/view', async (req, res) => {
     body { font-family: -apple-system, BlinkMacSystemFont, "PingFang SC", "Microsoft YaHei", sans-serif; background: #fdfbf7; padding: 20px; min-height: 100vh; }
     .container { max-width: 1200px; margin: 0 auto; }
     h1 { color: #5c4033; text-align: center; margin-bottom: 8px; font-size: 28px; }
-    .subtitle { text-align: center; color: #8b7355; margin-bottom: 20px; font-size: 14px; }
     .stats { display: flex; justify-content: center; gap: 20px; margin-bottom: 20px; flex-wrap: wrap; }
     .stat-box { background: white; padding: 15px 25px; border-radius: 12px; box-shadow: 0 2px 8px rgba(0,0,0,0.08); text-align: center; }
     .stat-num { font-size: 24px; font-weight: bold; color: #5c4033; }
@@ -328,9 +406,13 @@ app.get('/view', async (req, res) => {
     tr:hover { background: #fdfbf7; }
     .status-claimed { color: #d97706; font-weight: 600; }
     .status-completed { color: #059669; font-weight: 600; }
-    .refresh { text-align: center; margin-top: 20px; }
-    .refresh a { color: #8b7355; text-decoration: none; padding: 10px 20px; border: 1px solid #8b7355; border-radius: 8px; display: inline-block; transition: all 0.2s; }
-    .refresh a:hover { background: #8b7355; color: white; }
+    
+    .actions { text-align: center; margin-top: 20px; display: flex; justify-content: center; gap: 12px; flex-wrap: wrap; }
+    .actions a { color: #8b7355; text-decoration: none; padding: 10px 20px; border: 1px solid #8b7355; border-radius: 8px; display: inline-block; transition: all 0.2s; }
+    .actions a:hover { background: #8b7355; color: white; }
+    .download { background: #8b7355; color: white; }
+    .download:hover { background: #5c4033; border-color: #5c4033; }
+
     .empty { text-align: center; padding: 60px 20px; color: #999; }
     .update-time { text-align: center; color: #999; font-size: 12px; margin-top: 15px; }
     @media (max-width: 768px) {
@@ -361,7 +443,10 @@ app.get('/view', async (req, res) => {
       </div>
     </div>
     ${tableHtml}
-    <div class="refresh"><a href="/view?code=${code}">🔄 刷新数据</a></div>
+    <div class="actions">
+      <a class="download" href="/view.csv?code=${code}">\u4e0b\u8f7dCSV</a>
+      <a class="refresh" href="/view?code=${code}">\u21bb \u5237\u65b0\u6570\u636e</a>
+    </div>
     <p class="update-time">最后更新: ${new Date().toLocaleString('zh-CN')}</p>
   </div>
 </body>
