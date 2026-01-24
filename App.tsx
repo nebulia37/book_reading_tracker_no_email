@@ -170,14 +170,14 @@ const App: React.FC = () => {
     }
   };
 
-  const getStatusBadge = (status: VolumeStatus) => {
-    switch (status) {
+  const getStatusBadge = (volume: Volume) => {
+    switch (volume.status) {
       case VolumeStatus.UNCLAIMED:
         return <span className="px-3 py-1 text-xs font-bold rounded-full bg-gray-100 text-gray-400">待认领</span>;
       case VolumeStatus.CLAIMED:
-        return <span className="px-3 py-1 text-xs font-bold rounded-full bg-amber-50 text-amber-600">已认领</span>;
+        return <span className="px-3 py-1 text-xs font-bold rounded-full bg-amber-50 text-amber-600">已认领 - {volume.claimerName}</span>;
       case VolumeStatus.COMPLETED:
-        return <span className="px-3 py-1 text-xs font-bold rounded-full bg-emerald-50 text-emerald-600">已完成</span>;
+        return <span className="px-3 py-1 text-xs font-bold rounded-full bg-emerald-50 text-emerald-600">已完成 - {volume.claimerName}</span>;
     }
   };
 
@@ -230,7 +230,7 @@ const App: React.FC = () => {
                     <div className="flex-1">
                       <div className="text-xs text-gray-500 mb-1">{vol.volumeNumber}</div>
                       <h3 className="font-bold text-[#5c4033] serif-title text-base mb-2">{vol.volumeTitle}</h3>
-                      <div className="mb-2">{getStatusBadge(vol.status)}</div>
+                      <div className="mb-2">{getStatusBadge(vol)}</div>
                     </div>
                   </div>
                   <div className="flex gap-2">
@@ -281,7 +281,7 @@ const App: React.FC = () => {
                     <tr key={vol.id} className={`transition-colors group ${vol.status === VolumeStatus.CLAIMED ? 'bg-[#fdfbf7]' : 'hover:bg-[#fdfbf7]'}`}>
                       <td className="p-5 font-mono font-bold text-[#5c4033]">{vol.volumeNumber}</td>
                       <td className="p-5 font-bold text-[#5c4033] serif-title text-lg">{vol.volumeTitle}</td>
-                      <td className="p-5">{getStatusBadge(vol.status)}</td>
+                      <td className="p-5">{getStatusBadge(vol)}</td>
                       <td className="p-5">
                         <a
                           href={vol.readingUrl}
@@ -336,8 +336,6 @@ const App: React.FC = () => {
               返回名著列表
             </button>
 
-            <h2 className="text-2xl md:text-4xl font-bold serif-title text-[#5c4033] mb-6 md:mb-10 border-b-2 border-[#ede3d4] pb-4 md:pb-6">诵读认领申请</h2>
-
             <form onSubmit={handleSubmit} className="space-y-6 md:space-y-8">
               <div className="bg-[#fdfbf7] p-4 md:p-8 rounded-3xl border border-[#ede3d4] shadow-inner">
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4 md:gap-8">
@@ -358,7 +356,8 @@ const App: React.FC = () => {
 
               <div className="grid grid-cols-1 md:grid-cols-3 gap-4 md:gap-8">
                 <div>
-                  <label className="block text-sm font-bold text-gray-700 mb-2">您的姓名</label>
+                  <label className="block text-sm font-bold text-gray-700 mb-1">您的姓名 <span className="text-red-500">*</span></label>
+                  <p className="text-xs text-gray-500 mb-2">请使用法名或者常用名，方便义工联系</p>
                   <input
                     required
                     type="text"
@@ -369,18 +368,21 @@ const App: React.FC = () => {
                   />
                 </div>
                 <div>
-                  <label className="block text-sm font-bold text-gray-700 mb-2">联系手机</label>
+                  <label className="block text-sm font-bold text-gray-700 mb-2">联系手机 <span className="text-red-500">*</span></label>
                   <input
                     required
                     type="tel"
+                    pattern="[0-9]{11}"
+                    maxLength={11}
                     value={formData.phone}
-                    onChange={(e) => setFormData({...formData, phone: e.target.value})}
+                    onChange={(e) => setFormData({...formData, phone: e.target.value.replace(/\D/g, '')})}
                     className="w-full px-4 md:px-5 py-3 md:py-4 rounded-2xl border border-gray-200 focus:ring-4 focus:ring-[#8b73551a] outline-none transition-all text-base md:text-lg"
-                    placeholder="138 **** ****"
+                    placeholder="13800000000"
+                    title="请输入11位手机号码"
                   />
                 </div>
                 <div>
-                  <label className="block text-sm font-bold text-gray-700 mb-2">计划诵读周期</label>
+                  <label className="block text-sm font-bold text-gray-700 mb-2">计划诵读周期 <span className="text-red-500">*</span></label>
                   <div className="relative">
                     <select
                       required

@@ -33,6 +33,15 @@ app.post('/api/claim', async (req, res) => {
     return res.status(400).json({ error: 'Name is required.' });
   }
 
+  if (!phone) {
+    return res.status(400).json({ error: 'Phone number is required.' });
+  }
+
+  // Validate phone number format (11 digits)
+  if (!/^[0-9]{11}$/.test(phone)) {
+    return res.status(400).json({ error: 'Phone number must be 11 digits.' });
+  }
+
   try {
     const claimedAt = new Date().toISOString();
     const expectedDate = new Date();

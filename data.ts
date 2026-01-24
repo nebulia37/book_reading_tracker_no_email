@@ -19,7 +19,7 @@ const createSutraVolumes = (
   for (let i = 1; i <= scrolls; i++) {
     volumes.push({
       id: startId + i,
-      volumeNumber: `第${part}部 卷${i}`,
+      volumeNumber: `第${part}部-卷${i}`,
       volumeTitle: `${title} 卷${i}`,
       status: VolumeStatus.UNCLAIMED,
       readingUrl: `${BASE_URL}${subid}/`
