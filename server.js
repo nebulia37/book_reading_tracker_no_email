@@ -86,7 +86,7 @@ if (!fs.existsSync(DB_FILE)) {
 
 // Cache for Supabase data to reduce API calls
 let sheetCache = { data: null, timestamp: 0 };
-const CACHE_DURATION = 5 * 60 * 1000; // 5 minutes
+const CACHE_DURATION = 1 * 60 * 1000; // 1 minute
 
 let supabaseClient = null;
 const getSupabaseClient = () => {
@@ -175,9 +175,10 @@ app.get('/api/claims', async (req, res) => {
       return res.json({ data: [] });
     }
 
-    // Check cache first
+    // Check cache first (skip if ?fresh=1)
     const now = Date.now();
-    if (sheetCache.data && (now - sheetCache.timestamp) < CACHE_DURATION) {
+    const skipCache = req.query.fresh === '1';
+    if (!skipCache && sheetCache.data && (now - sheetCache.timestamp) < CACHE_DURATION) {
       console.log('Returning cached data (avoiding Supabase fetch)');
       return res.json(sheetCache.data);
     }
