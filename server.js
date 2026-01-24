@@ -101,7 +101,7 @@ const getSupabaseClient = () => {
 
 app.post('/api/claim', async (req, res) => {
   console.log("Received claim data:", req.body);
-  const { volumeId, volumeNumber, volumeTitle, name, phone, plannedDays, readingUrl, remarks } = req.body;
+  const { volumeId, part, scroll, volumeNumber, volumeTitle, name, phone, plannedDays, readingUrl, remarks } = req.body;
 
   if (!name) {
     return res.status(400).json({ error: 'Name is required.' });
@@ -123,6 +123,8 @@ app.post('/api/claim', async (req, res) => {
     // Note: expectedCompletionDate is auto-calculated by database trigger (claimedAt + plannedDays)
     const newClaim = {
       volumeId,
+      part: part || 1,
+      scroll: scroll || 1,
       volumeNumber,
       volumeTitle,
       name,
@@ -344,7 +346,6 @@ app.get('/view', async (req, res) => {
 <body>
   <div class="container">
     <h1>📖 诵读认领记录</h1>
-    <p class="subtitle">大般若波羅蜜多經 · 认领进度</p>
     <div class="stats">
       <div class="stat-box">
         <div class="stat-num">${claims.length}</div>

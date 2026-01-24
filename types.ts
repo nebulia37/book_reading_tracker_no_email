@@ -6,7 +6,9 @@ export enum VolumeStatus {
 }
 
 export interface Volume {
-  id: number;
+  id: string;
+  part: number;      // 部
+  scroll: number;    // 卷
   volumeNumber: string;
   volumeTitle: string;
   status: VolumeStatus;
@@ -20,7 +22,9 @@ export interface Volume {
 }
 
 export interface ClaimRequest {
-  volumeId: number;
+  volumeId: string;
+  part: number;      // 部
+  scroll: number;    // 卷
   volumeNumber: string;
   volumeTitle: string;
   name: string;
