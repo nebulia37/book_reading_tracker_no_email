@@ -181,13 +181,13 @@ const App: React.FC = () => {
   };
 
   return (
-    <div className="min-h-screen py-8 px-4 md:px-12 bg-[#fdfbf7]">
+    <div className="min-h-screen py-4 md:py-8 px-3 md:px-12 bg-[#fdfbf7]">
       {/* Header Section */}
-      <header className="max-w-7xl mx-auto mb-12 text-center fade-in">
-        <h1 className="text-5xl md:text-6xl font-bold serif-title text-[#5c4033] mb-6 tracking-tight">
+      <header className="max-w-7xl mx-auto mb-6 md:mb-12 text-center fade-in">
+        <h1 className="text-3xl md:text-6xl font-bold serif-title text-[#5c4033] mb-4 md:mb-6 tracking-tight">
           名著<span className="text-[#8b7355]">诵读认领</span>
         </h1>
-        <div className="w-24 h-1 bg-[#8b7355] mx-auto mb-6 rounded-full opacity-30"></div>
+        <div className="w-16 md:w-24 h-1 bg-[#8b7355] mx-auto mb-4 md:mb-6 rounded-full opacity-30"></div>
       </header>
 
       <main className="max-w-7xl mx-auto sutra-card rounded-3xl overflow-hidden fade-in" style={{ animationDelay: '0.1s' }}>
@@ -221,8 +221,50 @@ const App: React.FC = () => {
               </div>
             </div>
 
-            {/* Table */}
-            <div className="overflow-x-auto">
+            {/* Mobile Card View */}
+            <div className="block md:hidden">
+              {filteredVolumes.map((vol) => (
+                <div key={vol.id} className="p-4 border-b border-[#ede3d4] bg-white">
+                  <div className="flex justify-between items-start mb-3">
+                    <div className="flex-1">
+                      <div className="text-xs text-gray-500 mb-1">{vol.volumeNumber}</div>
+                      <h3 className="font-bold text-[#5c4033] serif-title text-base mb-2">{vol.volumeTitle}</h3>
+                      <div className="mb-2">{getStatusBadge(vol.status)}</div>
+                    </div>
+                  </div>
+                  <div className="flex gap-2">
+                    <a
+                      href={vol.readingUrl}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="flex-1 text-center py-3 px-4 border-2 border-blue-600 text-blue-600 rounded-xl font-bold text-sm transition-all active:scale-95"
+                    >
+                      阅读原文
+                    </a>
+                    {vol.status === VolumeStatus.UNCLAIMED ? (
+                      <button
+                        onClick={() => handleClaimClick(vol)}
+                        className="flex-1 bg-[#8b7355] text-white py-3 px-4 rounded-xl font-bold text-sm active:scale-95"
+                      >
+                        我要认领
+                      </button>
+                    ) : (
+                      <div className="flex-1 bg-gray-100 text-gray-400 py-3 px-4 rounded-xl font-bold text-sm text-center cursor-not-allowed">
+                        已认领
+                      </div>
+                    )}
+                  </div>
+                </div>
+              ))}
+              {filteredVolumes.length === 0 && (
+                <div className="p-20 text-center text-gray-400 font-serif italic text-lg">
+                  未找到符合条件的。
+                </div>
+              )}
+            </div>
+
+            {/* Desktop Table View */}
+            <div className="hidden md:block overflow-x-auto">
               <table className="w-full text-left border-collapse">
                 <thead className="bg-[#fcfaf7]">
                   <tr className="text-xs uppercase tracking-widest text-[#8b7355] font-bold">
@@ -240,10 +282,10 @@ const App: React.FC = () => {
                       <td className="p-5 font-bold text-[#5c4033] serif-title text-lg">{vol.volumeTitle}</td>
                       <td className="p-5">{getStatusBadge(vol.status)}</td>
                       <td className="p-5">
-                        <a 
-                          href={vol.readingUrl} 
-                          target="_blank" 
-                          rel="noopener noreferrer" 
+                        <a
+                          href={vol.readingUrl}
+                          target="_blank"
+                          rel="noopener noreferrer"
                           className="inline-flex items-center text-blue-600 hover:text-blue-800 font-bold text-sm transition-colors group-hover:underline"
                         >
                           阅读原文
@@ -282,22 +324,22 @@ const App: React.FC = () => {
         )}
 
         {view === 'claim' && selectedVolume && (
-          <div className="p-8 md:p-16 max-w-4xl mx-auto fade-in">
-            <button 
-              onClick={() => setView('home')} 
-              className="mb-8 text-[#8b7355] hover:text-[#5c4033] flex items-center font-bold transition-colors"
+          <div className="p-4 md:p-16 max-w-4xl mx-auto fade-in">
+            <button
+              onClick={() => setView('home')}
+              className="mb-6 md:mb-8 text-[#8b7355] hover:text-[#5c4033] flex items-center font-bold transition-colors text-base md:text-lg active:scale-95"
             >
               <svg className="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M15 19l-7-7 7-7" />
-              </svg> 
+              </svg>
               返回名著列表
             </button>
-            
-            <h2 className="text-4xl font-bold serif-title text-[#5c4033] mb-10 border-b-2 border-[#ede3d4] pb-6">诵读认领申请</h2>
-            
-            <form onSubmit={handleSubmit} className="space-y-8">
-              <div className="bg-[#fdfbf7] p-8 rounded-3xl border border-[#ede3d4] shadow-inner">
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+
+            <h2 className="text-2xl md:text-4xl font-bold serif-title text-[#5c4033] mb-6 md:mb-10 border-b-2 border-[#ede3d4] pb-4 md:pb-6">诵读认领申请</h2>
+
+            <form onSubmit={handleSubmit} className="space-y-6 md:space-y-8">
+              <div className="bg-[#fdfbf7] p-4 md:p-8 rounded-3xl border border-[#ede3d4] shadow-inner">
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4 md:gap-8">
                   <div>
                     <label className="block text-xs font-bold text-[#8b7355] uppercase tracking-widest mb-2">认领卷册</label>
                     <p className="text-2xl font-bold text-[#5c4033] serif-title">{selectedVolume.volumeNumber} {selectedVolume.volumeTitle}</p>
@@ -313,50 +355,50 @@ const App: React.FC = () => {
                 </div>
               </div>
 
-              <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-4 md:gap-8">
                 <div>
                   <label className="block text-sm font-bold text-gray-700 mb-2">您的姓名</label>
-                  <input 
-                    required 
-                    type="text" 
-                    value={formData.name} 
-                    onChange={(e) => setFormData({...formData, name: e.target.value})} 
-                    className="w-full px-5 py-4 rounded-2xl border border-gray-200 focus:ring-4 focus:ring-[#8b73551a] outline-none transition-all text-lg" 
-                    placeholder="" 
+                  <input
+                    required
+                    type="text"
+                    value={formData.name}
+                    onChange={(e) => setFormData({...formData, name: e.target.value})}
+                    className="w-full px-4 md:px-5 py-3 md:py-4 rounded-2xl border border-gray-200 focus:ring-4 focus:ring-[#8b73551a] outline-none transition-all text-base md:text-lg"
+                    placeholder=""
                   />
                 </div>
                 <div>
                   <label className="block text-sm font-bold text-gray-700 mb-2">联系手机</label>
-                  <input 
-                    required 
-                    type="tel" 
-                    value={formData.phone} 
-                    onChange={(e) => setFormData({...formData, phone: e.target.value})} 
-                    className="w-full px-5 py-4 rounded-2xl border border-gray-200 focus:ring-4 focus:ring-[#8b73551a] outline-none transition-all text-lg" 
-                    placeholder="138 **** ****" 
+                  <input
+                    required
+                    type="tel"
+                    value={formData.phone}
+                    onChange={(e) => setFormData({...formData, phone: e.target.value})}
+                    className="w-full px-4 md:px-5 py-3 md:py-4 rounded-2xl border border-gray-200 focus:ring-4 focus:ring-[#8b73551a] outline-none transition-all text-base md:text-lg"
+                    placeholder="138 **** ****"
                   />
                 </div>
                 <div>
                   <label className="block text-sm font-bold text-gray-700 mb-2">计划诵读周期</label>
                   <div className="relative">
-                    <input 
-                      required 
-                      type="number" 
-                      min="1" 
-                      value={formData.plannedDays} 
-                      onChange={(e) => setFormData({...formData, plannedDays: parseInt(e.target.value)})} 
-                      className="w-full px-5 py-4 rounded-2xl border border-gray-200 focus:ring-4 focus:ring-[#8b73551a] outline-none transition-all text-lg" 
+                    <input
+                      required
+                      type="number"
+                      min="1"
+                      value={formData.plannedDays}
+                      onChange={(e) => setFormData({...formData, plannedDays: parseInt(e.target.value)})}
+                      className="w-full px-4 md:px-5 py-3 md:py-4 rounded-2xl border border-gray-200 focus:ring-4 focus:ring-[#8b73551a] outline-none transition-all text-base md:text-lg"
                     />
-                    <span className="absolute right-5 top-4 text-gray-400 font-bold">天</span>
+                    <span className="absolute right-4 md:right-5 top-3 md:top-4 text-gray-400 font-bold">天</span>
                   </div>
                 </div>
               </div>
 
-              <div className="pt-10">
-                <button 
-                  disabled={isSubmitting} 
-                  type="submit" 
-                  className={`w-full py-5 rounded-2xl font-bold text-2xl transition-all shadow-2xl flex items-center justify-center transform active:scale-[0.98] ${isSubmitting ? 'bg-gray-200 text-gray-400 cursor-not-allowed' : 'bg-[#5c4033] hover:bg-[#3d2b22] text-white hover:-translate-y-1'}`}
+              <div className="pt-6 md:pt-10">
+                <button
+                  disabled={isSubmitting}
+                  type="submit"
+                  className={`w-full py-4 md:py-5 rounded-2xl font-bold text-lg md:text-2xl transition-all shadow-2xl flex items-center justify-center transform active:scale-[0.98] ${isSubmitting ? 'bg-gray-200 text-gray-400 cursor-not-allowed' : 'bg-[#5c4033] hover:bg-[#3d2b22] text-white md:hover:-translate-y-1'}`}
                 >
                   {isSubmitting ? (
                     <div className="flex items-center">
@@ -371,33 +413,33 @@ const App: React.FC = () => {
         )}
 
         {view === 'success' && successData && (
-          <div className="p-10 md:p-20 text-center fade-in">
-            <div className="w-32 h-32 bg-emerald-50 rounded-full flex items-center justify-center mx-auto mb-10 shadow-inner">
-              <svg className="w-16 h-16 text-emerald-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <div className="p-6 md:p-20 text-center fade-in">
+            <div className="w-24 h-24 md:w-32 md:h-32 bg-emerald-50 rounded-full flex items-center justify-center mx-auto mb-6 md:mb-10 shadow-inner">
+              <svg className="w-12 h-12 md:w-16 md:h-16 text-emerald-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="3" d="M5 13l4 4L19 7" />
               </svg>
             </div>
-            
-            <h2 className="text-5xl font-bold serif-title text-[#5c4033] mb-6">认领誓愿已成</h2>
 
-            <div className="bg-[#fcfaf7] border-2 border-[#ede3d4] rounded-3xl p-10 mb-12 shadow-sm relative overflow-hidden text-left">
-              <div className="absolute top-0 right-0 p-8 opacity-5">
+            <h2 className="text-3xl md:text-5xl font-bold serif-title text-[#5c4033] mb-4 md:mb-6">认领誓愿已成</h2>
+
+            <div className="bg-[#fcfaf7] border-2 border-[#ede3d4] rounded-3xl p-6 md:p-10 mb-8 md:mb-12 shadow-sm relative overflow-hidden text-left">
+              <div className="absolute top-0 right-0 p-8 opacity-5 hidden md:block">
                 <svg className="w-48 h-48 text-[#8b7355]" fill="currentColor" viewBox="0 0 24 24"><path d="M12 2L4.5 20.29l.71.71L12 18l6.79 3 .71-.71z"/></svg>
               </div>
-              
-              <h3 className="font-bold text-[#8b7355] mb-8 text-3xl serif-title calligraphy">诸佛加持 · 随喜赞叹</h3>
-              <p className="text-gray-700 italic text-2xl font-serif mb-10 border-l-8 border-[#8b7355] pl-8 leading-relaxed">
-                “{successData.blessing}”
+
+              <h3 className="font-bold text-[#8b7355] mb-4 md:mb-8 text-xl md:text-3xl serif-title calligraphy">诸佛加持 · 随喜赞叹</h3>
+              <p className="text-gray-700 italic text-base md:text-2xl font-serif mb-6 md:mb-10 border-l-4 md:border-l-8 border-[#8b7355] pl-4 md:pl-8 leading-relaxed">
+                "{successData.blessing}"
               </p>
-              
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-8 bg-white p-8 rounded-2xl border border-gray-100 shadow-inner">
+
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 md:gap-8 bg-white p-4 md:p-8 rounded-2xl border border-gray-100 shadow-inner">
                 <div>
                   <label className="text-xs text-gray-400 uppercase font-bold tracking-widest block mb-2">认领经目</label>
-                  <p className="font-bold text-gray-800 text-xl serif-title">{successData.volume.volumeTitle}</p>
+                  <p className="font-bold text-gray-800 text-base md:text-xl serif-title">{successData.volume.volumeTitle}</p>
                 </div>
                 <div>
                   <label className="text-xs text-gray-400 uppercase font-bold tracking-widest block mb-2">圆满截止日期</label>
-                  <p className="font-bold text-blue-600 text-2xl">
+                  <p className="font-bold text-blue-600 text-lg md:text-2xl">
                     {(() => {
                       try {
                         const date = new Date(successData.volume.expectedCompletionDate!);
@@ -409,18 +451,18 @@ const App: React.FC = () => {
                   </p>
                 </div>
               </div>
-              
-              <a 
-                href={successData.volume.readingUrl} 
-                target="_blank" 
-                rel="noopener noreferrer" 
-                className="mt-10 block w-full bg-[#8b7355] hover:bg-[#5c4033] text-white py-5 rounded-2xl font-bold text-center text-xl transition-all shadow-2xl transform hover:-translate-y-1"
+
+              <a
+                href={successData.volume.readingUrl}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="mt-6 md:mt-10 block w-full bg-[#8b7355] hover:bg-[#5c4033] text-white py-4 md:py-5 rounded-2xl font-bold text-center text-base md:text-xl transition-all shadow-2xl transform active:scale-95 md:hover:-translate-y-1"
               >
                 前往线上经库 · 开启诵读
               </a>
             </div>
 
-            <button onClick={() => setView('home')} className="text-[#8b7355] hover:text-[#5c4033] font-bold transition-colors text-lg flex items-center justify-center mx-auto">
+            <button onClick={() => setView('home')} className="text-[#8b7355] hover:text-[#5c4033] font-bold transition-colors text-base md:text-lg flex items-center justify-center mx-auto active:scale-95">
               <svg className="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M10 19l-7-7 7-7"/></svg>
               返回经目列表
             </button>

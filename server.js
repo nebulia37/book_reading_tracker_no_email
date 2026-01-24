@@ -100,8 +100,10 @@ app.post('/api/claim', async (req, res) => {
 
 // server.js - Add this to let the frontend see the claims
 app.get('/api/claims', async (req, res) => {
+  console.log(`[${new Date().toISOString()}] GET to /api/claims`);
   try {
     if (!process.env.SHEETDB_API_URL) {
+      console.log('SheetDB not configured, returning empty array');
       return res.json({ data: [] }); // Return empty array if not configured
     }
 
@@ -113,6 +115,7 @@ app.get('/api/claims', async (req, res) => {
       headers['Authorization'] = `Bearer ${process.env.SHEETDB_API_KEY}`;
     }
 
+    console.log('Fetching from SheetDB:', process.env.SHEETDB_API_URL);
     const response = await fetch(process.env.SHEETDB_API_URL, { headers });
 
     if (!response.ok) {
@@ -120,6 +123,8 @@ app.get('/api/claims', async (req, res) => {
     }
 
     const data = await response.json();
+    console.log('SheetDB returned data:', JSON.stringify(data, null, 2));
+    console.log(`Found ${Array.isArray(data) ? data.length : (data.data ? data.data.length : 0)} claims`);
     res.json(data); // Send the Google Sheet data back to the frontend
   } catch (error) {
     console.error('Error fetching from SheetDB:', error);

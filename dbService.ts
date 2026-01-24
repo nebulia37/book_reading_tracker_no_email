@@ -1,20 +1,22 @@
 import { Volume, VolumeStatus, ClaimRequest } from './types';
 import { INITIAL_VOLUMES } from './data';
 
-const DB_KEY = 'longzang_tripitaka_volumes_v12';
+const DB_KEY = 'longzang_tripitaka_volumes_v13';
+const API_BASE_URL = import.meta.env.VITE_API_URL;
 
 export const dbService = {
   getVolumes: async (): Promise<Volume[]> => {
     try {
-      const data = localStorage.getItem(DB_KEY);
-      let volumes: Volume[] = data ? JSON.parse(data) : [...INITIAL_VOLUMES];
+      // Always start with fresh INITIAL_VOLUMES (all unclaimed)
+      let volumes: Volume[] = [...INITIAL_VOLUMES];
 
       try {
-        const response = await fetch('https://book-reading-tracker-no-email.onrender.com/api/claims');
+        const response = await fetch(`${API_BASE_URL}/api/claims`);
         if (response.ok) {
           const claimsData = await response.json();
           const claims = claimsData.data || claimsData;
 
+          // Overlay claims from Google Sheet onto fresh volumes
           volumes = volumes.map(volume => {
             const claim = claims.find((c: any) => String(c.volumeId) === String(volume.id));
             if (claim) {
@@ -33,6 +35,11 @@ export const dbService = {
         }
       } catch (error) {
         console.warn('Failed to fetch claims from SheetDB, using local data only:', error);
+        // If SheetDB fetch fails, try to use localStorage as fallback
+        const data = localStorage.getItem(DB_KEY);
+        if (data) {
+          volumes = JSON.parse(data);
+        }
       }
 
       const now = new Date();
@@ -56,15 +63,14 @@ export const dbService = {
   },
 
   claimVolume: (request: ClaimRequest): Volume | null => {
-    const data = localStorage.getItem(DB_KEY);
-    const volumes: Volume[] = data ? JSON.parse(data) : [...INITIAL_VOLUMES];
+    // Always start with fresh INITIAL_VOLUMES
+    const volumes: Volume[] = [...INITIAL_VOLUMES];
 
     const index = volumes.findIndex(v => v.id === request.volumeId);
 
     if (index === -1) return null;
-    if (volumes[index].status !== VolumeStatus.UNCLAIMED) {
-      throw new Error('该卷册已被认领，请刷新页面查看最新状态。');
-    }
+    // Remove the status check here - let the backend/Google Sheet handle validation
+    // The frontend should trust the UI state which comes from Google Sheet
 
     const claimedAt = new Date();
     const expectedCompletionDate = new Date(claimedAt);
