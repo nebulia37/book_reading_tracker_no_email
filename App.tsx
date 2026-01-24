@@ -25,7 +25,7 @@ const App: React.FC = () => {
   const [formData, setFormData] = useState({
     name: '',
     phone: '',
-    plannedDays: 7,
+    plannedDays: 1,
     remarks: ''
   });
 
@@ -35,21 +35,21 @@ const App: React.FC = () => {
       const loadedVolumes = await dbService.getVolumes();
       setVolumes(loadedVolumes);
 
-      // Fetch claims from Google Sheets via backend
+      // Fetch claims from Supabase via backend
       try {
         if (API_BASE_URL) {
-          console.log('Fetching claims from Google Sheets...');
+          console.log('Fetching claims from Supabase...');
           const response = await fetch(`${API_BASE_URL}/api/claims`);
 
           if (response.ok) {
             const sheetData = await response.json();
-            console.log('Google Sheets data:', sheetData);
+            console.log('Supabase data:', sheetData);
 
-            // SheetDB returns data in format { data: [...] } or just [...]
+            // Supabase returns data in format { data: [...] } or just [...]
             const claims = Array.isArray(sheetData) ? sheetData : (sheetData.data || []);
 
             if (claims.length > 0) {
-              console.log(`Syncing ${claims.length} claims from Google Sheets...`);
+              console.log(`Syncing ${claims.length} claims from Supabase...`);
 
               // Sync each claim with dbService
               claims.forEach((claim: any) => {
@@ -70,16 +70,16 @@ const App: React.FC = () => {
               // Reload volumes to reflect synced claims
               const syncedVolumes = await dbService.getVolumes();
               setVolumes(syncedVolumes);
-              console.log('✓ Claims synced from Google Sheets');
+              console.log('✓ Claims synced from Supabase');
             } else {
-              console.log('No claims found in Google Sheets');
+              console.log('No claims found in Supabase');
             }
           } else {
             console.warn('Failed to fetch claims from backend:', response.status);
           }
         }
       } catch (error) {
-        console.error('Error syncing claims from Google Sheets:', error);
+        console.error('Error syncing claims from Supabase:', error);
         // Continue with local data even if sync fails
       }
     };

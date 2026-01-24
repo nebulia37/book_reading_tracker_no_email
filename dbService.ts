@@ -16,13 +16,16 @@ export const dbService = {
           const claimsData = await response.json();
           const claims = claimsData.data || claimsData;
 
-          // Overlay claims from Google Sheet onto fresh volumes
+          // Overlay claims from Supabase onto fresh volumes
+          const now = new Date();
           volumes = volumes.map(volume => {
             const claim = claims.find((c: any) => String(c.volumeId) === String(volume.id));
             if (claim) {
+              // Check if expectedCompletionDate has passed - mark as COMPLETED
+              const isCompleted = claim.expectedCompletionDate && now >= new Date(claim.expectedCompletionDate);
               return {
                 ...volume,
-                status: VolumeStatus.CLAIMED,
+                status: isCompleted ? VolumeStatus.COMPLETED : VolumeStatus.CLAIMED,
                 claimerName: claim.name,
                 claimerPhone: claim.phone,
                 plannedDays: claim.plannedDays,
@@ -35,8 +38,8 @@ export const dbService = {
           });
         }
       } catch (error) {
-        console.warn('Failed to fetch claims from SheetDB, using local data only:', error);
-        // If SheetDB fetch fails, try to use localStorage as fallback
+        console.warn('Failed to fetch claims from Supabase, using local data only:', error);
+        // If Supabase fetch fails, try to use localStorage as fallback
         const data = localStorage.getItem(DB_KEY);
         if (data) {
           volumes = JSON.parse(data);

@@ -4,7 +4,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## Project Overview
 
-A Buddhist scripture reading tracker (大藏经诵读认领系统) for claiming and managing Tripitaka reading volumes. Built as a full-stack React application with optional Google Sheets persistence and AI-generated blessings.
+A Buddhist scripture reading tracker (大藏经诵读认领系统) for claiming and managing Tripitaka reading volumes. Built as a full-stack React application with optional Supabase persistence and AI-generated blessings.
 
 ## Development Commands
 
@@ -37,18 +37,18 @@ The app requires both frontend and backend running:
 ### Data Layer ([dbService.ts](dbService.ts))
 Hybrid persistence strategy:
 1. **Primary Storage**: Browser LocalStorage (key: `longzang_tripitaka_volumes_v12`)
-2. **Optional Sync**: Google Sheets via SheetDB API
+2. **Optional Sync**: Supabase via Supabase API
 3. **Data Flow**:
-   - On load: Fetch from SheetDB → Merge with LocalStorage → Update UI
-   - On claim: Save to both LocalStorage and SheetDB (via backend)
+   - On load: Fetch from Supabase → Merge with LocalStorage → Update UI
+   - On claim: Save to both LocalStorage and Supabase (via backend)
    - Auto-completion: Client-side date comparison marks volumes as completed
 
 ### Backend ([server.js](server.js))
 Express server with two endpoints:
-- `POST /api/claim`: Accepts claim data, saves to SheetDB (if configured), returns success
-- `GET /api/claims`: Fetches all claims from SheetDB
+- `POST /api/claim`: Accepts claim data, saves to Supabase (if configured), returns success
+- `GET /api/claims`: Fetches all claims from Supabase
 
-**Important**: The backend fails gracefully if SheetDB credentials are not configured. Claims still save to LocalStorage.
+**Important**: The backend fails gracefully if Supabase credentials are not configured. Claims still save to LocalStorage.
 
 ### Data Structure ([types.ts](types.ts), [data.ts](data.ts))
 - **Volume**: Represents a scripture volume with status (unclaimed/claimed/completed)
@@ -66,19 +66,19 @@ Express server with two endpoints:
 Required in `.env`:
 ```bash
 VITE_GEMINI_API_KEY=...        # Google Gemini API key (optional if AI disabled)
-SHEETDB_API_URL=...            # SheetDB endpoint (optional)
-SHEETDB_API_KEY=...            # SheetDB auth token (optional)
+SUPABASE_URL=...            # Supabase endpoint (optional)
+SUPABASE_ANON_KEY=...            # Supabase auth token (optional)
 ```
 
 Frontend access: `import.meta.env.VITE_GEMINI_API_KEY`
-Backend access: `process.env.SHEETDB_API_URL`
+Backend access: `process.env.SUPABASE_URL`
 
 ## Key Implementation Patterns
 
 ### Volume Claiming Flow
 1. User clicks "我要认领" → Sets `selectedVolume` and switches to `claim` view
 2. User submits form → `handleSubmit` calls backend `/api/claim`
-3. Backend attempts SheetDB save (fails gracefully if not configured)
+3. Backend attempts Supabase save (fails gracefully if not configured)
 4. Frontend updates LocalStorage via `dbService.claimVolume()`
 5. Generate blessing message (currently returns fallback)
 6. Switch to `success` view with completion date
@@ -98,8 +98,8 @@ expectedCompletionDate.setDate(claimedAt.getDate() + request.plannedDays)
 ## Critical Files
 
 - [App.tsx](App.tsx): Entire UI, all views, form handling
-- [dbService.ts](dbService.ts): LocalStorage + SheetDB sync logic
-- [server.js](server.js): Backend API, SheetDB integration
+- [dbService.ts](dbService.ts): LocalStorage + Supabase sync logic
+- [server.js](server.js): Backend API, Supabase integration
 - [data.ts](data.ts): Initial volume dataset (700+ volumes)
 - [types.ts](types.ts): TypeScript interfaces
 - [vite.config.ts](vite.config.ts): Vite configuration, env var injection
@@ -107,15 +107,15 @@ expectedCompletionDate.setDate(claimedAt.getDate() + request.plannedDays)
 ## Known Issues & Notes
 
 1. **Gemini Service Disabled**: The AI blessing feature is commented out in [geminiService.ts:4](geminiService.ts#L4) to avoid Vite build errors
-2. **LocalStorage-First Design**: The app works completely offline; SheetDB is optional
+2. **LocalStorage-First Design**: The app works completely offline; Supabase is optional
 3. **No Authentication**: Anyone can claim any volume
 4. **Client-Side Validation Only**: No server-side validation of claim data
 5. **Hardcoded Volume List**: All volumes are defined in [data.ts](data.ts), not loaded from external source
 6. **CORS Configuration**: [server.js:105](server.js#L105) has a duplicate CORS config (already enabled on line 12)
 
-## Google Sheets Integration
+## Supabase Integration
 
-If using SheetDB, the Google Sheet must have these columns:
+If using Supabase, the Google Sheet must have these columns:
 ```
 volumeId | volumeNumber | volumeTitle | name | phone | plannedDays | readingUrl | claimedAt | expectedCompletionDate | status
 ```

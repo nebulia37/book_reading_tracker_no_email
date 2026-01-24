@@ -4,6 +4,7 @@ import express from 'express';
 import cors from 'cors';
 import fs from 'fs';
 import 'dotenv/config';
+import { createClient } from '@supabase/supabase-js';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -18,12 +19,29 @@ app.use((req, res, next) => {
   next();
 });
 
-const PORT = 3001; 
+const PORT = 3001;
 const DB_FILE = path.join(__dirname, 'claims.json');
+const SUPABASE_URL = process.env.SUPABASE_URL;
+const SUPABASE_ANON_KEY = process.env.SUPABASE_ANON_KEY;
 
 if (!fs.existsSync(DB_FILE)) {
   fs.writeFileSync(DB_FILE, JSON.stringify([], null, 2));
 }
+
+// Cache for Supabase data to reduce API calls
+let sheetCache = { data: null, timestamp: 0 };
+const CACHE_DURATION = 5 * 60 * 1000; // 5 minutes
+
+let supabaseClient = null;
+const getSupabaseClient = () => {
+  if (!SUPABASE_URL || !SUPABASE_ANON_KEY) return null;
+  if (!supabaseClient) {
+    supabaseClient = createClient(SUPABASE_URL, SUPABASE_ANON_KEY, {
+      auth: { persistSession: false }
+    });
+  }
+  return supabaseClient;
+};
 
 app.post('/api/claim', async (req, res) => {
   console.log("Received claim data:", req.body);
@@ -44,66 +62,46 @@ app.post('/api/claim', async (req, res) => {
 
   try {
     const claimedAt = new Date().toISOString();
-    const expectedDate = new Date();
-    expectedDate.setDate(new Date().getDate() + (plannedDays || 7));
 
-    // Prepare the data to match your Google Sheet headers
+    // Prepare the data to match your Supabase table columns
+    // Note: expectedCompletionDate is auto-calculated by database trigger (claimedAt + plannedDays)
     const newClaim = {
       volumeId,
       volumeNumber,
       volumeTitle,
       name,
       phone,
-      plannedDays,
+      plannedDays: plannedDays || 7,
       readingUrl,
       claimedAt,
-      expectedCompletionDate: expectedDate.toISOString(),
       status: 'claimed',
       remarks: remarks || ''
     };
 
-    console.log("Sending to SheetDB:", newClaim);
-
-    // Send data to SheetDB (don't fail if SheetDB is not configured)
-    try {
-      if (process.env.SHEETDB_API_URL) {
-        const headers = {
-          'Content-Type': 'application/json'
-        };
-
-        // Add Authorization header only if API key is provided
-        if (process.env.SHEETDB_API_KEY) {
-          headers['Authorization'] = `Bearer ${process.env.SHEETDB_API_KEY}`;
-        }
-
-        console.log('Posting to SheetDB:', process.env.SHEETDB_API_URL);
-        console.log('Data being sent:', JSON.stringify(newClaim, null, 2));
-
-        const sheetResponse = await fetch(process.env.SHEETDB_API_URL, {
-          method: 'POST',
-          headers,
-          body: JSON.stringify({ data: newClaim })  // Single object, not array
-        });
-
-        const responseText = await sheetResponse.text();
-        console.log('SheetDB response status:', sheetResponse.status);
-        console.log('SheetDB response:', responseText);
-
-        if (sheetResponse.ok) {
-          console.log("✓ Success: Saved to Google Sheets!");
-        } else {
-          console.error('✗ SheetDB save failed:', sheetResponse.status, responseText);
-        }
-      } else {
-        console.warn('SheetDB not configured, claim saved locally only');
-      }
-    } catch (sheetError) {
-      console.warn('SheetDB error:', sheetError.message, '- claim saved locally only');
+    console.log("Saving to Supabase:", newClaim);
+    const supabase = getSupabaseClient();
+    if (!supabase) {
+      console.warn('Supabase not configured, claim saved locally only');
+      return res.status(500).json({ error: 'Supabase not configured.' });
     }
 
-    res.json({ success: true, claim: newClaim });
+    const { data, error } = await supabase
+      .from('claims')
+      .insert([newClaim])
+      .select()
+      .single();
+
+    if (error) {
+      console.error('Supabase insert failed:', error.message);
+      return res.status(500).json({ error: 'Failed to record claim.' });
+    }
+
+    // Invalidate cache so next GET fetches fresh data
+    sheetCache = { data: null, timestamp: 0 };
+
+    res.json({ success: true, claim: data || newClaim });
   } catch (error) {
-    console.error('SheetDB Error:', error);
+    console.error('Supabase Error:', error);
     res.status(500).json({ error: 'Failed to record claim.' });
   }
 });
@@ -112,33 +110,43 @@ app.post('/api/claim', async (req, res) => {
 app.get('/api/claims', async (req, res) => {
   console.log(`[${new Date().toISOString()}] GET to /api/claims`);
   try {
-    if (!process.env.SHEETDB_API_URL) {
-      console.log('SheetDB not configured, returning empty array');
-      return res.json({ data: [] }); // Return empty array if not configured
+    const supabase = getSupabaseClient();
+    if (!supabase) {
+      console.log('Supabase not configured, returning empty array');
+      return res.json({ data: [] });
     }
 
-    const headers = {
-      'Content-Type': 'application/json'
-    };
-
-    if (process.env.SHEETDB_API_KEY) {
-      headers['Authorization'] = `Bearer ${process.env.SHEETDB_API_KEY}`;
+    // Check cache first
+    const now = Date.now();
+    if (sheetCache.data && (now - sheetCache.timestamp) < CACHE_DURATION) {
+      console.log('Returning cached data (avoiding Supabase fetch)');
+      return res.json(sheetCache.data);
     }
 
-    console.log('Fetching from SheetDB:', process.env.SHEETDB_API_URL);
-    const response = await fetch(process.env.SHEETDB_API_URL, { headers });
+    console.log('Fetching from Supabase...');
+    const { data, error } = await supabase
+      .from('claims')
+      .select('*');
 
-    if (!response.ok) {
-      throw new Error(`SheetDB responded with status: ${response.status}`);
+    if (error) {
+      throw new Error(`Supabase responded with error: ${error.message}`);
     }
 
-    const data = await response.json();
-    console.log('SheetDB returned data:', JSON.stringify(data, null, 2));
-    console.log(`Found ${Array.isArray(data) ? data.length : (data.data ? data.data.length : 0)} claims`);
-    res.json(data); // Send the Google Sheet data back to the frontend
+    console.log('Supabase returned data:', JSON.stringify(data, null, 2));
+    console.log(`Found ${Array.isArray(data) ? data.length : 0} claims`);
+
+    // Update cache
+    sheetCache = { data, timestamp: now };
+
+    res.json({ data });
   } catch (error) {
-    console.error('Error fetching from SheetDB:', error);
-    res.status(500).json({ error: "Failed to fetch from SheetDB", details: error.message });
+    console.error('Error fetching from Supabase:', error);
+    // Return cached data if available, otherwise error
+    if (sheetCache.data) {
+      console.log('Returning cached data due to error');
+      return res.json(sheetCache.data);
+    }
+    res.status(500).json({ error: "Failed to fetch from Supabase", details: error.message });
   }
 });
 
@@ -146,5 +154,5 @@ app.get('/api/claims', async (req, res) => {
 app.listen(PORT, () => {
   console.log(`\nServer Active at http://localhost:${PORT}`);
   console.log(`CORS enabled for all origins`);
-  console.log(`SheetDB configured: ${!!process.env.SHEETDB_API_URL}`);
+  console.log(`Supabase configured: ${!!(SUPABASE_URL && SUPABASE_ANON_KEY)}`);
 });
