@@ -357,7 +357,7 @@ const App: React.FC = () => {
               <div className="grid grid-cols-1 md:grid-cols-3 gap-4 md:gap-8">
                 <div>
                   <label className="block text-sm font-bold text-gray-700 mb-1">您的姓名 <span className="text-red-500">*</span></label>
-                  <p className="text-xs text-gray-500 mb-2">请使用法名或者常用名，方便义工联系</p>
+                  <p className="text-xs text-gray-500 mb-2">请使用faming或者常用名，方便义工联系</p>
                   <input
                     required
                     type="text"
@@ -373,9 +373,10 @@ const App: React.FC = () => {
                     required
                     type="tel"
                     pattern="[0-9]{11}"
+                    minLength={11}
                     maxLength={11}
                     value={formData.phone}
-                    onChange={(e) => setFormData({...formData, phone: e.target.value.replace(/\D/g, '')})}
+                    onChange={(e) => setFormData({...formData, phone: e.target.value.replace(/\D/g, '').slice(0, 11)})}
                     className="w-full px-4 md:px-5 py-3 md:py-4 rounded-2xl border border-gray-200 focus:ring-4 focus:ring-[#8b73551a] outline-none transition-all text-base md:text-lg"
                     placeholder="13800000000"
                     title="请输入11位手机号码"
@@ -496,8 +497,7 @@ const App: React.FC = () => {
         </div>
         <p className="text-gray-400 text-sm mb-2">© {new Date().getFullYear()}  阅读平台</p>
         <div className="flex flex-col space-y-2 mt-4">
-          <p className="font-serif text-[#8b7355] opacity-50 italic">愿以此功德，普及于一切。我等与众生，皆共成佛道。</p>
-          <button 
+          <button
             onClick={() => { if(confirm('重置系统将清除所有本地认领记录，确定吗？')) dbService.reset(); }}
             className="text-[10px] text-gray-300 hover:text-red-400 underline transition-colors mt-2"
           >
