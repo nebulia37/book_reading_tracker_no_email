@@ -256,9 +256,7 @@ app.get('/view.csv', async (req, res) => {
 
     const escapeValue = (value) => {
       const raw = value === null || value === undefined ? '' : String(value);
-      if (raw.includes('"') || raw.includes(',') || raw.includes('
-') || raw.includes('
-')) {
+      if (raw.includes('"') || raw.includes(',') || raw.includes('\n') || raw.includes('\r')) {
         return `"${raw.replace(/"/g, '""')}"`;
       }
       return raw;
@@ -286,8 +284,7 @@ app.get('/view.csv', async (req, res) => {
 
     res.setHeader('Content-Type', 'text/csv; charset=utf-8');
     res.setHeader('Content-Disposition', 'attachment; filename="claims.csv"');
-    res.send(lines.join('
-'));
+    res.send(lines.join('\n'));
   } catch (error) {
     console.error('Error exporting CSV:', error);
     res.status(500).send('Failed to export CSV');
