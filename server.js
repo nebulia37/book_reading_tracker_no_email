@@ -407,8 +407,8 @@ app.get('/view', async (req, res) => {
     .actions { text-align: center; margin-top: 20px; display: flex; justify-content: center; gap: 12px; flex-wrap: wrap; }
     .actions a { color: #8b7355; text-decoration: none; padding: 10px 20px; border: 1px solid #8b7355; border-radius: 8px; display: inline-block; transition: all 0.2s; }
     .actions a:hover { background: #8b7355; color: white; }
-    .download { background: #8b7355; color: white; }
-    .download:hover { background: #5c4033; border-color: #5c4033; }
+    .download { background: white; color: #5c4033; border-color: #5c4033; font-weight: 600; }
+    .download:hover { background: #5c4033; color: white; border-color: #5c4033; }
 
     .empty { text-align: center; padding: 60px 20px; color: #999; }
     .update-time { text-align: center; color: #999; font-size: 12px; margin-top: 15px; }
