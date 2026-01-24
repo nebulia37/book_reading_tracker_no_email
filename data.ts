@@ -30,7 +30,7 @@ const createSutraVolumes = (
 
 // Based on the verified SubID list for the Prajna section (id/43)
 const prajna: Volume[] = [
-  ...createSutraVolumes(1000, 67, 1, '大般若波羅蜜多j', 300),
+  ...createSutraVolumes(1000, 67, 1, '大般若波羅蜜多j', 200),
 ];
 
 export const INITIAL_VOLUMES: Volume[] = prajna;
