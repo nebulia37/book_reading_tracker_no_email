@@ -444,8 +444,8 @@ app.get('/view', async (req, res) => {
     </div>
     ${tableHtml}
     <div class="actions">
-      <a class="download" href="/view.csv?code=${code}">\u4e0b\u8f7dCSV</a>
-      <a class="refresh" href="/view?code=${code}">\u21bb \u5237\u65b0\u6570\u636e</a>
+      <a class="download" href="/view.csv?code=${code}">Download CSV</a>
+      <a class="refresh" href="/view?code=${code}">Refresh</a>
     </div>
     <p class="update-time">最后更新: ${new Date().toLocaleString('zh-CN')}</p>
   </div>
