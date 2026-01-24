@@ -381,15 +381,19 @@ const App: React.FC = () => {
                 <div>
                   <label className="block text-sm font-bold text-gray-700 mb-2">计划诵读周期</label>
                   <div className="relative">
-                    <input
+                    <select
                       required
-                      type="number"
-                      min="1"
                       value={formData.plannedDays}
                       onChange={(e) => setFormData({...formData, plannedDays: parseInt(e.target.value)})}
-                      className="w-full px-4 md:px-5 py-3 md:py-4 rounded-2xl border border-gray-200 focus:ring-4 focus:ring-[#8b73551a] outline-none transition-all text-base md:text-lg"
-                    />
-                    <span className="absolute right-4 md:right-5 top-3 md:top-4 text-gray-400 font-bold">天</span>
+                      className="w-full px-4 md:px-5 py-3 md:py-4 rounded-2xl border border-gray-200 focus:ring-4 focus:ring-[#8b73551a] outline-none transition-all text-base md:text-lg appearance-none bg-white"
+                    >
+                      <option value="1">1天</option>
+                      <option value="3">3天</option>
+                      <option value="7">7天</option>
+                    </select>
+                    <svg className="absolute right-4 md:right-5 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400 pointer-events-none" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M19 9l-7 7-7-7" />
+                    </svg>
                   </div>
                 </div>
               </div>
