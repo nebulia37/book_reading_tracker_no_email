@@ -16,6 +16,7 @@ export interface Volume {
   claimedAt?: string;
   expectedCompletionDate?: string;
   readingUrl: string;
+  remarks?: string;
 }
 
 export interface ClaimRequest {
@@ -25,7 +26,8 @@ export interface ClaimRequest {
   name: string;
   phone: string;
   plannedDays: number;
-  readingUrl: string; // Added readingUrl to request
+  readingUrl: string;
+  remarks?: string;
 }
 
 export type AppView = 'home' | 'claim' | 'success';

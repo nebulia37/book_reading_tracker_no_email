@@ -27,7 +27,7 @@ if (!fs.existsSync(DB_FILE)) {
 
 app.post('/api/claim', async (req, res) => {
   console.log("Received claim data:", req.body);
-  const { volumeId, volumeNumber, volumeTitle, name, phone, plannedDays, readingUrl } = req.body;
+  const { volumeId, volumeNumber, volumeTitle, name, phone, plannedDays, readingUrl, remarks } = req.body;
 
   if (!name) {
     return res.status(400).json({ error: 'Name is required.' });
@@ -37,19 +37,20 @@ app.post('/api/claim', async (req, res) => {
     const claimedAt = new Date().toISOString();
     const expectedDate = new Date();
     expectedDate.setDate(new Date().getDate() + (plannedDays || 7));
-    
+
     // Prepare the data to match your Google Sheet headers
     const newClaim = {
-      volumeId, 
+      volumeId,
       volumeNumber,
       volumeTitle,
-      name, 
-      phone, 
-      plannedDays, 
+      name,
+      phone,
+      plannedDays,
       readingUrl,
       claimedAt,
       expectedCompletionDate: expectedDate.toISOString(),
-      status: 'claimed'
+      status: 'claimed',
+      remarks: remarks || ''
     };
 
     console.log("Sending to SheetDB:", newClaim);

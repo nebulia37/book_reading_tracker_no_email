@@ -25,7 +25,8 @@ const App: React.FC = () => {
   const [formData, setFormData] = useState({
     name: '',
     phone: '',
-    plannedDays: 7
+    plannedDays: 7,
+    remarks: ''
   });
 
   useEffect(() => {
@@ -396,6 +397,17 @@ const App: React.FC = () => {
                     </svg>
                   </div>
                 </div>
+              </div>
+
+              <div>
+                <label className="block text-sm font-bold text-gray-700 mb-2">备注</label>
+                <textarea
+                  value={formData.remarks}
+                  onChange={(e) => setFormData({...formData, remarks: e.target.value})}
+                  rows={3}
+                  className="w-full px-4 md:px-5 py-3 md:py-4 rounded-2xl border border-gray-200 focus:ring-4 focus:ring-[#8b73551a] outline-none transition-all text-base md:text-lg resize-none"
+                  placeholder="选填：可以添加您的期望、祈愿或其他说明..."
+                />
               </div>
 
               <div className="pt-6 md:pt-10">

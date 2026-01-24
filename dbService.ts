@@ -27,7 +27,8 @@ export const dbService = {
                 claimerPhone: claim.phone,
                 plannedDays: claim.plannedDays,
                 claimedAt: claim.claimedAt,
-                expectedCompletionDate: claim.expectedCompletionDate
+                expectedCompletionDate: claim.expectedCompletionDate,
+                remarks: claim.remarks
               };
             }
             return volume;
@@ -83,7 +84,8 @@ export const dbService = {
       claimerPhone: request.phone,
       plannedDays: request.plannedDays,
       claimedAt: claimedAt.toISOString(),
-      expectedCompletionDate: expectedCompletionDate.toISOString()
+      expectedCompletionDate: expectedCompletionDate.toISOString(),
+      remarks: request.remarks
     };
 
     volumes[index] = updatedVolume;
