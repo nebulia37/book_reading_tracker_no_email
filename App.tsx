@@ -14,14 +14,8 @@ const App: React.FC = () => {
   const [selectedVolume, setSelectedVolume] = useState<Volume | null>(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [successData, setSuccessData] = useState<{ volume: Volume; blessing: string; sentViaBackend: boolean } | null>(null);
-  const [copyFeedback, setCopyFeedback] = useState(false);
+  const [showNameSuggestions, setShowNameSuggestions] = useState(false);
 
-  // Debug: Log API URL on mount
-  useEffect(() => {
-    console.log('API_BASE_URL:', API_BASE_URL);
-  }, []);
-
-  // Form State
   const [formData, setFormData] = useState({
     name: '',
     phone: '',
@@ -29,61 +23,36 @@ const App: React.FC = () => {
     remarks: ''
   });
 
+  // Extract unique name-phone pairs from claimed volumes for autocomplete
+  const knownClaimers = useMemo(() => {
+    const claimersMap = new Map<string, string>();
+    volumes.forEach(v => {
+      if (v.claimerName && v.claimerPhone) {
+        claimersMap.set(v.claimerName, v.claimerPhone);
+      }
+    });
+    return Array.from(claimersMap.entries()).map(([name, phone]) => ({ name, phone }));
+  }, [volumes]);
+
+  // Filter suggestions based on input
+  const nameSuggestions = useMemo(() => {
+    if (!formData.name.trim()) return [];
+    return knownClaimers.filter(c =>
+      c.name.toLowerCase().includes(formData.name.toLowerCase())
+    ).slice(0, 5);
+  }, [formData.name, knownClaimers]);
+
+  const handleNameSelect = (name: string, phone: string) => {
+    setFormData({ ...formData, name, phone });
+    setShowNameSuggestions(false);
+  };
+
   useEffect(() => {
     const loadVolumes = async () => {
-      // Load initial volumes from local data
+      console.log('Loading volumes from dbService...');
       const loadedVolumes = await dbService.getVolumes();
+      console.log('Loaded volumes:', loadedVolumes.filter(v => v.status !== VolumeStatus.UNCLAIMED).length, 'claimed');
       setVolumes(loadedVolumes);
-
-      // Fetch claims from Supabase via backend
-      try {
-        if (API_BASE_URL) {
-          console.log('Fetching claims from Supabase...');
-          const response = await fetch(`${API_BASE_URL}/api/claims`);
-
-          if (response.ok) {
-            const sheetData = await response.json();
-            console.log('Supabase data:', sheetData);
-
-            // Supabase returns data in format { data: [...] } or just [...]
-            const claims = Array.isArray(sheetData) ? sheetData : (sheetData.data || []);
-
-            if (claims.length > 0) {
-              console.log(`Syncing ${claims.length} claims from Supabase...`);
-
-              // Sync each claim with dbService
-              claims.forEach((claim: any) => {
-                if (claim.volumeId && claim.name && claim.phone) {
-                  const claimRequest: ClaimRequest = {
-                    volumeId: String(claim.volumeId),
-                    part: parseInt(claim.part) || 1,
-                    scroll: parseInt(claim.scroll) || 1,
-                    volumeNumber: claim.volumeNumber || '',
-                    volumeTitle: claim.volumeTitle || '',
-                    readingUrl: claim.readingUrl || '',
-                    name: claim.name,
-                    phone: claim.phone,
-                    plannedDays: parseInt(claim.plannedDays) || 7
-                  };
-                  dbService.claimVolume(claimRequest);
-                }
-              });
-
-              // Reload volumes to reflect synced claims
-              const syncedVolumes = await dbService.getVolumes();
-              setVolumes(syncedVolumes);
-              console.log('✓ Claims synced from Supabase');
-            } else {
-              console.log('No claims found in Supabase');
-            }
-          } else {
-            console.warn('Failed to fetch claims from backend:', response.status);
-          }
-        }
-      } catch (error) {
-        console.error('Error syncing claims from Supabase:', error);
-        // Continue with local data even if sync fails
-      }
     };
     loadVolumes();
   }, []);
@@ -95,72 +64,6 @@ const App: React.FC = () => {
       return matchesSearch && matchesFilter;
     });
   }, [volumes, searchTerm, filterStatus]);
-
-  const formatDate = (value?: string) => {
-    if (!value) return '-';
-    const date = new Date(value);
-    if (Number.isNaN(date.getTime())) return value;
-    return date.toLocaleDateString();
-  };
-
-  const buildCsv = (rows: Volume[]) => {
-    const headers = [
-      'volumeId',
-      'part',
-      'scroll',
-      'volumeNumber',
-      'volumeTitle',
-      'status',
-      'claimerName',
-      'claimerPhone',
-      'plannedDays',
-      'claimedAt',
-      'expectedCompletionDate',
-      'readingUrl',
-      'remarks'
-    ];
-
-    const escapeValue = (value: unknown) => {
-      const raw = value === null || value === undefined ? '' : String(value);
-      if (raw.includes('"') || raw.includes(',') || raw.includes('\n') || raw.includes('\r')) {
-        return `"${raw.replace(/"/g, '""')}"`;
-      }
-      return raw;
-    };
-
-    const lines = [headers.join(',')];
-    rows.forEach((vol) => {
-      const row = [
-        vol.id,
-        vol.part,
-        vol.scroll,
-        vol.volumeNumber,
-        vol.volumeTitle,
-        vol.status,
-        vol.claimerName || '',
-        vol.claimerPhone || '',
-        vol.plannedDays ?? '',
-        vol.claimedAt || '',
-        vol.expectedCompletionDate || '',
-        vol.readingUrl,
-        vol.remarks || ''
-      ];
-      lines.push(row.map(escapeValue).join(','));
-    });
-
-    return lines.join('\n');
-  };
-
-  const handleDownloadCsv = () => {
-    const csv = buildCsv(filteredVolumes);
-    const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
-    const url = URL.createObjectURL(blob);
-    const link = document.createElement('a');
-    link.href = url;
-    link.download = `volumes-${new Date().toISOString().slice(0, 10)}.csv`;
-    link.click();
-    URL.revokeObjectURL(url);
-  };
 
   const handleClaimClick = (volume: Volume) => {
     setSelectedVolume(volume);
@@ -189,10 +92,6 @@ const App: React.FC = () => {
         ...formData
       };
 
-      console.log('Submitting claim to:', `${API_BASE_URL}/api/claim`);
-      console.log('Claim data:', claimRequest);
-
-      // Submit to backend
       const response = await fetch(`${API_BASE_URL}/api/claim`, {
         method: 'POST',
         headers: {
@@ -202,49 +101,29 @@ const App: React.FC = () => {
         body: JSON.stringify(claimRequest)
       });
 
-      console.log('Response status:', response.status);
-      console.log('Response ok:', response.ok);
-
       if (!response.ok) {
         const errorData = await response.json().catch(() => ({}));
-        console.error('Backend error response:', errorData);
-
-        // Handle duplicate claim (409 Conflict)
         if (response.status === 409) {
           alert(errorData.error || '该经卷已被其他人认领，请刷新页面选择其他经卷。');
-          // Refresh volumes list to show updated state
           const refreshedVolumes = await dbService.getVolumes();
           setVolumes(refreshedVolumes);
           setView('home');
           return;
         }
-
         throw new Error(errorData.error || `Backend returned ${response.status}`);
       }
 
-      const responseData = await response.json();
-      console.log('Backend response:', responseData);
+      await response.json();
       sentViaBackend = true;
 
-      // Update Local state via dbService
-      console.log('Updating local state via dbService...');
       const updated = dbService.claimVolume(claimRequest);
-      console.log('Updated volume:', updated);
 
       if (updated) {
-        // Update volumes list
         setVolumes(prev => prev.map(v => v.id === updated.id ? updated : v));
-
-        // Generate blessing message
-        console.log('Generating blessing message...');
         const blessing = await generateBlessingMessage(updated.volumeTitle, updated.claimerName || '同修');
-        console.log('Blessing:', blessing);
-
         setSuccessData({ volume: updated, blessing, sentViaBackend });
-        console.log('Switching to success view');
         setView('success');
       } else {
-        console.error('Updated volume is null/undefined');
         throw new Error('Failed to update local volume data');
       }
     } catch (error: any) {
@@ -268,7 +147,6 @@ const App: React.FC = () => {
 
   return (
     <div className="min-h-screen py-4 md:py-8 px-3 md:px-12 bg-[#fdfbf7]">
-      {/* Header Section */}
       <header className="max-w-7xl mx-auto mb-6 md:mb-12 text-center fade-in">
         <h1 className="text-3xl md:text-6xl font-bold serif-title text-[#5c4033] mb-4 md:mb-6 tracking-tight">
           名著<span className="text-[#8b7355]">诵读认领</span>
@@ -277,15 +155,15 @@ const App: React.FC = () => {
       </header>
 
       <main className="max-w-7xl mx-auto sutra-card rounded-3xl overflow-hidden fade-in" style={{ animationDelay: '0.1s' }}>
-        
+
         {view === 'home' && (
           <div className="flex flex-col">
             {/* Search & Filter Bar */}
             <div className="p-6 bg-[#fcfaf7] border-b border-[#ede3d4] flex flex-col md:flex-row gap-4 items-center justify-between">
               <div className="relative w-full md:w-96">
-                <input 
-                  type="text" 
-                  placeholder="搜索名称或卷号..." 
+                <input
+                  type="text"
+                  placeholder="搜索名称或卷号..."
                   value={searchTerm}
                   onChange={(e) => setSearchTerm(e.target.value)}
                   className="w-full pl-10 pr-4 py-2 rounded-xl border border-gray-200 focus:outline-none focus:ring-2 focus:ring-[#8b7355] transition-all"
@@ -305,12 +183,6 @@ const App: React.FC = () => {
                   </button>
                 ))}
               </div>
-              <button
-                onClick={handleDownloadCsv}
-                className="w-full md:w-auto px-4 py-2 rounded-xl text-sm font-bold bg-[#5c4033] text-white hover:bg-[#3d2b22] transition-all shadow-md"
-              >
-                Download CSV
-              </button>
             </div>
 
             {/* Mobile Card View */}
@@ -322,18 +194,6 @@ const App: React.FC = () => {
                       <div className="text-xs text-gray-500 mb-1">{vol.volumeNumber}</div>
                       <h3 className="font-bold text-[#5c4033] serif-title text-base mb-2">{vol.volumeTitle}</h3>
                       <div className="mb-2">{getStatusBadge(vol)}</div>
-                      <div className="grid grid-cols-1 gap-1 text-xs text-gray-600 mb-3">
-                        <div><span className="font-semibold text-gray-500">ID:</span> {vol.id}</div>
-                        <div><span className="font-semibold text-gray-500">Part:</span> {vol.part}</div>
-                        <div><span className="font-semibold text-gray-500">Scroll:</span> {vol.scroll}</div>
-                        <div><span className="font-semibold text-gray-500">Claimer:</span> {vol.claimerName || '-'}</div>
-                        <div><span className="font-semibold text-gray-500">Phone:</span> {vol.claimerPhone || '-'}</div>
-                        <div><span className="font-semibold text-gray-500">Planned Days:</span> {vol.plannedDays ?? '-'}</div>
-                        <div><span className="font-semibold text-gray-500">Claimed At:</span> {formatDate(vol.claimedAt)}</div>
-                        <div><span className="font-semibold text-gray-500">Expected Date:</span> {formatDate(vol.expectedCompletionDate)}</div>
-                        <div className="break-all"><span className="font-semibold text-gray-500">Reading URL:</span> {vol.readingUrl}</div>
-                        <div><span className="font-semibold text-gray-500">Remarks:</span> {vol.remarks || '-'}</div>
-                      </div>
                     </div>
                   </div>
                   <div className="flex gap-2">
@@ -343,18 +203,18 @@ const App: React.FC = () => {
                       rel="noopener noreferrer"
                       className="flex-1 text-center py-3 px-4 border-2 border-blue-600 text-blue-600 rounded-xl font-bold text-sm transition-all active:scale-95"
                     >
-                      Read
+                      阅读原文
                     </a>
                     {vol.status === VolumeStatus.UNCLAIMED ? (
                       <button
                         onClick={() => handleClaimClick(vol)}
                         className="flex-1 bg-[#8b7355] text-white py-3 px-4 rounded-xl font-bold text-sm active:scale-95"
                       >
-                        Claim
+                        我要认领
                       </button>
                     ) : (
                       <div className="flex-1 bg-gray-100 text-gray-400 py-3 px-4 rounded-xl font-bold text-sm text-center cursor-not-allowed">
-                        Claimed
+                        已认领
                       </div>
                     )}
                   </div>
@@ -362,46 +222,29 @@ const App: React.FC = () => {
               ))}
               {filteredVolumes.length === 0 && (
                 <div className="p-20 text-center text-gray-400 font-serif italic text-lg">
-                  No matching records.
+                  未找到符合条件的。
                 </div>
               )}
             </div>
 
-            {/* Desktop Table View */}
+            {/* Desktop Table View - Essential columns only */}
             <div className="hidden md:block overflow-x-auto">
               <table className="w-full text-left border-collapse">
                 <thead className="bg-[#fcfaf7]">
                   <tr className="text-xs uppercase tracking-widest text-[#8b7355] font-bold">
-                    <th className="p-5 border-b border-[#ede3d4]">ID</th>
-                    <th className="p-5 border-b border-[#ede3d4]">部</th>
-                    <th className="p-5 border-b border-[#ede3d4]">卷</th>
                     <th className="p-5 border-b border-[#ede3d4]">卷编号</th>
                     <th className="p-5 border-b border-[#ede3d4]">名称</th>
                     <th className="p-5 border-b border-[#ede3d4]">状态</th>
-                    <th className="p-5 border-b border-[#ede3d4]">认领人</th>
-                    <th className="p-5 border-b border-[#ede3d4]">手机</th>
-                    <th className="p-5 border-b border-[#ede3d4]">计划诵读天数</th>
-                    <th className="p-5 border-b border-[#ede3d4]">认领时间</th>
-                    <th className="p-5 border-b border-[#ede3d4]">截止日期</th>
                     <th className="p-5 border-b border-[#ede3d4]">在线阅读</th>
-                    <th className="p-5 border-b border-[#ede3d4]">备注</th>
                     <th className="p-5 border-b border-[#ede3d4] text-center">操作</th>
                   </tr>
                 </thead>
                 <tbody className="divide-y divide-[#f1e9db]">
                   {filteredVolumes.map((vol) => (
                     <tr key={vol.id} className={`transition-colors group ${vol.status === VolumeStatus.CLAIMED ? 'bg-[#fdfbf7]' : 'hover:bg-[#fdfbf7]'}`}>
-                      <td className="p-5 font-mono font-bold text-[#5c4033]">{vol.id}</td>
-                      <td className="p-5 text-[#5c4033]">{vol.part}</td>
-                      <td className="p-5 text-[#5c4033]">{vol.scroll}</td>
                       <td className="p-5 font-mono font-bold text-[#5c4033]">{vol.volumeNumber}</td>
                       <td className="p-5 font-bold text-[#5c4033] serif-title text-lg">{vol.volumeTitle}</td>
                       <td className="p-5">{getStatusBadge(vol)}</td>
-                      <td className="p-5 text-[#5c4033]">{vol.claimerName || '-'}</td>
-                      <td className="p-5 text-[#5c4033]">{vol.claimerPhone || '-'}</td>
-                      <td className="p-5 text-[#5c4033]">{vol.plannedDays ?? '-'}</td>
-                      <td className="p-5 text-[#5c4033]">{formatDate(vol.claimedAt)}</td>
-                      <td className="p-5 text-[#5c4033]">{formatDate(vol.expectedCompletionDate)}</td>
                       <td className="p-5">
                         <a
                           href={vol.readingUrl}
@@ -413,9 +256,6 @@ const App: React.FC = () => {
                           <svg className="w-4 h-4 ml-1" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" /></svg>
                         </a>
                       </td>
-                      <td className="p-5 text-[#5c4033] max-w-xs">
-                        <span className="block truncate" title={vol.remarks || ''}>{vol.remarks || '-'}</span>
-                      </td>
                       <td className="p-5 text-center">
                         {vol.status === VolumeStatus.UNCLAIMED ? (
                           <button
@@ -425,18 +265,16 @@ const App: React.FC = () => {
                             我要认领
                           </button>
                         ) : (
-                          <div className="inline-flex flex-col items-center">
-                            <span className="bg-gray-100 text-gray-400 px-6 py-2 rounded-xl text-sm font-bold cursor-not-allowed">
-                              已认领
-                            </span>
-                          </div>
+                          <span className="bg-gray-100 text-gray-400 px-6 py-2 rounded-xl text-sm font-bold cursor-not-allowed">
+                            已认领
+                          </span>
                         )}
                       </td>
                     </tr>
                   ))}
                   {filteredVolumes.length === 0 && (
                     <tr>
-                      <td colSpan={14} className="p-20 text-center text-gray-400 font-serif italic text-lg">
+                      <td colSpan={5} className="p-20 text-center text-gray-400 font-serif italic text-lg">
                         未找到符合条件的。
                       </td>
                     </tr>
@@ -468,27 +306,45 @@ const App: React.FC = () => {
                   </div>
                   <div>
                     <label className="block text-xs font-bold text-[#8b7355] uppercase tracking-widest mb-2">诵读地址</label>
-                    <div className="flex items-center space-x-2">
-                      <a href={selectedVolume.readingUrl} target="_blank" rel="noopener noreferrer" className="text-blue-600 underline text-sm font-mono break-all truncate block">
-                        {selectedVolume.readingUrl}
-                      </a>
-                    </div>
+                    <a href={selectedVolume.readingUrl} target="_blank" rel="noopener noreferrer" className="text-blue-600 underline text-sm font-mono break-all truncate block">
+                      {selectedVolume.readingUrl}
+                    </a>
                   </div>
                 </div>
               </div>
 
               <div className="grid grid-cols-1 md:grid-cols-3 gap-4 md:gap-8">
-                <div>
+                <div className="relative">
                   <label className="block text-sm font-bold text-gray-700 mb-1">您的姓名 <span className="text-red-500">*</span></label>
                   <p className="text-xs text-gray-500 mb-2">请使用faming或者常用名，方便义工联系</p>
                   <input
                     required
                     type="text"
                     value={formData.name}
-                    onChange={(e) => setFormData({...formData, name: e.target.value})}
+                    onChange={(e) => {
+                      setFormData({...formData, name: e.target.value});
+                      setShowNameSuggestions(true);
+                    }}
+                    onFocus={() => setShowNameSuggestions(true)}
+                    onBlur={() => setTimeout(() => setShowNameSuggestions(false), 200)}
                     className="w-full px-4 md:px-5 py-3 md:py-4 rounded-2xl border border-gray-200 focus:ring-4 focus:ring-[#8b73551a] outline-none transition-all text-base md:text-lg"
                     placeholder=""
+                    autoComplete="off"
                   />
+                  {showNameSuggestions && nameSuggestions.length > 0 && (
+                    <div className="absolute z-10 w-full mt-1 bg-white border border-gray-200 rounded-xl shadow-lg max-h-48 overflow-y-auto">
+                      {nameSuggestions.map((suggestion, idx) => (
+                        <div
+                          key={idx}
+                          className="px-4 py-3 hover:bg-[#fdfbf7] cursor-pointer border-b border-gray-100 last:border-b-0"
+                          onMouseDown={() => handleNameSelect(suggestion.name, suggestion.phone)}
+                        >
+                          <div className="font-medium text-[#5c4033]">{suggestion.name}</div>
+                          <div className="text-xs text-gray-400">{suggestion.phone.slice(0, 3)}****{suggestion.phone.slice(-4)}</div>
+                        </div>
+                      ))}
+                    </div>
+                  )}
                 </div>
                 <div>
                   <label className="block text-sm font-bold text-gray-700 mb-2">联系手机 <span className="text-red-500">*</span></label>
@@ -565,10 +421,6 @@ const App: React.FC = () => {
             <h2 className="text-3xl md:text-5xl font-bold serif-title text-[#5c4033] mb-4 md:mb-6">认领誓愿已成</h2>
 
             <div className="bg-[#fcfaf7] border-2 border-[#ede3d4] rounded-3xl p-6 md:p-10 mb-8 md:mb-12 shadow-sm relative overflow-hidden text-left">
-              <div className="absolute top-0 right-0 p-8 opacity-5 hidden md:block">
-                <svg className="w-48 h-48 text-[#8b7355]" fill="currentColor" viewBox="0 0 24 24"><path d="M12 2L4.5 20.29l.71.71L12 18l6.79 3 .71-.71z"/></svg>
-              </div>
-
               <h3 className="font-bold text-[#8b7355] mb-4 md:mb-8 text-xl md:text-3xl serif-title calligraphy">诸佛加持 · 随喜赞叹</h3>
               <p className="text-gray-700 italic text-base md:text-2xl font-serif mb-6 md:mb-10 border-l-4 md:border-l-8 border-[#8b7355] pl-4 md:pl-8 leading-relaxed">
                 "{successData.blessing}"
@@ -618,15 +470,13 @@ const App: React.FC = () => {
            <svg className="w-6 h-6 text-[#8b7355]" fill="currentColor" viewBox="0 0 24 24"><path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/></svg>
            <div className="w-12 h-px bg-[#8b7355]"></div>
         </div>
-        <p className="text-gray-400 text-sm mb-2">© {new Date().getFullYear()}  阅读平台</p>
-        <div className="flex flex-col space-y-2 mt-4">
-          <button
-            onClick={() => { if(confirm('重置系统将清除所有本地认领记录，确定吗？')) dbService.reset(); }}
-            className="text-[10px] text-gray-300 hover:text-red-400 underline transition-colors mt-2"
-          >
-            系统调试：清除缓存并重置数据
-          </button>
-        </div>
+        <p className="text-gray-400 text-sm mb-2">© {new Date().getFullYear()} 阅读平台</p>
+        <button
+          onClick={() => { if(confirm('重置系统将清除所有本地认领记录，确定吗？')) dbService.reset(); }}
+          className="text-[10px] text-gray-300 hover:text-red-400 underline transition-colors mt-2"
+        >
+          系统调试：清除缓存并重置数据
+        </button>
       </footer>
     </div>
   );
