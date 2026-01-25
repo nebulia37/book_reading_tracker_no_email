@@ -206,9 +206,20 @@ const App: React.FC = () => {
       console.log('Response ok:', response.ok);
 
       if (!response.ok) {
-        const errorText = await response.text();
-        console.error('Backend error response:', errorText);
-        throw new Error(`Backend returned ${response.status}: ${errorText}`);
+        const errorData = await response.json().catch(() => ({}));
+        console.error('Backend error response:', errorData);
+
+        // Handle duplicate claim (409 Conflict)
+        if (response.status === 409) {
+          alert(errorData.error || '该经卷已被其他人认领，请刷新页面选择其他经卷。');
+          // Refresh volumes list to show updated state
+          const refreshedVolumes = await dbService.getVolumes();
+          setVolumes(refreshedVolumes);
+          setView('home');
+          return;
+        }
+
+        throw new Error(errorData.error || `Backend returned ${response.status}`);
       }
 
       const responseData = await response.json();

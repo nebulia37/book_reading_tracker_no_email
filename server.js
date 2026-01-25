@@ -150,7 +150,11 @@ app.post('/api/claim', async (req, res) => {
       .single();
 
     if (error) {
-      console.error('Supabase insert failed:', error.message);
+      console.error('Supabase insert failed:', error.message, error.code);
+      // Check for unique constraint violation (duplicate volumeId)
+      if (error.code === '23505') {
+        return res.status(409).json({ error: '该经卷已被其他人认领，请刷新页面选择其他经卷。' });
+      }
       return res.status(500).json({ error: 'Failed to record claim.' });
     }
 
