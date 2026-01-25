@@ -309,7 +309,7 @@ const App: React.FC = () => {
                 onClick={handleDownloadCsv}
                 className="w-full md:w-auto px-4 py-2 rounded-xl text-sm font-bold bg-[#5c4033] text-white hover:bg-[#3d2b22] transition-all shadow-md"
               >
-                下载CSV
+                Download CSV
               </button>
             </div>
 
@@ -324,35 +324,15 @@ const App: React.FC = () => {
                       <div className="mb-2">{getStatusBadge(vol)}</div>
                       <div className="grid grid-cols-1 gap-1 text-xs text-gray-600 mb-3">
                         <div><span className="font-semibold text-gray-500">ID:</span> {vol.id}</div>
-                        <div><span className="font-semibold text-gray-500">部:</span> {vol.part}</div>
-                        <div><span className="font-semibold text-gray-500">卷:</span> {vol.scroll}</div>
-                        <div><span className="font-semibold text-gray-500">认领人:</span> {vol.claimerName || '-'}</div>
-                        <div><span className="font-semibold text-gray-500">手机:</span> {vol.claimerPhone || '-'}</div>
-                        <div><span className="font-semibold text-gray-500">计划诵读天数:</span> {vol.plannedDays ?? '-'}</div>
-                        <div><span className="font-semibold text-gray-500">认领时间:</span> {formatDate(vol.claimedAt)}</div>
-                        <div><span className="font-semibold text-gray-500">截止日期:</span> {formatDate(vol.expectedCompletionDate)}</div>
-                        <div className="break-all"><span className="font-semibold text-gray-500">读经地址:</span> {vol.readingUrl}</div>
-                        <div><span className="font-semibold text-gray-500">备注:</span> {vol.remarks || '-'}</div>
-                      </div>
-                        <div><span className="font-semibold text-gray-500">?:</span> {vol.part}</div>
-                        <div><span className="font-semibold text-gray-500">?:</span> {vol.scroll}</div>
-                        <div><span className="font-semibold text-gray-500">???:</span> {vol.claimerName || '-'}</div>
-                        <div><span className="font-semibold text-gray-500">??:</span> {vol.claimerPhone || '-'}</div>
-                        <div><span className="font-semibold text-gray-500">??????:</span> {vol.plannedDays ?? '-'}</div>
-                        <div><span className="font-semibold text-gray-500">????:</span> {formatDate(vol.claimedAt)}</div>
-                        <div><span className="font-semibold text-gray-500">????:</span> {formatDate(vol.expectedCompletionDate)}</div>
-                        <div className="break-all"><span className="font-semibold text-gray-500">????:</span> {vol.readingUrl}</div>
-                        <div><span className="font-semibold text-gray-500">??:</span> {vol.remarks || '-'}</div>
-                      </div>
-                        <div><span className="font-semibold text-gray-500">éƒ¨:</span> {vol.part}</div>
-                        <div><span className="font-semibold text-gray-500">å·:</span> {vol.scroll}</div>
-                        <div><span className="font-semibold text-gray-500">è®¤é¢†äºº:</span> {vol.claimerName || '-'}</div>
-                        <div><span className="font-semibold text-gray-500">æ‰‹æœº:</span> {vol.claimerPhone || '-'}</div>
-                        <div><span className="font-semibold text-gray-500">è®¡åˆ’è¯µè¯»å¤©æ•°:</span> {vol.plannedDays ?? '-'}</div>
-                        <div><span className="font-semibold text-gray-500">è®¤é¢†æ—¶é—´:</span> {formatDate(vol.claimedAt)}</div>
-                        <div><span className="font-semibold text-gray-500">æˆªæ­¢æ—¥æœŸ:</span> {formatDate(vol.expectedCompletionDate)}</div>
-                        <div className="break-all"><span className="font-semibold text-gray-500">è¯»ç»åœ°å€:</span> {vol.readingUrl}</div>
-                        <div><span className="font-semibold text-gray-500">å¤‡æ³¨:</span> {vol.remarks || '-'}</div>
+                        <div><span className="font-semibold text-gray-500">Part:</span> {vol.part}</div>
+                        <div><span className="font-semibold text-gray-500">Scroll:</span> {vol.scroll}</div>
+                        <div><span className="font-semibold text-gray-500">Claimer:</span> {vol.claimerName || '-'}</div>
+                        <div><span className="font-semibold text-gray-500">Phone:</span> {vol.claimerPhone || '-'}</div>
+                        <div><span className="font-semibold text-gray-500">Planned Days:</span> {vol.plannedDays ?? '-'}</div>
+                        <div><span className="font-semibold text-gray-500">Claimed At:</span> {formatDate(vol.claimedAt)}</div>
+                        <div><span className="font-semibold text-gray-500">Expected Date:</span> {formatDate(vol.expectedCompletionDate)}</div>
+                        <div className="break-all"><span className="font-semibold text-gray-500">Reading URL:</span> {vol.readingUrl}</div>
+                        <div><span className="font-semibold text-gray-500">Remarks:</span> {vol.remarks || '-'}</div>
                       </div>
                     </div>
                   </div>
@@ -363,18 +343,18 @@ const App: React.FC = () => {
                       rel="noopener noreferrer"
                       className="flex-1 text-center py-3 px-4 border-2 border-blue-600 text-blue-600 rounded-xl font-bold text-sm transition-all active:scale-95"
                     >
-                      阅读原文
+                      Read
                     </a>
                     {vol.status === VolumeStatus.UNCLAIMED ? (
                       <button
                         onClick={() => handleClaimClick(vol)}
                         className="flex-1 bg-[#8b7355] text-white py-3 px-4 rounded-xl font-bold text-sm active:scale-95"
                       >
-                        我要认领
+                        Claim
                       </button>
                     ) : (
                       <div className="flex-1 bg-gray-100 text-gray-400 py-3 px-4 rounded-xl font-bold text-sm text-center cursor-not-allowed">
-                        已认领
+                        Claimed
                       </div>
                     )}
                   </div>
@@ -382,7 +362,7 @@ const App: React.FC = () => {
               ))}
               {filteredVolumes.length === 0 && (
                 <div className="p-20 text-center text-gray-400 font-serif italic text-lg">
-                  未找到符合条件的。
+                  No matching records.
                 </div>
               )}
             </div>
