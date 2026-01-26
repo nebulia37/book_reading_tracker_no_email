@@ -73,8 +73,8 @@ const App: React.FC = () => {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!selectedVolume) return;
-    if (formData.phone.length !== 11) {
-      alert('请输入11位手机号');
+    if (formData.phone.length < 8 || formData.phone.length > 11) {
+      alert('请输入8-11位手机号');
       return;
     }
 
@@ -351,13 +351,14 @@ const App: React.FC = () => {
                   <input
                     required
                     type="tel"
-                    pattern="[0-9]"
+                    pattern="[0-9]{8,11}"
                     minLength={8}
+                    maxLength={11}
                     value={formData.phone}
                     onChange={(e) => setFormData({...formData, phone: e.target.value.replace(/\D/g, '').slice(0, 11)})}
                     className="w-full px-4 md:px-5 py-3 md:py-4 rounded-2xl border border-gray-200 focus:ring-4 focus:ring-[#8b73551a] outline-none transition-all text-base md:text-lg"
                     placeholder="13800000000"
-                    title="请输入11位手机号码"
+                    title="请输入8-11位手机号码"
                   />
                 </div>
                 <div>

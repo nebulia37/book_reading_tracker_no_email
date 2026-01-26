@@ -111,9 +111,9 @@ app.post('/api/claim', async (req, res) => {
     return res.status(400).json({ error: 'Phone number is required.' });
   }
 
-  // Validate phone number format (11 digits)
-  if (!/^[0-9]{11}$/.test(phone)) {
-    return res.status(400).json({ error: 'Phone number must be 11 digits.' });
+  // Validate phone number format (8-11 digits)
+  if (!/^[0-9]{8,11}$/.test(phone)) {
+    return res.status(400).json({ error: 'Phone number must be 8-11 digits.' });
   }
 
   try {
