@@ -17,7 +17,7 @@ const createSutraVolumes = (
   const volumes: Volume[] = [];
   for (let i = 1; i <= scrolls; i++) {
     volumes.push({
-      id: `${part}部-卷${i}`,
+      id: `${part}${String(i).padStart(3, '0')}`,
       part: part,
       scroll: i,
       volumeNumber: `第${part}部-卷${i}`,

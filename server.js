@@ -136,13 +136,28 @@ app.post('/api/claim', async (req, res) => {
       remarks: remarks || ''
     };
 
-    console.log("Saving to Supabase:", newClaim);
     const supabase = getSupabaseClient();
     if (!supabase) {
       console.warn('Supabase not configured, claim saved locally only');
       return res.status(500).json({ error: 'Supabase not configured.' });
     }
 
+    const { data: existingClaims, error: existingError } = await supabase
+      .from('claims')
+      .select('id')
+      .eq('volumeId', volumeId)
+      .limit(1);
+
+    if (existingError) {
+      console.error('Supabase lookup failed:', existingError.message);
+      return res.status(500).json({ error: 'Failed to validate claim uniqueness.' });
+    }
+
+    if (existingClaims && existingClaims.length > 0) {
+      return res.status(409).json({ error: 'This volume has already been claimed.' });
+    }
+
+    console.log("Saving to Supabase:", newClaim);
     const { data, error } = await supabase
       .from('claims')
       .insert([newClaim])
