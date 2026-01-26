@@ -351,9 +351,8 @@ const App: React.FC = () => {
                   <input
                     required
                     type="tel"
-                    pattern="[0-9]{11}"
-                    minLength={11}
-                    maxLength={11}
+                    pattern="[0-9]"
+                    minLength={8}
                     value={formData.phone}
                     onChange={(e) => setFormData({...formData, phone: e.target.value.replace(/\D/g, '').slice(0, 11)})}
                     className="w-full px-4 md:px-5 py-3 md:py-4 rounded-2xl border border-gray-200 focus:ring-4 focus:ring-[#8b73551a] outline-none transition-all text-base md:text-lg"
