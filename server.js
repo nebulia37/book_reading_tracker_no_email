@@ -7,6 +7,11 @@ import crypto from 'crypto';
 import 'dotenv/config';
 import { createClient } from '@supabase/supabase-js';
 import iconv from 'iconv-lite';
+import puppeteer from 'puppeteer-core';
+import chromium from '@sparticuz/chromium';
+
+// Pre-extract chromium binary at startup to avoid ETXTBSY on concurrent requests
+const chromiumPathPromise = chromium.executablePath();
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -788,25 +793,13 @@ app.get('/api/scripture/:scroll/pdf', async (req, res) => {
 </body>
 </html>`;
 
-    // Generate PDF using puppeteer-core + @sparticuz/chromium
-    let puppeteer, chromium;
-    try {
-      puppeteer = await import('puppeteer-core');
-      chromium = (await import('@sparticuz/chromium')).default;
-    } catch (e) {
-      console.error('Puppeteer/Chromium import failed:', e);
-      return res.status(500).json({
-        error: 'PDF generation not available',
-        hint: 'Run: npm install puppeteer-core @sparticuz/chromium'
-      });
-    }
-
+    // Generate PDF using puppeteer-core + @sparticuz/chromium (imported at top level)
     let browser;
     try {
-      browser = await puppeteer.default.launch({
+      browser = await puppeteer.launch({
         args: chromium.args,
         defaultViewport: chromium.defaultViewport,
-        executablePath: await chromium.executablePath(),
+        executablePath: await chromiumPathPromise,
         headless: chromium.headless,
       });
 
