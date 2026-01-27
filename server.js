@@ -532,6 +532,26 @@ app.get('/api/scripture/:scroll', async (req, res) => {
   }
 });
 
+// MP3 audio proxy (same-origin download for WeChat compatibility)
+app.get('/api/scripture/:scroll/mp3', async (req, res) => {
+  const scroll = parseInt(req.params.scroll);
+  if (isNaN(scroll) || scroll < 1 || scroll > 200) {
+    return res.status(400).json({ error: 'Invalid scroll number (1-200)' });
+  }
+  try {
+    const upstream = `https://w1.xianmijingzang.com/fojing/1/1/1/1_${scroll}.mp3?_mt=`;
+    const response = await fetch(upstream);
+    if (!response.ok) throw new Error(`Upstream returned ${response.status}`);
+    const buffer = Buffer.from(await response.arrayBuffer());
+    res.setHeader('Content-Type', 'audio/mpeg');
+    res.setHeader('Content-Disposition', `attachment; filename="scroll_${scroll}.mp3"`);
+    res.send(buffer);
+  } catch (error) {
+    console.error('Failed to proxy MP3:', error);
+    res.status(500).json({ error: 'Failed to download audio' });
+  }
+});
+
 // Text file download endpoint (reliable Chinese support)
 app.get('/api/scripture/:scroll/txt', async (req, res) => {
   const scroll = parseInt(req.params.scroll);
@@ -643,11 +663,13 @@ app.get('/api/scripture/:scroll/pdf', async (req, res) => {
       '$2<i><span>\u00a0</span><span>$1</span></i>'
     );
     // Convert all <i><span>pinyin</span><span>hanzi</span></i> to py-pair
-    const rubyHtml = cleanedHtml
+    let rubyHtml = cleanedHtml
       .replace(/<i><span[^>]*>([^<]*)<\/span><span[^>]*>([^<]*)<\/span><\/i>/gi, (_, py, hz) => {
         const pinyin = py.trim() || '\u00a0';
         return `<span class="py-pair"><span class="py">${pinyin}</span><span class="hz">${hz}</span></span>`;
       });
+    // Strip whitespace between py-pair elements to eliminate inline-block gaps
+    rubyHtml = rubyHtml.replace(/(<\/span>)\s+(<span class="py-pair">)/g, '$1$2');
 
     let pCount = 0;
     const centeredHtml = rubyHtml.replace(/<p([^>]*)>/gi, (match, attrs) => {
@@ -721,7 +743,6 @@ app.get('/api/scripture/:scroll/pdf', async (req, res) => {
     .content p {
       margin-bottom: 1em;
       text-indent: 2em;
-      word-spacing: -0.5em;
     }
     .content p.center {
       text-align: center;
@@ -732,7 +753,6 @@ app.get('/api/scripture/:scroll/pdf', async (req, res) => {
     .py-pair {
       display: inline-block;
       text-align: center;
-      word-spacing: normal;
       margin: 0;
       line-height: 1.1;
     }

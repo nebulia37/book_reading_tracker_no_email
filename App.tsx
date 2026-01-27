@@ -535,9 +535,7 @@ const App: React.FC = () => {
                   </audio>
                   <div className="flex gap-2 mt-2">
                     <a
-                      href={`https://w1.xianmijingzang.com/fojing/1/1/1/1_${selectedVolume.scroll}.mp3?_mt=`}
-                      target="_blank"
-                      rel="noopener noreferrer"
+                      href={`${API_BASE_URL}/api/scripture/${selectedVolume.scroll}/mp3`}
                       className="inline-flex items-center px-4 py-2 border-2 border-[#8b7355] text-[#8b7355] hover:bg-[#f5f0eb] rounded-xl font-bold text-sm transition-all"
                     >
                       下载
@@ -565,8 +563,6 @@ const App: React.FC = () => {
                   <div className="flex gap-2">
                     <a
                       href={`${API_BASE_URL}/api/scripture/${selectedVolume.scroll}/pdf`}
-                      target="_blank"
-                      rel="noopener noreferrer"
                       className="inline-flex items-center px-4 py-3 border-2 border-[#5c4033] text-[#5c4033] hover:bg-[#f5f0eb] rounded-xl font-bold text-sm transition-all"
                     >
                       <svg className="w-5 h-5 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
