@@ -542,10 +542,10 @@ app.get('/api/scripture/:scroll/mp3', async (req, res) => {
     const upstream = `https://w1.xianmijingzang.com/fojing/1/1/1/1_${scroll}.mp3?_mt=`;
     const response = await fetch(upstream);
     if (!response.ok) throw new Error(`Upstream returned ${response.status}`);
-    const buffer = Buffer.from(await response.arrayBuffer());
     res.setHeader('Content-Type', 'audio/mpeg');
     res.setHeader('Content-Disposition', `attachment; filename="scroll_${scroll}.mp3"`);
-    res.send(buffer);
+    const { Readable } = await import('stream');
+    Readable.fromWeb(response.body).pipe(res);
   } catch (error) {
     console.error('Failed to proxy MP3:', error);
     res.status(500).json({ error: 'Failed to download audio' });
@@ -656,20 +656,18 @@ app.get('/api/scripture/:scroll/pdf', async (req, res) => {
 
     // Upstream nests punctuation inside the hanzi span:
     //   <i><span>pinyin</span><span>hanzi<span class=dou>，</span></span></i>
-    // Extract to a separate <i> block so it becomes its own py-pair with empty pinyin
+    // Extract punctuation out of the hanzi span, place after </i>
     let cleanedHtml = scriptureHtml;
     cleanedHtml = cleanedHtml.replace(
       /<span class=(?:["'])?(?:dou|dian)(?:["'])?>([^<]*)<\/span>(<\/span><\/i>)/gi,
-      '$2<i><span>\u00a0</span><span>$1</span></i>'
+      '$2$1'
     );
-    // Convert all <i><span>pinyin</span><span>hanzi</span></i> to py-pair
-    let rubyHtml = cleanedHtml
+    // Convert all <i><span>pinyin</span><span>hanzi</span></i> to <ruby> tags
+    const rubyHtml = cleanedHtml
       .replace(/<i><span[^>]*>([^<]*)<\/span><span[^>]*>([^<]*)<\/span><\/i>/gi, (_, py, hz) => {
-        const pinyin = py.trim() || '\u00a0';
-        return `<span class="py-pair"><span class="py">${pinyin}</span><span class="hz">${hz}</span></span>`;
+        const pinyin = py.trim();
+        return pinyin ? `<ruby>${hz}<rt>${pinyin}</rt></ruby>` : hz;
       });
-    // Strip whitespace between py-pair elements to eliminate inline-block gaps
-    rubyHtml = rubyHtml.replace(/(<\/span>)\s+(<span class="py-pair">)/g, '$1$2');
 
     let pCount = 0;
     const centeredHtml = rubyHtml.replace(/<p([^>]*)>/gi, (match, attrs) => {
@@ -734,7 +732,7 @@ app.get('/api/scripture/:scroll/pdf', async (req, res) => {
     }
     .content {
       padding: 20px 30px;
-      text-align: justify;
+      text-align: left;
       background: #fff;
       border: 1px solid #e8e0d0;
       border-radius: 4px;
@@ -742,34 +740,21 @@ app.get('/api/scripture/:scroll/pdf', async (req, res) => {
     }
     .content p {
       margin-bottom: 1em;
-      text-indent: 32pt;
-      font-size: 0;
+      text-indent: 2em;
     }
     .content p.center {
       text-align: center;
       text-indent: 0;
     }
 
-    /* Pinyin above Chinese characters, separate lines */
-    .py-pair {
-      display: inline-block;
-      text-align: center;
-      margin: 0;
-      line-height: 1.1;
+    /* Pinyin above Chinese characters using native ruby */
+    ruby {
+      ruby-align: center;
     }
-    .py-pair .py {
-      display: block;
+    rt {
       font-size: 8pt;
       color: #888;
       font-family: Arial, "Helvetica Neue", sans-serif;
-      line-height: 1;
-      min-height: 8pt;
-    }
-    .py-pair .hz {
-      display: block;
-      font-size: 16pt;
-      color: #333;
-      line-height: 1.2;
     }
 
     .footer {
