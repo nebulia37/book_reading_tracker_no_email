@@ -721,6 +721,7 @@ app.get('/api/scripture/:scroll/pdf', async (req, res) => {
     .content p {
       margin-bottom: 1em;
       text-indent: 2em;
+      word-spacing: -0.5em;
     }
     .content p.center {
       text-align: center;
@@ -731,6 +732,7 @@ app.get('/api/scripture/:scroll/pdf', async (req, res) => {
     .py-pair {
       display: inline-block;
       text-align: center;
+      word-spacing: normal;
       margin: 0;
       line-height: 1.1;
     }
