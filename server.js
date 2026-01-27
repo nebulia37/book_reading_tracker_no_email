@@ -742,7 +742,8 @@ app.get('/api/scripture/:scroll/pdf', async (req, res) => {
     }
     .content p {
       margin-bottom: 1em;
-      text-indent: 2em;
+      text-indent: 32pt;
+      font-size: 0;
     }
     .content p.center {
       text-align: center;
