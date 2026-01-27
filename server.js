@@ -665,6 +665,8 @@ app.get('/api/scripture/:scroll/pdf', async (req, res) => {
 <html lang="zh-TW">
 <head>
   <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Serif+SC:wght@400;700&display=swap" rel="stylesheet">
   <style>
     @page {
       size: A4;
@@ -676,7 +678,7 @@ app.get('/api/scripture/:scroll/pdf', async (req, res) => {
       box-sizing: border-box;
     }
     body {
-      font-family: "Microsoft YaHei", "SimSun", "STSong", "Noto Serif CJK SC", "PingFang SC", serif;
+      font-family: "Noto Serif SC", "PingFang SC", "Microsoft YaHei", "SimSun", serif;
       font-size: 16pt;
       line-height: 2.8;
       color: #333;
@@ -719,7 +721,6 @@ app.get('/api/scripture/:scroll/pdf', async (req, res) => {
     .content p {
       margin-bottom: 1em;
       text-indent: 2em;
-      font-size: 0;
     }
     .content p.center {
       text-align: center;
