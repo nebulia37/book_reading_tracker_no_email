@@ -788,30 +788,26 @@ app.get('/api/scripture/:scroll/pdf', async (req, res) => {
 </body>
 </html>`;
 
-    // Generate PDF using Puppeteer
-    let puppeteer;
+    // Generate PDF using puppeteer-core + @sparticuz/chromium
+    let puppeteer, chromium;
     try {
-      puppeteer = await import('puppeteer');
+      puppeteer = await import('puppeteer-core');
+      chromium = (await import('@sparticuz/chromium')).default;
     } catch (e) {
-      console.error('Puppeteer import failed:', e);
+      console.error('Puppeteer/Chromium import failed:', e);
       return res.status(500).json({
         error: 'PDF generation not available',
-        hint: 'Run: npm install puppeteer'
+        hint: 'Run: npm install puppeteer-core @sparticuz/chromium'
       });
     }
 
     let browser;
     try {
       browser = await puppeteer.default.launch({
-        headless: 'new',
-        args: [
-          '--no-sandbox',
-          '--disable-setuid-sandbox',
-          '--disable-dev-shm-usage',
-          '--disable-gpu',
-          '--font-render-hinting=none',
-          '--disable-web-security'
-        ]
+        args: chromium.args,
+        defaultViewport: chromium.defaultViewport,
+        executablePath: await chromium.executablePath(),
+        headless: chromium.headless,
       });
 
       const page = await browser.newPage();
