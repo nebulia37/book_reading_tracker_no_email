@@ -348,12 +348,6 @@ const App: React.FC = () => {
                     <label className="block text-xs font-bold text-[#8b7355] uppercase tracking-widest mb-2">认领卷册</label>
                     <p className="text-2xl font-bold text-[#5c4033] serif-title">{selectedVolume.volumeNumber} {selectedVolume.volumeTitle}</p>
                   </div>
-                  <div>
-                    <label className="block text-xs font-bold text-[#8b7355] uppercase tracking-widest mb-2">诵读地址</label>
-                    <a href={selectedVolume.readingUrl} target="_blank" rel="noopener noreferrer" className="text-blue-600 underline text-sm font-mono break-all truncate block">
-                      {selectedVolume.readingUrl}
-                    </a>
-                  </div>
                 </div>
               </div>
 
