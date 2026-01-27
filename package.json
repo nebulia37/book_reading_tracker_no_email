@@ -25,7 +25,6 @@
     "iconv-lite": "^0.7.2",
     "pdfkit": "^0.17.2",
     "pdfmake": "^0.3.3",
-    "puppeteer": "^24.36.0",
     "react": "^19.2.3",
     "react-dom": "^19.2.3"
   },

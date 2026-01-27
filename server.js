@@ -7,7 +7,6 @@ import crypto from 'crypto';
 import 'dotenv/config';
 import { createClient } from '@supabase/supabase-js';
 import iconv from 'iconv-lite';
-import puppeteer from 'puppeteer';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -769,9 +768,31 @@ app.get('/api/scripture/:scroll/pdf', async (req, res) => {
       margin: 15px 0;
       letter-spacing: 10px;
     }
+    .print-btn {
+      position: fixed;
+      top: 16px;
+      right: 16px;
+      padding: 10px 24px;
+      background: #8b7355;
+      color: #fff;
+      border: none;
+      border-radius: 8px;
+      font-size: 14pt;
+      font-weight: bold;
+      cursor: pointer;
+      z-index: 1000;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.2);
+    }
+    .print-btn:hover { background: #5c4033; }
+    @media print {
+      .print-btn { display: none; }
+      body { background: #fff; }
+      .header { background: none; border-bottom: 1px solid #c9a86c; }
+    }
   </style>
 </head>
 <body>
+  <button class="print-btn" onclick="window.print()">保存PDF</button>
   <div class="header">
     <div class="title">大般若波羅蜜多經</div>
     <div class="subtitle">卷第${scroll}</div>
@@ -789,52 +810,9 @@ app.get('/api/scripture/:scroll/pdf', async (req, res) => {
 </body>
 </html>`;
 
-    // Generate PDF using Puppeteer
-    let browser;
-    try {
-      browser = await puppeteer.launch({
-        headless: 'new',
-        args: [
-          '--no-sandbox',
-          '--disable-setuid-sandbox',
-          '--disable-dev-shm-usage',
-          '--disable-gpu',
-          '--font-render-hinting=none',
-          '--disable-web-security'
-        ]
-      });
-
-      const page = await browser.newPage();
-      await page.setContent(fullHtml, {
-        waitUntil: 'domcontentloaded',
-        timeout: 30000
-      });
-
-      const pdfBuffer = await page.pdf({
-        format: 'A4',
-        printBackground: true,
-        margin: {
-          top: '2.5cm',
-          bottom: '2.5cm',
-          left: '2cm',
-          right: '2cm'
-        },
-        displayHeaderFooter: false
-      });
-
-      await browser.close();
-
-      res.setHeader('Content-Type', 'application/pdf');
-      const filename = `大般若波羅蜜多經_卷${scroll}.pdf`;
-      const encodedFilename = encodeURIComponent(filename);
-      res.setHeader('Content-Disposition', `attachment; filename="${scroll}.pdf"; filename*=UTF-8''${encodedFilename}`);
-      res.send(pdfBuffer);
-
-    } catch (browserError) {
-      console.error('Browser/PDF error:', browserError);
-      if (browser) await browser.close().catch(() => {});
-      throw browserError;
-    }
+    // Serve print-friendly HTML page (works in any browser including WeChat)
+    res.setHeader('Content-Type', 'text/html; charset=utf-8');
+    res.send(fullHtml);
 
   } catch (error) {
     console.error('Failed to generate PDF:', error);

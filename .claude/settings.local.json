@@ -3,7 +3,8 @@
     "allow": [
       "Bash(npm install:*)",
       "Bash(npm uninstall:*)",
-      "Bash(npx puppeteer browsers install chrome)"
+      "Bash(npx puppeteer browsers install chrome)",
+      "Bash(del \"c:\\\\Projects\\\\apps\\\\Scripture-Reading-Tracker-main\\\\book_reading_tracker_no_email\\\\.puppeteerrc.cjs\")"
     ]
   }
 }
