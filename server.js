@@ -7,11 +7,7 @@ import crypto from 'crypto';
 import 'dotenv/config';
 import { createClient } from '@supabase/supabase-js';
 import iconv from 'iconv-lite';
-import puppeteer from 'puppeteer-core';
-import chromium from '@sparticuz/chromium';
-
-// Pre-extract chromium binary at startup to avoid ETXTBSY on concurrent requests
-const chromiumPathPromise = chromium.executablePath();
+import puppeteer from 'puppeteer';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -793,14 +789,19 @@ app.get('/api/scripture/:scroll/pdf', async (req, res) => {
 </body>
 </html>`;
 
-    // Generate PDF using puppeteer-core + @sparticuz/chromium (imported at top level)
+    // Generate PDF using Puppeteer
     let browser;
     try {
       browser = await puppeteer.launch({
-        args: chromium.args,
-        defaultViewport: chromium.defaultViewport,
-        executablePath: await chromiumPathPromise,
-        headless: chromium.headless,
+        headless: 'new',
+        args: [
+          '--no-sandbox',
+          '--disable-setuid-sandbox',
+          '--disable-dev-shm-usage',
+          '--disable-gpu',
+          '--font-render-hinting=none',
+          '--disable-web-security'
+        ]
       });
 
       const page = await browser.newPage();

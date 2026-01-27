@@ -562,16 +562,15 @@ const App: React.FC = () => {
                     下载经文
                   </label>
                   <div className="flex gap-2">
-                    <a
-                      href={`${API_BASE_URL}/api/scripture/${selectedVolume.scroll}/pdf`}
+                    <button
+                      onClick={() => window.open(`${API_BASE_URL}/api/scripture/${selectedVolume.scroll}/pdf`, '_blank')}
                       className="inline-flex items-center px-4 py-3 border-2 border-[#5c4033] text-[#5c4033] hover:bg-[#f5f0eb] rounded-xl font-bold text-sm transition-all"
-                      download
                     >
                       <svg className="w-5 h-5 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M7 21h10a2 2 0 002-2V9.414a1 1 0 00-.293-.707l-5.414-5.414A1 1 0 0012.586 3H7a2 2 0 00-2 2v14a2 2 0 002 2z" />
                       </svg>
                       PDF
-                    </a>
+                    </button>
                   </div>
                 </div>
 
