@@ -43,3 +43,36 @@ input:focus, select:focus {
   border-color: var(--sutra-gold) !important;
   ring-color: var(--sutra-gold) !important;
 }
+
+/* Scripture content styling - match source layout */
+.scripture-content {
+  font-family: "PingFang SC", "Microsoft YaHei", "Noto Serif SC", serif;
+  font-size: 18px;
+  line-height: 2.1;
+  color: #3d2b22;
+  white-space: normal;
+  word-break: break-word;
+}
+.scripture-content p {
+  margin: 0 0 1em 0;
+  text-indent: 0;
+}
+.scripture-content i {
+  font-style: normal;
+  display: inline-block;
+  text-align: center;
+  margin: 0 1px;
+  vertical-align: middle;
+}
+.scripture-content i span {
+  display: block;
+  line-height: 1.1;
+}
+.scripture-content i span:first-child {
+  font-size: 10px;
+  color: #9a7b5f;
+}
+.scripture-content i span:last-child {
+  font-size: 18px;
+  color: #3d2b22;
+}

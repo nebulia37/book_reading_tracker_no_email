@@ -6,6 +6,7 @@ import fs from 'fs';
 import crypto from 'crypto';
 import 'dotenv/config';
 import { createClient } from '@supabase/supabase-js';
+import iconv from 'iconv-lite';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -472,6 +473,382 @@ app.get('/view', async (req, res) => {
   } catch (error) {
     console.error('Error rendering view:', error);
     res.status(500).send('加载失败: ' + error.message);
+  }
+});
+
+// ============================================
+// SCRIPTURE TEXT AND PDF ENDPOINTS
+// ============================================
+
+// Cache for scripture content to reduce upstream requests
+let scriptureCache = new Map();
+const SCRIPTURE_CACHE_DURATION = 60 * 60 * 1000; // 1 hour
+
+// Scripture text proxy endpoint (avoids CORS issues)
+// BOOK_ID = 2069 + scroll (e.g., scroll 1 → book 2070, scroll 200 → book 2269)
+app.get('/api/scripture/:scroll', async (req, res) => {
+  const scroll = parseInt(req.params.scroll);
+  if (isNaN(scroll) || scroll < 1 || scroll > 200) {
+    return res.status(400).json({ error: 'Invalid scroll number (1-200)' });
+  }
+
+  const bookId = 2069 + scroll;
+  const cacheKey = `scripture_${scroll}`;
+
+  // Check cache first
+  const cached = scriptureCache.get(cacheKey);
+  if (cached && (Date.now() - cached.timestamp) < SCRIPTURE_CACHE_DURATION) {
+    console.log(`Returning cached scripture for scroll ${scroll}`);
+    return res.json({ html: cached.html, scroll, bookId, cached: true });
+  }
+
+  console.log(`Fetching scripture for scroll ${scroll}, book ID ${bookId}`);
+
+  try {
+    const response = await fetch('https://w1.xianmijingzang.com/wapajax/tripitaka/', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/x-www-form-urlencoded; charset=UTF-8',
+        'X-Requested-With': 'XMLHttpRequest'
+      },
+      body: `menuid=43|67&book=${bookId}&lang=zh&only_content=1`
+    });
+
+    if (!response.ok) {
+      throw new Error(`Upstream returned ${response.status}`);
+    }
+
+    // Upstream returns GB2312 encoding, need to decode properly
+    const buffer = await response.arrayBuffer();
+    const html = iconv.decode(Buffer.from(buffer), 'gbk');
+
+    // Cache the result
+    scriptureCache.set(cacheKey, { html, timestamp: Date.now() });
+
+    res.json({ html, scroll, bookId, cached: false });
+  } catch (error) {
+    console.error('Failed to fetch scripture:', error);
+    res.status(500).json({ error: 'Failed to fetch scripture text: ' + error.message });
+  }
+});
+
+// Text file download endpoint (reliable Chinese support)
+app.get('/api/scripture/:scroll/txt', async (req, res) => {
+  const scroll = parseInt(req.params.scroll);
+  if (isNaN(scroll) || scroll < 1 || scroll > 200) {
+    return res.status(400).json({ error: 'Invalid scroll number (1-200)' });
+  }
+
+  const bookId = 2069 + scroll;
+  console.log(`Generating TXT for scroll ${scroll}, book ID ${bookId}`);
+
+  try {
+    const cacheKey = `scripture_${scroll}`;
+    let scriptureHtml;
+
+    const cached = scriptureCache.get(cacheKey);
+    if (cached && (Date.now() - cached.timestamp) < SCRIPTURE_CACHE_DURATION) {
+      scriptureHtml = cached.html;
+    } else {
+      const response = await fetch('https://w1.xianmijingzang.com/wapajax/tripitaka/', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/x-www-form-urlencoded; charset=UTF-8',
+          'X-Requested-With': 'XMLHttpRequest'
+        },
+        body: `menuid=43|67&book=${bookId}&lang=zh&only_content=1`
+      });
+
+      if (!response.ok) {
+        throw new Error(`Upstream returned ${response.status}`);
+      }
+
+      const buffer = await response.arrayBuffer();
+      scriptureHtml = iconv.decode(Buffer.from(buffer), 'gbk');
+      scriptureCache.set(cacheKey, { html: scriptureHtml, timestamp: Date.now() });
+    }
+
+    // Extract plain text - keep Chinese characters only
+    const plainText = scriptureHtml
+      .replace(/<style[^>]*>[\s\S]*?<\/style>/gi, '')
+      .replace(/<script[^>]*>[\s\S]*?<\/script>/gi, '')
+      .replace(/<i><span>[^<]*<\/span><span>([^<]*)<\/span><\/i>/gi, '$1')
+      .replace(/<\/p>/gi, '\n\n')
+      .replace(/<br\s*\/?>/gi, '\n')
+      .replace(/<[^>]+>/g, '')
+      .replace(/&nbsp;/g, ' ')
+      .replace(/&lt;/g, '<')
+      .replace(/&gt;/g, '>')
+      .replace(/&amp;/g, '&')
+      .replace(/[ \t]+/g, ' ')
+      .replace(/\n{3,}/g, '\n\n')
+      .trim();
+
+    const fullText = `大般若波羅蜜多經 卷${scroll}\n唐三藏法師玄奘 奉詔譯\n${'='.repeat(40)}\n\n${plainText}`;
+
+    res.setHeader('Content-Type', 'text/plain; charset=utf-8');
+    const txtFilename = `大般若波羅蜜多經_卷${scroll}.txt`;
+    const encodedTxtFilename = encodeURIComponent(txtFilename);
+    res.setHeader('Content-Disposition', `attachment; filename="${scroll}.txt"; filename*=UTF-8''${encodedTxtFilename}`);
+    res.send(fullText);
+  } catch (error) {
+    console.error('Failed to generate TXT:', error);
+    res.status(500).json({ error: 'Failed to generate text file: ' + error.message });
+  }
+});
+
+// PDF generation endpoint using Puppeteer (proper Chinese support & styling)
+app.get('/api/scripture/:scroll/pdf', async (req, res) => {
+  const scroll = parseInt(req.params.scroll);
+  if (isNaN(scroll) || scroll < 1 || scroll > 200) {
+    return res.status(400).json({ error: 'Invalid scroll number (1-200)' });
+  }
+
+  const bookId = 2069 + scroll;
+  console.log(`Generating PDF for scroll ${scroll}, book ID ${bookId}`);
+
+  try {
+    // First fetch the scripture content (check cache)
+    const cacheKey = `scripture_${scroll}`;
+    let scriptureHtml;
+
+    const cached = scriptureCache.get(cacheKey);
+    if (cached && (Date.now() - cached.timestamp) < SCRIPTURE_CACHE_DURATION) {
+      scriptureHtml = cached.html;
+    } else {
+      const response = await fetch('https://w1.xianmijingzang.com/wapajax/tripitaka/', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/x-www-form-urlencoded; charset=UTF-8',
+          'X-Requested-With': 'XMLHttpRequest'
+        },
+        body: `menuid=43|67&book=${bookId}&lang=zh&only_content=1`
+      });
+
+      if (!response.ok) {
+        throw new Error(`Upstream returned ${response.status}`);
+      }
+
+      const buffer = await response.arrayBuffer();
+      scriptureHtml = iconv.decode(Buffer.from(buffer), 'gbk');
+      scriptureCache.set(cacheKey, { html: scriptureHtml, timestamp: Date.now() });
+    }
+
+    // Upstream nests punctuation inside the hanzi span:
+    //   <i><span>pinyin</span><span>hanzi<span class=dou>，</span></span></i>
+    // Extract to a separate <i> block so it becomes its own py-pair with empty pinyin
+    let cleanedHtml = scriptureHtml;
+    cleanedHtml = cleanedHtml.replace(
+      /<span class=(?:["'])?(?:dou|dian)(?:["'])?>([^<]*)<\/span>(<\/span><\/i>)/gi,
+      '$2<i><span>\u00a0</span><span>$1</span></i>'
+    );
+    // Convert all <i><span>pinyin</span><span>hanzi</span></i> to py-pair
+    const rubyHtml = cleanedHtml
+      .replace(/<i><span[^>]*>([^<]*)<\/span><span[^>]*>([^<]*)<\/span><\/i>/gi, (_, py, hz) => {
+        const pinyin = py.trim() || '\u00a0';
+        return `<span class="py-pair"><span class="py">${pinyin}</span><span class="hz">${hz}</span></span>`;
+      });
+
+    let pCount = 0;
+    const centeredHtml = rubyHtml.replace(/<p([^>]*)>/gi, (match, attrs) => {
+      pCount += 1;
+      if (pCount > 3) return `<p${attrs}>`;
+      if (/\bclass\s*=/.test(attrs)) {
+        return match.replace(/class\s*=\s*["']([^"']*)["']/, (m, cls) => `class="${cls} center"`);
+      }
+      return `<p${attrs} class="center">`;
+    });
+
+    // Generate styled HTML for PDF - matching xianmijingzang.com style with ruby annotations
+    const fullHtml = `
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+  <meta charset="UTF-8">
+  <style>
+    @page {
+      size: A4;
+      margin: 1.5cm 1.5cm;
+    }
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+    body {
+      font-family: "Microsoft YaHei", "SimSun", "STSong", "Noto Serif CJK SC", "PingFang SC", serif;
+      font-size: 16pt;
+      line-height: 2.8;
+      color: #333;
+      background: #fdfbf7;
+    }
+    .header {
+      text-align: center;
+      margin-bottom: 30px;
+      padding: 20px;
+      background: linear-gradient(to bottom, #f5f0e8, #fdfbf7);
+      border-bottom: 2px solid #c9a86c;
+    }
+    .title {
+      font-size: 32pt;
+      font-weight: bold;
+      color: #8b4513;
+      margin-bottom: 10px;
+      letter-spacing: 10px;
+      text-shadow: 1px 1px 2px rgba(0,0,0,0.1);
+    }
+    .subtitle {
+      font-size: 16pt;
+      color: #a0522d;
+      letter-spacing: 6px;
+    }
+    .translator {
+      font-size: 12pt;
+      color: #8b7355;
+      margin-top: 8px;
+      letter-spacing: 3px;
+    }
+    .content {
+      padding: 20px 30px;
+      text-align: justify;
+      background: #fff;
+      border: 1px solid #e8e0d0;
+      border-radius: 4px;
+      margin: 0 10px;
+    }
+    .content p {
+      margin-bottom: 1em;
+      text-indent: 2em;
+      font-size: 0;
+    }
+    .content p.center {
+      text-align: center;
+      text-indent: 0;
+    }
+
+    /* Pinyin above Chinese characters, separate lines */
+    .py-pair {
+      display: inline-block;
+      text-align: center;
+      margin: 0;
+      line-height: 1.1;
+    }
+    .py-pair .py {
+      display: block;
+      font-size: 8pt;
+      color: #888;
+      font-family: Arial, "Helvetica Neue", sans-serif;
+      line-height: 1;
+      min-height: 8pt;
+    }
+    .py-pair .hz {
+      display: block;
+      font-size: 16pt;
+      color: #333;
+      line-height: 1.2;
+    }
+
+    .footer {
+      margin-top: 40px;
+      padding: 15px;
+      text-align: center;
+      font-size: 10pt;
+      color: #a0522d;
+      border-top: 1px solid #c9a86c;
+    }
+
+    /* Hide any remaining styling elements */
+    i { font-style: normal; }
+
+    /* Decorative elements */
+    .ornament {
+      text-align: center;
+      color: #c9a86c;
+      font-size: 14pt;
+      margin: 15px 0;
+      letter-spacing: 10px;
+    }
+  </style>
+</head>
+<body>
+  <div class="header">
+    <div class="title">大般若波羅蜜多經</div>
+    <div class="subtitle">卷第${scroll}</div>
+    <div class="translator">唐三藏法師玄奘 奉詔譯</div>
+  </div>
+  <div class="ornament">❀ ❀ ❀</div>
+  <div class="content">
+    ${centeredHtml}
+  </div>
+  <div class="ornament">❀ ❀ ❀</div>
+  <div class="footer">
+    — 大般若波羅蜜多經 卷第${scroll} —<br>
+    <span style="font-size: 8pt; color: #999;">Generated from xianmijingzang.com</span>
+  </div>
+</body>
+</html>`;
+
+    // Generate PDF using Puppeteer
+    let puppeteer;
+    try {
+      puppeteer = await import('puppeteer');
+    } catch (e) {
+      console.error('Puppeteer import failed:', e);
+      return res.status(500).json({
+        error: 'PDF generation not available',
+        hint: 'Run: npm install puppeteer'
+      });
+    }
+
+    let browser;
+    try {
+      browser = await puppeteer.default.launch({
+        headless: 'new',
+        args: [
+          '--no-sandbox',
+          '--disable-setuid-sandbox',
+          '--disable-dev-shm-usage',
+          '--disable-gpu',
+          '--font-render-hinting=none',
+          '--disable-web-security'
+        ]
+      });
+
+      const page = await browser.newPage();
+      await page.setContent(fullHtml, {
+        waitUntil: 'domcontentloaded',
+        timeout: 30000
+      });
+
+      const pdfBuffer = await page.pdf({
+        format: 'A4',
+        printBackground: true,
+        margin: {
+          top: '2.5cm',
+          bottom: '2.5cm',
+          left: '2cm',
+          right: '2cm'
+        },
+        displayHeaderFooter: false
+      });
+
+      await browser.close();
+
+      res.setHeader('Content-Type', 'application/pdf');
+      const filename = `大般若波羅蜜多經_卷${scroll}.pdf`;
+      const encodedFilename = encodeURIComponent(filename);
+      res.setHeader('Content-Disposition', `attachment; filename="${scroll}.pdf"; filename*=UTF-8''${encodedFilename}`);
+      res.send(pdfBuffer);
+
+    } catch (browserError) {
+      console.error('Browser/PDF error:', browserError);
+      if (browser) await browser.close().catch(() => {});
+      throw browserError;
+    }
+
+  } catch (error) {
+    console.error('Failed to generate PDF:', error);
+    res.status(500).json({ error: 'Failed to generate PDF: ' + error.message });
   }
 });
 

@@ -1,5 +1,5 @@
 
-import React, { useState, useEffect, useMemo } from 'react';
+import React, { useState, useEffect, useMemo, useRef } from 'react';
 import { Volume, VolumeStatus, AppView, ClaimRequest } from './types';
 import { dbService } from './dbService';
 import { generateBlessingMessage } from './geminiService';
@@ -16,12 +16,56 @@ const App: React.FC = () => {
   const [successData, setSuccessData] = useState<{ volume: Volume; blessing: string; sentViaBackend: boolean } | null>(null);
   const [showNameSuggestions, setShowNameSuggestions] = useState(false);
 
+  // Scripture page state
+  const [scriptureHtml, setScriptureHtml] = useState<string>('');
+  const [scriptureLoading, setScriptureLoading] = useState(false);
+  const [scriptureError, setScriptureError] = useState<string>('');
+  const audioRef = useRef<HTMLAudioElement>(null);
+  const [playbackSpeed, setPlaybackSpeed] = useState(1);
+
   const [formData, setFormData] = useState({
     name: '',
     phone: '',
     plannedDays: 1,
     remarks: ''
   });
+
+  // Function to load scripture content
+  const loadScripture = async (scroll: number) => {
+    setScriptureLoading(true);
+    setScriptureError('');
+    setScriptureHtml('');
+
+    try {
+      const response = await fetch(`${API_BASE_URL}/api/scripture/${scroll}`);
+      if (!response.ok) {
+        throw new Error(`Failed to load scripture: ${response.status}`);
+      }
+      const data = await response.json();
+      const normalizeScriptureHtml = (html: string) => {
+        // Upstream nests punctuation inside the hanzi span:
+        //   <i><span>pinyin</span><span>hanzi<span class=dou>，</span></span></i>
+        // Extract punctuation into its own <i> block with empty pinyin for baseline alignment
+        return html.replace(
+          /<span class=(?:["'])?(?:dou|dian)(?:["'])?>([^<]*)<\/span>(<\/span><\/i>)/gi,
+          '$2<i><span>\u00a0</span><span>$1</span></i>'
+        );
+      };
+      setScriptureHtml(normalizeScriptureHtml(data.html));
+    } catch (error: any) {
+      console.error('Failed to load scripture:', error);
+      setScriptureError(error.message || 'Failed to load scripture text');
+    } finally {
+      setScriptureLoading(false);
+    }
+  };
+
+  // Navigate to scripture page
+  const goToScripture = (volume: Volume) => {
+    setSelectedVolume(volume);
+    setView('scripture');
+    loadScripture(volume.scroll);
+  };
 
   // Extract unique name-phone pairs from claimed volumes for autocomplete
   const knownClaimers = useMemo(() => {
@@ -66,6 +110,10 @@ const App: React.FC = () => {
   }, [volumes, searchTerm, filterStatus]);
 
   const handleClaimClick = (volume: Volume) => {
+    if (volume.status !== VolumeStatus.UNCLAIMED) {
+      alert('该卷已经被认领');
+      return;
+    }
     setSelectedVolume(volume);
     setView('claim');
   };
@@ -104,7 +152,7 @@ const App: React.FC = () => {
       if (!response.ok) {
         const errorData = await response.json().catch(() => ({}));
         if (response.status === 409) {
-          alert(errorData.error || '该经卷已被其他人认领，请刷新页面选择其他经卷。');
+          alert(errorData.error || '该卷已经被认领');
           const refreshedVolumes = await dbService.getVolumes();
           setVolumes(refreshedVolumes);
           setView('home');
@@ -197,14 +245,12 @@ const App: React.FC = () => {
                     </div>
                   </div>
                   <div className="flex gap-2">
-                    <a
-                      href={vol.readingUrl}
-                      target="_blank"
-                      rel="noopener noreferrer"
+                    <button
+                      onClick={() => goToScripture(vol)}
                       className="flex-1 text-center py-3 px-4 border-2 border-blue-600 text-blue-600 rounded-xl font-bold text-sm transition-all active:scale-95"
                     >
                       阅读原文
-                    </a>
+                    </button>
                     {vol.status === VolumeStatus.UNCLAIMED ? (
                       <button
                         onClick={() => handleClaimClick(vol)}
@@ -246,15 +292,13 @@ const App: React.FC = () => {
                       <td className="p-5 font-bold text-[#5c4033] serif-title text-lg">{vol.volumeTitle}</td>
                       <td className="p-5">{getStatusBadge(vol)}</td>
                       <td className="p-5">
-                        <a
-                          href={vol.readingUrl}
-                          target="_blank"
-                          rel="noopener noreferrer"
+                        <button
+                          onClick={() => goToScripture(vol)}
                           className="inline-flex items-center text-blue-600 hover:text-blue-800 font-bold text-sm transition-colors group-hover:underline"
                         >
                           阅读原文
                           <svg className="w-4 h-4 ml-1" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" /></svg>
-                        </a>
+                        </button>
                       </td>
                       <td className="p-5 text-center">
                         {vol.status === VolumeStatus.UNCLAIMED ? (
@@ -446,20 +490,163 @@ const App: React.FC = () => {
                 </div>
               </div>
 
-              <a
-                href={successData.volume.readingUrl}
-                target="_blank"
-                rel="noopener noreferrer"
+              <button
+                onClick={() => goToScripture(successData.volume)}
                 className="mt-6 md:mt-10 block w-full bg-[#8b7355] hover:bg-[#5c4033] text-white py-4 md:py-5 rounded-2xl font-bold text-center text-base md:text-xl transition-all shadow-2xl transform active:scale-95 md:hover:-translate-y-1"
               >
-                前往线上经库 · 开启诵读
-              </a>
+                开始诵读经文
+              </button>
             </div>
 
             <button onClick={() => setView('home')} className="text-[#8b7355] hover:text-[#5c4033] font-bold transition-colors text-base md:text-lg flex items-center justify-center mx-auto active:scale-95">
               <svg className="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M10 19l-7-7 7-7"/></svg>
               返回经目列表
             </button>
+          </div>
+        )}
+
+        {view === 'scripture' && selectedVolume && (
+          <div className="p-4 md:p-8 fade-in">
+            <button
+              onClick={() => setView('home')}
+              className="mb-6 text-[#8b7355] hover:text-[#5c4033] flex items-center font-bold transition-colors text-base active:scale-95"
+            >
+              <svg className="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M15 19l-7-7 7-7" />
+              </svg>
+              返回经目列表
+            </button>
+
+            {/* Scripture Header */}
+            <div className="bg-[#fdfbf7] p-6 md:p-8 rounded-2xl border border-[#ede3d4] mb-6">
+              <h2 className="text-2xl md:text-4xl font-bold serif-title text-[#5c4033] mb-4">
+                {selectedVolume.volumeTitle}
+              </h2>
+              <p className="text-sm text-gray-500 mb-4">{selectedVolume.volumeNumber}</p>
+
+              {/* Action Buttons */}
+              <div className="flex flex-wrap gap-3">
+                {/* Audio Player */}
+                <div className="flex-1 min-w-[280px]">
+                  <label className="block text-xs font-bold text-[#8b7355] uppercase tracking-widest mb-2">
+                    人声朗读
+                  </label>
+                  <audio
+                    ref={audioRef}
+                    controls
+                    className="w-full"
+                    src={`https://w1.xianmijingzang.com/fojing/1/1/1/1_${selectedVolume.scroll}.mp3?_mt=`}
+                  >
+                    Your browser does not support the audio element.
+                  </audio>
+                  <div className="flex gap-2 mt-2">
+                    <a
+                      href={`https://w1.xianmijingzang.com/fojing/1/1/1/1_${selectedVolume.scroll}.mp3?_mt=`}
+                      download
+                      className="inline-flex items-center px-4 py-2 border-2 border-[#8b7355] text-[#8b7355] hover:bg-[#f5f0eb] rounded-xl font-bold text-sm transition-all"
+                    >
+                      下载
+                    </a>
+                    <button
+                      onClick={() => {
+                        const speeds = [0.5, 0.75, 1, 1.25, 1.5, 2];
+                        const nextIdx = (speeds.indexOf(playbackSpeed) + 1) % speeds.length;
+                        const next = speeds[nextIdx];
+                        setPlaybackSpeed(next);
+                        if (audioRef.current) audioRef.current.playbackRate = next;
+                      }}
+                      className="inline-flex items-center px-4 py-2 border-2 border-[#8b7355] text-[#8b7355] hover:bg-[#f5f0eb] rounded-xl font-bold text-sm transition-all"
+                    >
+                      倍数 {playbackSpeed}x
+                    </button>
+                  </div>
+                </div>
+
+                {/* Download Options */}
+                <div>
+                  <label className="block text-xs font-bold text-[#8b7355] uppercase tracking-widest mb-2">
+                    下载经文
+                  </label>
+                  <div className="flex gap-2">
+                    <a
+                      href={`${API_BASE_URL}/api/scripture/${selectedVolume.scroll}/pdf`}
+                      className="inline-flex items-center px-4 py-3 border-2 border-[#5c4033] text-[#5c4033] hover:bg-[#f5f0eb] rounded-xl font-bold text-sm transition-all"
+                      download
+                    >
+                      <svg className="w-5 h-5 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M7 21h10a2 2 0 002-2V9.414a1 1 0 00-.293-.707l-5.414-5.414A1 1 0 0012.586 3H7a2 2 0 00-2 2v14a2 2 0 002 2z" />
+                      </svg>
+                      PDF
+                    </a>
+                  </div>
+                </div>
+
+                {/* External Link */}
+                <div>
+                  <label className="block text-xs font-bold text-[#8b7355] uppercase tracking-widest mb-2">
+                    原始来源
+                  </label>
+                  <a
+                    href={selectedVolume.readingUrl}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="inline-flex items-center px-6 py-3 border-2 border-blue-600 text-blue-600 hover:bg-blue-50 rounded-xl font-bold text-sm transition-all"
+                  >
+                    <svg className="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" />
+                    </svg>
+                    原文链接
+                  </a>
+                </div>
+              </div>
+            </div>
+
+            {/* Scripture Content */}
+            <div className="bg-white rounded-2xl border border-[#ede3d4] p-6 md:p-10 shadow-sm">
+              <h3 className="text-xl font-bold text-[#5c4033] mb-6 pb-4 border-b border-[#ede3d4]">
+                经文内容
+              </h3>
+
+              {scriptureLoading && (
+                <div className="flex items-center justify-center py-20">
+                  <svg className="animate-spin h-10 w-10 text-[#8b7355]" viewBox="0 0 24 24">
+                    <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" fill="none"></circle>
+                    <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                  </svg>
+                  <span className="ml-4 text-gray-500 text-lg">正在加载经文...</span>
+                </div>
+              )}
+
+              {scriptureError && (
+                <div className="text-center py-20">
+                  <div className="text-red-500 mb-4">
+                    <svg className="w-16 h-16 mx-auto mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
+                    </svg>
+                    <p className="text-lg font-medium">{scriptureError}</p>
+                  </div>
+                  <button
+                    onClick={() => loadScripture(selectedVolume.scroll)}
+                    className="px-6 py-3 bg-[#8b7355] hover:bg-[#5c4033] text-white rounded-xl font-bold transition-all"
+                  >
+                    重试
+                  </button>
+                </div>
+              )}
+
+              {!scriptureLoading && !scriptureError && scriptureHtml && (
+                <div
+                  className="scripture-content"
+                  dangerouslySetInnerHTML={{ __html: scriptureHtml }}
+                />
+              )}
+
+              {!scriptureLoading && !scriptureError && !scriptureHtml && (
+                <div className="text-center py-20 text-gray-400">
+                  <p>经文内容为空</p>
+                </div>
+              )}
+            </div>
           </div>
         )}
       </main>

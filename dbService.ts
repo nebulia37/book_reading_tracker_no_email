@@ -11,7 +11,15 @@ export const dbService = {
       let volumes: Volume[] = [...INITIAL_VOLUMES];
 
       try {
-        const response = await fetch(`${API_BASE_URL}/api/claims`);
+        // Add 10 second timeout so page loads faster if server is sleeping
+        const controller = new AbortController();
+        const timeoutId = setTimeout(() => controller.abort(), 10000);
+
+        const response = await fetch(`${API_BASE_URL}/api/claims`, {
+          signal: controller.signal
+        });
+        clearTimeout(timeoutId);
+
         if (response.ok) {
           const claimsData = await response.json();
           const claims = claimsData.data || claimsData;
@@ -39,10 +47,33 @@ export const dbService = {
         }
       } catch (error) {
         console.warn('Failed to fetch claims from Supabase, using local data only:', error);
-        // If Supabase fetch fails, try to use localStorage as fallback
-        const data = localStorage.getItem(DB_KEY);
-        if (data) {
-          volumes = JSON.parse(data);
+        // If Supabase fetch fails, try to merge localStorage claims with INITIAL_VOLUMES
+        // Don't replace volumes entirely - just overlay any cached claim info
+        try {
+          const data = localStorage.getItem(DB_KEY);
+          if (data) {
+            const cachedVolumes = JSON.parse(data);
+            const now = new Date();
+            volumes = volumes.map(volume => {
+              const cached = cachedVolumes.find((c: any) => String(c.id) === String(volume.id));
+              if (cached && cached.status !== VolumeStatus.UNCLAIMED) {
+                const isCompleted = cached.expectedCompletionDate && now >= new Date(cached.expectedCompletionDate);
+                return {
+                  ...volume,
+                  status: isCompleted ? VolumeStatus.COMPLETED : cached.status,
+                  claimerName: cached.claimerName,
+                  claimerPhone: cached.claimerPhone,
+                  plannedDays: cached.plannedDays,
+                  claimedAt: cached.claimedAt,
+                  expectedCompletionDate: cached.expectedCompletionDate,
+                  remarks: cached.remarks
+                };
+              }
+              return volume;
+            });
+          }
+        } catch (cacheError) {
+          console.warn('Failed to parse localStorage cache:', cacheError);
         }
       }
 

@@ -34,4 +34,4 @@ export interface ClaimRequest {
   remarks?: string;
 }
 
-export type AppView = 'home' | 'claim' | 'success';
+export type AppView = 'home' | 'claim' | 'success' | 'scripture';

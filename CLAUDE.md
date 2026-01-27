@@ -4,13 +4,13 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## Project Overview
 
-A Buddhist scripture reading tracker (大藏经诵读认领系统) for claiming and managing Tripitaka reading volumes. Built as a full-stack React application with optional Supabase persistence and AI-generated blessings.
+A Buddhist scripture reading tracker (大藏经诵读认领系统) for claiming and managing Tripitaka reading volumes. Full-stack React + Express application with optional Supabase persistence and AI-generated blessings.
 
 ## Development Commands
 
 ### Prerequisites
 - Node.js installed
-- Copy `.env_example` to `.env` and configure API keys
+- Create `.env` with required variables (see Environment Variables section)
 
 ### Essential Commands
 ```bash
@@ -22,109 +22,96 @@ npm start               # Start Express backend server on port 3001
 ```
 
 ### Running the Full Application
-The app requires both frontend and backend running:
+Both frontend and backend must run simultaneously:
 1. Terminal 1: `npm run dev` (frontend at http://localhost:3000)
 2. Terminal 2: `npm start` (backend at http://localhost:3001)
 
+### No Tests or Linting
+There are no test files, test frameworks, ESLint, or Prettier configured in this project.
+
 ## Architecture Overview
 
-### Frontend Architecture (React SPA)
-- **Single Component Design**: All UI logic lives in [App.tsx](App.tsx)
-- **Three View States**: `home` (volume list), `claim` (form), `success` (confirmation)
-- **Client-Side State Management**: Uses React `useState` for all state
-- **No Router**: View switching via state (`view` variable)
+### Frontend (React 19 SPA)
+- **Single Component Design**: All UI logic lives in [App.tsx](App.tsx) (~654 lines)
+- **Four View States** (`AppView` type): `home` (volume list), `claim` (form), `success` (confirmation), `scripture` (reading view)
+- **No Router**: View switching via `useState` (`view` variable)
+- **Mobile-Responsive**: Card layout on mobile, table on desktop
 
 ### Data Layer ([dbService.ts](dbService.ts))
 Hybrid persistence strategy:
-1. **Primary Storage**: Browser LocalStorage (key: `longzang_tripitaka_volumes_v12`)
-2. **Optional Sync**: Supabase via Supabase API
+1. **Primary Storage**: Browser LocalStorage (key: `longzang_tripitaka_volumes_v13`)
+2. **Optional Sync**: Supabase via backend API
 3. **Data Flow**:
-   - On load: Fetch from Supabase → Merge with LocalStorage → Update UI
+   - On load: Fetch from `/api/claims` (10s timeout) → merge with LocalStorage → update UI
    - On claim: Save to both LocalStorage and Supabase (via backend)
-   - Auto-completion: Client-side date comparison marks volumes as completed
+   - Auto-completion: Client-side date comparison marks volumes as `COMPLETED`
 
 ### Backend ([server.js](server.js))
-Express server with two endpoints:
-- `POST /api/claim`: Accepts claim data, saves to Supabase (if configured), returns success
-- `GET /api/claims`: Fetches all claims from Supabase
+Express 5 server (~833 lines) with caching (1-minute for claims, 1-hour for scripture):
 
-**Important**: The backend fails gracefully if Supabase credentials are not configured. Claims still save to LocalStorage.
+| Endpoint | Description |
+|----------|-------------|
+| `POST /api/claim` | Validate + save claim to Supabase |
+| `GET /api/claims` | Fetch all claims (cached, `?fresh=1` to bypass) |
+| `GET /api/scripture/:scroll` | Fetch scripture HTML from xianmijingzang.com (GBK→UTF-8) |
+| `GET /api/scripture/:scroll/txt` | Download scripture as plain text |
+| `GET /api/scripture/:scroll/pdf` | Generate PDF via Puppeteer with ruby annotations |
+| `GET /view?code=ACCESS_CODE` | Admin dashboard HTML (password-protected) |
+| `GET /view.csv?code=ACCESS_CODE` | CSV export of all claims (password-protected) |
+
+The backend fails gracefully if Supabase credentials are not configured. Claims still save to LocalStorage.
 
 ### Data Structure ([types.ts](types.ts), [data.ts](data.ts))
-- **Volume**: Represents a scripture volume with status (unclaimed/claimed/completed)
-- **INITIAL_VOLUMES**: Hardcoded list of 700+ Prajna section volumes
-- **Volume Generation**: Helper function `createSutraVolumes()` generates volumes from metadata
+- `Volume`: Scripture volume with status (unclaimed/claimed/completed), claimer info, dates
+- `createSutraVolumes()`: Generates 200 Prajna section volumes (大般若波羅蜜多經, scrolls 1-200)
+- Reading URLs point to xianmijingzang.com (collection ID 43, subid 67)
 
 ### AI Integration ([geminiService.ts](geminiService.ts))
-**Currently Disabled**: The Gemini API integration is stubbed out with a mock object. To enable:
-1. Uncomment the real import
-2. Initialize with `GEMINI_API_KEY` from environment
-3. Used for generating Buddhist blessing messages after successful claims
+**Currently Disabled**: The `@google/genai` import is commented out and replaced with a mock object to avoid Vite build errors. Returns hardcoded fallback blessing messages.
 
 ## Environment Variables
 
-Required in `.env`:
 ```bash
-VITE_GEMINI_API_KEY=...        # Google Gemini API key (optional if AI disabled)
-SUPABASE_URL=...            # Supabase endpoint (optional)
-SUPABASE_ANON_KEY=...            # Supabase auth token (optional)
-```
+# Frontend (accessed via import.meta.env)
+VITE_GEMINI_API_KEY=...        # Google Gemini API key (optional, AI disabled by default)
+VITE_API_URL=...               # Backend API base URL
 
-Frontend access: `import.meta.env.VITE_GEMINI_API_KEY`
-Backend access: `process.env.SUPABASE_URL`
+# Backend (accessed via process.env)
+SUPABASE_URL=...               # Supabase endpoint (optional)
+SUPABASE_ANON_KEY=...          # Supabase auth token (optional)
+VIEW_ACCESS_CODE=...           # Password for /view admin dashboard (default: 'admin123')
+```
 
 ## Key Implementation Patterns
 
 ### Volume Claiming Flow
-1. User clicks "我要认领" → Sets `selectedVolume` and switches to `claim` view
-2. User submits form → `handleSubmit` calls backend `/api/claim`
-3. Backend attempts Supabase save (fails gracefully if not configured)
+1. User clicks "我要认领" → sets `selectedVolume`, switches to `claim` view
+2. User submits form → `handleSubmit` POSTs to `/api/claim`
+3. Backend validates (name, 8-11 digit phone), checks for duplicate volumeId, saves to Supabase
 4. Frontend updates LocalStorage via `dbService.claimVolume()`
-5. Generate blessing message (currently returns fallback)
-6. Switch to `success` view with completion date
+6. Switch to `success` view with blessing message and completion date
 
 ### Status Management
-Volumes have three states (defined in [types.ts:2](types.ts#L2)):
+Volumes have three states (defined in [types.ts](types.ts)):
 - `UNCLAIMED`: Available for claiming
-- `CLAIMED`: Someone has claimed it, deadline not passed
-- `COMPLETED`: Deadline has passed (auto-marked in `dbService.getVolumes()`)
+- `CLAIMED`: Active claim, deadline not yet passed
+- `COMPLETED`: Deadline passed (auto-marked in `dbService.getVolumes()`)
 
-### Date Calculation
-Completion date = claim date + `plannedDays`:
-```typescript
-expectedCompletionDate.setDate(claimedAt.getDate() + request.plannedDays)
-```
-
-## Critical Files
-
-- [App.tsx](App.tsx): Entire UI, all views, form handling
-- [dbService.ts](dbService.ts): LocalStorage + Supabase sync logic
-- [server.js](server.js): Backend API, Supabase integration
-- [data.ts](data.ts): Initial volume dataset (700+ volumes)
-- [types.ts](types.ts): TypeScript interfaces
-- [vite.config.ts](vite.config.ts): Vite configuration, env var injection
-
-## Known Issues & Notes
-
-1. **Gemini Service Disabled**: The AI blessing feature is commented out in [geminiService.ts:4](geminiService.ts#L4) to avoid Vite build errors
-2. **LocalStorage-First Design**: The app works completely offline; Supabase is optional
-3. **No Authentication**: Anyone can claim any volume
-4. **Client-Side Validation Only**: No server-side validation of claim data
-5. **Hardcoded Volume List**: All volumes are defined in [data.ts](data.ts), not loaded from external source
-6. **CORS Configuration**: [server.js:105](server.js#L105) has a duplicate CORS config (already enabled on line 12)
+### Phone Number Validation
+Backend enforces 8-11 digit phone numbers. Duplicate claims for the same volumeId return 409.
 
 ## Supabase Integration
 
-If using Supabase, the Google Sheet must have these columns:
+The `claims` table uses these columns:
 ```
-volumeId | volumeNumber | volumeTitle | name | phone | plannedDays | readingUrl | claimedAt | expectedCompletionDate | status
+volumeId | volumeNumber | volumeTitle | name | phone | plannedDays | readingUrl | claimedAt | expectedCompletionDate | remarks | status
 ```
 
 ## Styling
 
-- Uses Tailwind CSS via inline classes
-- Custom color palette: `#5c4033`, `#8b7355`, `#fdfbf7` (brown/beige theme)
-- Serif fonts for Chinese text: `serif-title`, `calligraphy` classes
+- Tailwind CSS via CDN (in [index.html](index.html))
+- Custom CSS variables in [styles.css](styles.css): `--sutra-brown`, `--sutra-gold`, `--sutra-bg`, `--sutra-border`
+- Chinese fonts: Noto Serif SC (`.serif-title`), Ma Shan Zheng (`.calligraphy`)
 - Animations: `fade-in` class with staggered delays
 
 ## Path Aliasing
@@ -133,3 +120,11 @@ TypeScript and Vite both configured with `@/*` → project root:
 ```typescript
 import { dbService } from '@/dbService'
 ```
+
+## Known Issues & Notes
+
+1. **Gemini Service Disabled**: AI import is stubbed out with mock object in [geminiService.ts](geminiService.ts)
+2. **LocalStorage-First Design**: App works completely offline; Supabase is optional
+3. **No Authentication**: Anyone can claim any volume
+4. **Puppeteer Required**: PDF generation endpoint requires Puppeteer (heavy dependency)
+5. **External Scripture Source**: Scripture content proxied from xianmijingzang.com with GBK→UTF-8 decoding
