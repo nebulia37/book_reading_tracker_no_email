@@ -534,12 +534,6 @@ const App: React.FC = () => {
                     Your browser does not support the audio element.
                   </audio>
                   <div className="flex gap-2 mt-2">
-                    <a
-                      href={`${API_BASE_URL}/api/scripture/${selectedVolume.scroll}/mp3`}
-                      className="inline-flex items-center px-4 py-2 border-2 border-[#8b7355] text-[#8b7355] hover:bg-[#f5f0eb] rounded-xl font-bold text-sm transition-all"
-                    >
-                      下载
-                    </a>
                     <button
                       onClick={() => {
                         const speeds = [0.5, 0.75, 1, 1.25, 1.5, 2];
@@ -552,24 +546,6 @@ const App: React.FC = () => {
                     >
                       倍数 {playbackSpeed}x
                     </button>
-                  </div>
-                </div>
-
-                {/* Download Options */}
-                <div>
-                  <label className="block text-xs font-bold text-[#8b7355] uppercase tracking-widest mb-2">
-                    打印经文
-                  </label>
-                  <div className="flex gap-2">
-                    <a
-                      href={`${API_BASE_URL}/api/scripture/${selectedVolume.scroll}/pdf`}
-                      className="inline-flex items-center px-4 py-3 border-2 border-[#5c4033] text-[#5c4033] hover:bg-[#f5f0eb] rounded-xl font-bold text-sm transition-all"
-                    >
-                      <svg className="w-5 h-5 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M17 17h2a2 2 0 002-2v-4a2 2 0 00-2-2H5a2 2 0 00-2 2v4a2 2 0 002 2h2m2 4h6a2 2 0 002-2v-4a2 2 0 00-2-2H9a2 2 0 00-2 2v4a2 2 0 002 2zm8-12V5a2 2 0 00-2-2H9a2 2 0 00-2 2v4h10z" />
-                      </svg>
-                      打印版
-                    </a>
                   </div>
                 </div>
 
