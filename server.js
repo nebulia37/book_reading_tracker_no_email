@@ -604,10 +604,10 @@ app.get('/api/scripture/:scroll/txt', async (req, res) => {
       .replace(/\n{3,}/g, '\n\n')
       .trim();
 
-    const fullText = `大般若波羅蜜多經 卷${scroll}\n唐三藏法師玄奘 奉詔譯\n${'='.repeat(40)}\n\n${plainText}`;
+    const fullText = `大般若波罗蜜多经 卷${scroll}\n唐三藏法师玄奘 奉詔译\n${'='.repeat(40)}\n\n${plainText}`;
 
     res.setHeader('Content-Type', 'text/plain; charset=utf-8');
-    const txtFilename = `大般若波羅蜜多經_卷${scroll}.txt`;
+    const txtFilename = `大般若波罗蜜多经_卷${scroll}.txt`;
     const encodedTxtFilename = encodeURIComponent(txtFilename);
     res.setHeader('Content-Disposition', `attachment; filename="${scroll}.txt"; filename*=UTF-8''${encodedTxtFilename}`);
     res.send(fullText);
