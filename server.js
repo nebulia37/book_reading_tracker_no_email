@@ -59,7 +59,7 @@ async function sendDingTalkNotification(claim) {
               `**电话**: ${claim.phone.slice(0, 3)}****${claim.phone.slice(-4)}\n\n` +
               `**计划天数**: ${claim.plannedDays}天\n\n` +
               `**预计完成**: ${new Date(Date.now() + claim.plannedDays * 24 * 60 * 60 * 1000).toLocaleDateString('zh-CN')}\n\n` +
-              (claim.remarks ? `**备注**: ${claim.remarks}\n\n` : '') +
+              (claim.remarks ? `**备注（不要留回向信息，请自行回向）**: ${claim.remarks}\n\n` : '') +
               `---\n认领时间: ${new Date().toLocaleString('zh-CN')}`
       }
     };
