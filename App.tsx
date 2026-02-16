@@ -420,7 +420,7 @@ const App: React.FC = () => {
               </div>
 
               <div>
-                <label className="block text-sm font-bold text-gray-700 mb-2">备注</label>
+                <label className="block text-sm font-bold text-gray-700 mb-2">备注（不要留回向信息，请自行回向）</label>
                 <textarea
                   value={formData.remarks}
                   onChange={(e) => setFormData({...formData, remarks: e.target.value})}
