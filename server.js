@@ -25,6 +25,8 @@ const PORT = 3001;
 const DB_FILE = path.join(__dirname, 'claims.json');
 const SUPABASE_URL = process.env.SUPABASE_URL;
 const SUPABASE_ANON_KEY = process.env.SUPABASE_ANON_KEY;
+const SUPABASE_SERVICE_ROLE_KEY = process.env.SUPABASE_SERVICE_ROLE_KEY;
+const SUPABASE_SERVER_KEY = SUPABASE_SERVICE_ROLE_KEY || SUPABASE_ANON_KEY;
 
 // 钉钉机器人配置
 const DINGTALK_WEBHOOK = process.env.DINGTALK_WEBHOOK;
@@ -97,11 +99,12 @@ const CACHE_DURATION = 1 * 60 * 1000; // 1 minute
 
 let supabaseClient = null;
 const getSupabaseClient = () => {
-  if (!SUPABASE_URL || !SUPABASE_ANON_KEY) return null;
+  if (!SUPABASE_URL || !SUPABASE_SERVER_KEY) return null;
   if (!supabaseClient) {
-    supabaseClient = createClient(SUPABASE_URL, SUPABASE_ANON_KEY, {
+    supabaseClient = createClient(SUPABASE_URL, SUPABASE_SERVER_KEY, {
       auth: { persistSession: false }
     });
+    console.log(`Supabase client initialized with ${SUPABASE_SERVICE_ROLE_KEY ? 'service role key' : 'anon key'}`);
   }
   return supabaseClient;
 };
@@ -312,7 +315,11 @@ app.post('/api/complete', async (req, res) => {
 
     if (updateError) {
       console.error(`Complete: update by id="${targetClaim.id}" failed:`, updateError.message);
-      return res.status(500).json({ error: 'Failed to complete volume' });
+      return res.status(500).json({
+        error: 'Failed to complete volume',
+        details: updateError.message,
+        code: updateError.code || null
+      });
     }
 
     let updatedClaim = Array.isArray(updateRows) && updateRows.length > 0 ? updateRows[0] : null;
@@ -357,7 +364,10 @@ app.post('/api/complete', async (req, res) => {
     res.json({ success: true, claim: updatedClaim });
   } catch (error) {
     console.error('Complete error:', error);
-    res.status(500).json({ error: 'Failed to complete volume' });
+    res.status(500).json({
+      error: 'Failed to complete volume',
+      details: error?.message || String(error)
+    });
   }
 });
 
