@@ -4,7 +4,9 @@ import { Volume, VolumeStatus, AppView, ClaimRequest } from './types';
 import { dbService } from './dbService';
 import { generateBlessingMessage } from './geminiService';
 
-const API_BASE_URL = import.meta.env.VITE_API_URL;
+const API_BASE_URL = import.meta.env.DEV
+  ? 'http://localhost:3001'
+  : import.meta.env.VITE_API_URL;
 
 const App: React.FC = () => {
   const [view, setView] = useState<AppView>('home');
@@ -18,10 +20,15 @@ const App: React.FC = () => {
 
   // Scripture page state
   const [scriptureHtml, setScriptureHtml] = useState<string>('');
+  const [prefaceHtml, setPrefaceHtml] = useState<string>('');
   const [scriptureLoading, setScriptureLoading] = useState(false);
   const [scriptureError, setScriptureError] = useState<string>('');
   const audioRef = useRef<HTMLAudioElement>(null);
+  const secondaryAudioRef = useRef<HTMLAudioElement>(null);
+  const [audioSrc, setAudioSrc] = useState<string | null>(null);
+  const [secondaryAudioSrc, setSecondaryAudioSrc] = useState<string | null>(null);
   const [playbackSpeed, setPlaybackSpeed] = useState(1);
+  const [completingVolumeId, setCompletingVolumeId] = useState<string | null>(null);
 
   const [formData, setFormData] = useState({
     name: '',
@@ -35,6 +42,9 @@ const App: React.FC = () => {
     setScriptureLoading(true);
     setScriptureError('');
     setScriptureHtml('');
+    setPrefaceHtml('');
+    setAudioSrc(null);
+    setSecondaryAudioSrc(null);
 
     try {
       const response = await fetch(`${API_BASE_URL}/api/scripture/${scroll}`);
@@ -43,6 +53,7 @@ const App: React.FC = () => {
       }
       const data = await response.json();
       const normalizeScriptureHtml = (html: string) => {
+        if (!html) return '';
         // Upstream nests punctuation inside the hanzi span:
         //   <i><span>pinyin</span><span>hanzi<span class=dou>，</span></span></i>
         // Extract punctuation into its own <i> block with empty pinyin for baseline alignment
@@ -51,7 +62,15 @@ const App: React.FC = () => {
           '$2<i><span>\u00a0</span><span>$1</span></i>'
         );
       };
-      setScriptureHtml(normalizeScriptureHtml(data.html));
+      const mainHtml = normalizeScriptureHtml(data.html);
+      const preHtml = normalizeScriptureHtml(data.prefaceHtml || '');
+
+      // Use server-provided audio source suffixes (e.g. "580" or "574a")
+      setAudioSrc(data.audioSrc || null);
+      setSecondaryAudioSrc(data.secondaryAudioSrc || null);
+
+      setScriptureHtml(mainHtml);
+      setPrefaceHtml(preHtml);
     } catch (error: any) {
       console.error('Failed to load scripture:', error);
       setScriptureError(error.message || 'Failed to load scripture text');
@@ -182,14 +201,45 @@ const App: React.FC = () => {
     }
   };
 
+  const handleComplete = async (volume: Volume) => {
+    if (volume.status !== VolumeStatus.CLAIMED) return;
+    if (!confirm(`确认标记 ${volume.volumeNumber} 为已完成吗？`)) return;
+
+    setCompletingVolumeId(volume.id);
+    try {
+      const updated = await dbService.completeVolume(volume);
+      if (updated) {
+        setVolumes(prev =>
+          prev.map(v =>
+            v.id === volume.id
+              ? {
+                  ...v,
+                  status: VolumeStatus.COMPLETED,
+                  claimerName: updated.claimerName || v.claimerName
+                }
+              : v
+          )
+        );
+      } else {
+        const refreshedVolumes = await dbService.getVolumes();
+        setVolumes(refreshedVolumes);
+      }
+    } catch (error: any) {
+      console.error('Complete error:', error);
+      alert(error.message || '更新完成状态失败，请重试。');
+    } finally {
+      setCompletingVolumeId(null);
+    }
+  };
+
   const getStatusBadge = (volume: Volume) => {
     switch (volume.status) {
       case VolumeStatus.UNCLAIMED:
         return <span className="px-3 py-1 text-xs font-bold rounded-full bg-gray-100 text-gray-400">待认领</span>;
       case VolumeStatus.CLAIMED:
-        return <span className="px-3 py-1 text-xs font-bold rounded-full bg-amber-50 text-amber-600">已认领 - {volume.claimerName}</span>;
+        return <span className="px-3 py-1 text-xs font-bold rounded-full bg-amber-50 text-amber-600">{volume.claimerName ? `已认领 - ${volume.claimerName}` : '已认领'}</span>;
       case VolumeStatus.COMPLETED:
-        return <span className="px-3 py-1 text-xs font-bold rounded-full bg-emerald-50 text-emerald-600">已完成 - {volume.claimerName}</span>;
+        return <span className="px-3 py-1 text-xs font-bold rounded-full bg-emerald-50 text-emerald-600">{volume.claimerName ? `已完成 - ${volume.claimerName}` : '已完成'}</span>;
     }
   };
 
@@ -244,7 +294,7 @@ const App: React.FC = () => {
                       <div className="mb-2">{getStatusBadge(vol)}</div>
                     </div>
                   </div>
-                  <div className="flex gap-2">
+                  <div className="flex gap-2 mb-2">
                     <button
                       onClick={() => goToScripture(vol)}
                       className="flex-1 text-center py-3 px-4 border-2 border-blue-600 text-blue-600 rounded-xl font-bold text-sm transition-all active:scale-95"
@@ -260,7 +310,22 @@ const App: React.FC = () => {
                       </button>
                     ) : (
                       <div className="flex-1 bg-gray-100 text-gray-400 py-3 px-4 rounded-xl font-bold text-sm text-center cursor-not-allowed">
-                        已认领
+                        {vol.status === VolumeStatus.COMPLETED ? '已完成' : '已认领'}
+                      </div>
+                    )}
+                  </div>
+                  <div>
+                    {vol.status === VolumeStatus.CLAIMED ? (
+                      <button
+                        onClick={() => handleComplete(vol)}
+                        disabled={completingVolumeId === vol.id}
+                        className={`w-full py-3 px-4 rounded-xl font-bold text-sm transition-all ${completingVolumeId === vol.id ? 'bg-gray-200 text-gray-400 cursor-not-allowed' : 'bg-emerald-600 text-white active:scale-95'}`}
+                      >
+                        {completingVolumeId === vol.id ? '处理中...' : '完成'}
+                      </button>
+                    ) : (
+                      <div className={`w-full py-3 px-4 rounded-xl font-bold text-sm text-center ${vol.status === VolumeStatus.COMPLETED ? 'bg-emerald-50 text-emerald-600' : 'bg-gray-100 text-gray-400'}`}>
+                        {vol.status === VolumeStatus.COMPLETED ? '已完成' : '未认领'}
                       </div>
                     )}
                   </div>
@@ -282,6 +347,7 @@ const App: React.FC = () => {
                     <th className="p-5 border-b border-[#ede3d4]">名称</th>
                     <th className="p-5 border-b border-[#ede3d4]">状态</th>
                     <th className="p-5 border-b border-[#ede3d4]">在线阅读</th>
+                    <th className="p-5 border-b border-[#ede3d4] text-center">是否完成</th>
                     <th className="p-5 border-b border-[#ede3d4] text-center">操作</th>
                   </tr>
                 </thead>
@@ -301,6 +367,21 @@ const App: React.FC = () => {
                         </button>
                       </td>
                       <td className="p-5 text-center">
+                        {vol.status === VolumeStatus.CLAIMED ? (
+                          <button
+                            onClick={() => handleComplete(vol)}
+                            disabled={completingVolumeId === vol.id}
+                            className={`px-6 py-2 rounded-xl text-sm font-bold transition-all ${completingVolumeId === vol.id ? 'bg-gray-200 text-gray-400 cursor-not-allowed' : 'bg-emerald-600 text-white hover:bg-emerald-700'}`}
+                          >
+                            {completingVolumeId === vol.id ? '处理中...' : '完成'}
+                          </button>
+                        ) : (
+                          <span className={`px-6 py-2 rounded-xl text-sm font-bold ${vol.status === VolumeStatus.COMPLETED ? 'bg-emerald-50 text-emerald-600' : 'bg-gray-100 text-gray-400'}`}>
+                            {vol.status === VolumeStatus.COMPLETED ? '已完成' : '未认领'}
+                          </span>
+                        )}
+                      </td>
+                      <td className="p-5 text-center">
                         {vol.status === VolumeStatus.UNCLAIMED ? (
                           <button
                             onClick={() => handleClaimClick(vol)}
@@ -310,7 +391,7 @@ const App: React.FC = () => {
                           </button>
                         ) : (
                           <span className="bg-gray-100 text-gray-400 px-6 py-2 rounded-xl text-sm font-bold cursor-not-allowed">
-                            已认领
+                            {vol.status === VolumeStatus.COMPLETED ? '已完成' : '已认领'}
                           </span>
                         )}
                       </td>
@@ -318,7 +399,7 @@ const App: React.FC = () => {
                   ))}
                   {filteredVolumes.length === 0 && (
                     <tr>
-                      <td colSpan={5} className="p-20 text-center text-gray-400 font-serif italic text-lg">
+                      <td colSpan={6} className="p-20 text-center text-gray-400 font-serif italic text-lg">
                         未找到符合条件的。
                       </td>
                     </tr>
@@ -520,16 +601,16 @@ const App: React.FC = () => {
 
               {/* Action Buttons */}
               <div className="flex flex-wrap gap-3">
-                {/* Audio Player */}
+                {/* Main Audio */}
                 <div className="flex-1 min-w-[280px]">
                   <label className="block text-xs font-bold text-[#8b7355] uppercase tracking-widest mb-2">
-                    人声朗读
+                    {secondaryAudioSrc ? '音频 A' : '正文音频'}
                   </label>
                   <audio
                     ref={audioRef}
                     controls
                     className="w-full"
-                    src={`https://w1.xianmijingzang.com/fojing/1/1/1/1_${selectedVolume.scroll}.mp3?_mt=`}
+                    src={audioSrc ? `https://w1.xianmijingzang.com/fojing/1/1/1/1_${audioSrc}.mp3?_mt=` : undefined}
                   >
                     Your browser does not support the audio element.
                   </audio>
@@ -541,6 +622,7 @@ const App: React.FC = () => {
                         const next = speeds[nextIdx];
                         setPlaybackSpeed(next);
                         if (audioRef.current) audioRef.current.playbackRate = next;
+                        if (secondaryAudioRef.current) secondaryAudioRef.current.playbackRate = next;
                       }}
                       className="inline-flex items-center px-4 py-2 border-2 border-[#8b7355] text-[#8b7355] hover:bg-[#f5f0eb] rounded-xl font-bold text-sm transition-all"
                     >
@@ -548,6 +630,23 @@ const App: React.FC = () => {
                     </button>
                   </div>
                 </div>
+
+                {/* Secondary audio (part B for split scrolls) */}
+                {secondaryAudioSrc && (
+                  <div className="flex-1 min-w-[280px]">
+                    <label className="block text-xs font-bold text-[#8b7355] uppercase tracking-widest mb-2">
+                      音频 B
+                    </label>
+                    <audio
+                      ref={secondaryAudioRef}
+                      controls
+                      className="w-full"
+                      src={`https://w1.xianmijingzang.com/fojing/1/1/1/1_${secondaryAudioSrc}.mp3?_mt=`}
+                    >
+                      Your browser does not support the audio element.
+                    </audio>
+                  </div>
+                )}
 
                 {/* External Link */}
                 <div>
@@ -602,14 +701,30 @@ const App: React.FC = () => {
                 </div>
               )}
 
-              {!scriptureLoading && !scriptureError && scriptureHtml && (
-                <div
-                  className="scripture-content"
-                  dangerouslySetInnerHTML={{ __html: scriptureHtml }}
-                />
+              {!scriptureLoading && !scriptureError && (prefaceHtml || scriptureHtml) && (
+                <div className="space-y-8">
+                  {prefaceHtml && (
+                    <section className="scripture-section preface-section">
+                      <h4 className="scripture-section-title">序文</h4>
+                      <div
+                        className="scripture-content is-preface"
+                        dangerouslySetInnerHTML={{ __html: prefaceHtml }}
+                      />
+                    </section>
+                  )}
+                  {scriptureHtml && (
+                    <section className="scripture-section">
+                      <h4 className="scripture-section-title">正文</h4>
+                      <div
+                        className="scripture-content"
+                        dangerouslySetInnerHTML={{ __html: scriptureHtml }}
+                      />
+                    </section>
+                  )}
+                </div>
               )}
 
-              {!scriptureLoading && !scriptureError && !scriptureHtml && (
+              {!scriptureLoading && !scriptureError && !prefaceHtml && !scriptureHtml && (
                 <div className="text-center py-20 text-gray-400">
                   <p>经文内容为空</p>
                 </div>

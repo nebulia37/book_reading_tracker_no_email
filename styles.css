@@ -59,10 +59,15 @@ input:focus, select:focus {
 }
 .scripture-content i {
   font-style: normal;
-  display: inline-block;
+  display: inline-flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-end;
   text-align: center;
-  margin: 0 1px;
-  vertical-align: middle;
+  margin: 0 0.5px;
+  vertical-align: bottom;
+  width: 1.4em;
+  min-width: 1.4em;
 }
 .scripture-content i span {
   display: block;
@@ -71,8 +76,31 @@ input:focus, select:focus {
 .scripture-content i span:first-child {
   font-size: 10px;
   color: #9a7b5f;
+  min-height: 14px;
+  line-height: 1.1;
 }
 .scripture-content i span:last-child {
   font-size: 18px;
   color: #3d2b22;
+}
+
+.scripture-section {
+  border: 1px solid #f2e8da;
+  border-radius: 14px;
+  padding: 14px;
+  background: #fffdf9;
+}
+
+.preface-section {
+  background: #fdfaf3;
+}
+
+.scripture-section-title {
+  font-size: 14px;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  color: #8b7355;
+  margin-bottom: 12px;
+  padding-bottom: 8px;
+  border-bottom: 1px dashed #e6d9c5;
 }

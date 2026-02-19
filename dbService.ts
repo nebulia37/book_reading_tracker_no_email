@@ -2,7 +2,12 @@ import { Volume, VolumeStatus, ClaimRequest } from './types';
 import { INITIAL_VOLUMES } from './data';
 
 const DB_KEY = 'longzang_tripitaka_volumes_v13';
-const API_BASE_URL = import.meta.env.VITE_API_URL;
+const API_BASE_URL = import.meta.env.DEV
+  ? 'http://localhost:3001'
+  : import.meta.env.VITE_API_URL;
+const COMPLETED_STATUS_VALUES = new Set(['completed', 'complete', 'done', '已完成']);
+const isCompletedStatus = (status: unknown): boolean =>
+  COMPLETED_STATUS_VALUES.has(String(status ?? '').trim().toLowerCase());
 
 export const dbService = {
   getVolumes: async (): Promise<Volume[]> => {
@@ -25,12 +30,10 @@ export const dbService = {
           const claims = claimsData.data || claimsData;
 
           // Overlay claims from Supabase onto fresh volumes
-          const now = new Date();
           volumes = volumes.map(volume => {
             const claim = claims.find((c: any) => String(c.volumeId) === String(volume.id));
             if (claim) {
-              // Check if expectedCompletionDate has passed - mark as COMPLETED
-              const isCompleted = claim.expectedCompletionDate && now >= new Date(claim.expectedCompletionDate);
+              const isCompleted = isCompletedStatus(claim.status);
               return {
                 ...volume,
                 status: isCompleted ? VolumeStatus.COMPLETED : VolumeStatus.CLAIMED,
@@ -53,11 +56,10 @@ export const dbService = {
           const data = localStorage.getItem(DB_KEY);
           if (data) {
             const cachedVolumes = JSON.parse(data);
-            const now = new Date();
             volumes = volumes.map(volume => {
               const cached = cachedVolumes.find((c: any) => String(c.id) === String(volume.id));
               if (cached && cached.status !== VolumeStatus.UNCLAIMED) {
-                const isCompleted = cached.expectedCompletionDate && now >= new Date(cached.expectedCompletionDate);
+                const isCompleted = volume.scroll <= 300 || cached.status === VolumeStatus.COMPLETED;
                 return {
                   ...volume,
                   status: isCompleted ? VolumeStatus.COMPLETED : cached.status,
@@ -77,19 +79,6 @@ export const dbService = {
         }
       }
 
-      const now = new Date();
-      let modified = false;
-      volumes = volumes.map(v => {
-        if (v.status === VolumeStatus.CLAIMED && v.expectedCompletionDate) {
-          if (now >= new Date(v.expectedCompletionDate)) {
-            modified = true;
-            return { ...v, status: VolumeStatus.COMPLETED };
-          }
-        }
-        return v;
-      });
-
-      if (modified) localStorage.setItem(DB_KEY, JSON.stringify(volumes));
       return volumes;
     } catch (e) {
       console.error("Failed to load volumes from storage:", e);
@@ -125,6 +114,43 @@ export const dbService = {
     volumes[index] = updatedVolume;
     localStorage.setItem(DB_KEY, JSON.stringify(volumes));
     return updatedVolume;
+  },
+
+  completeVolume: async (volume: Volume): Promise<Volume | null> => {
+    const volumeId = String(volume.id);
+    const response = await fetch(`${API_BASE_URL}/api/complete`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'Accept': 'application/json'
+      },
+      body: JSON.stringify({
+        volumeId,
+        part: volume.part,
+        scroll: volume.scroll,
+        volumeNumber: volume.volumeNumber
+      })
+    });
+
+    if (!response.ok) {
+      const errorData = await response.json().catch(() => ({}));
+      throw new Error(errorData.error || `Backend returned ${response.status}`);
+    }
+
+    const payload = await response.json();
+    const claim = payload.claim || {};
+
+    const volumes = await dbService.getVolumes();
+    const matched = volumes.find(v => v.id === volumeId);
+    if (!matched) return null;
+
+    const completedVolume: Volume = {
+      ...matched,
+      status: VolumeStatus.COMPLETED,
+      claimerName: claim.name || matched.claimerName,
+      claimerPhone: claim.phone || matched.claimerPhone
+    };
+    return completedVolume;
   },
 
   reset: () => {

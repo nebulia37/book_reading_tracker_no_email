@@ -4,7 +4,13 @@
       "Bash(npm install:*)",
       "Bash(npm uninstall:*)",
       "Bash(npx puppeteer browsers install chrome)",
-      "Bash(del \"c:\\\\Projects\\\\apps\\\\Scripture-Reading-Tracker-main\\\\book_reading_tracker_no_email\\\\.puppeteerrc.cjs\")"
+      "Bash(del \"c:\\\\Projects\\\\apps\\\\Scripture-Reading-Tracker-main\\\\book_reading_tracker_no_email\\\\.puppeteerrc.cjs\")",
+      "Bash(curl:*)",
+      "Bash(iconv:*)",
+      "Bash(python3:*)",
+      "Bash(for:*)",
+      "Bash(do echo -n \"Book $id: \")",
+      "Bash(done)"
     ]
   }
 }

@@ -32,6 +32,12 @@ const DINGTALK_SECRET = process.env.DINGTALK_SECRET;
 
 // /view 页面访问密码
 const VIEW_ACCESS_CODE = process.env.VIEW_ACCESS_CODE || 'admin123';
+const COMPLETED_STATUS_VALUES = new Set(['completed', 'complete', 'done', '已完成']);
+const normalizeStatus = (status) => String(status || '').trim().toLowerCase();
+const isCompletedStatus = (status) => {
+  const normalized = normalizeStatus(status);
+  return COMPLETED_STATUS_VALUES.has(normalized) || normalized.includes('完成');
+};
 
 // 发送钉钉通知
 async function sendDingTalkNotification(claim) {
@@ -59,7 +65,7 @@ async function sendDingTalkNotification(claim) {
               `**电话**: ${claim.phone.slice(0, 3)}****${claim.phone.slice(-4)}\n\n` +
               `**计划天数**: ${claim.plannedDays}天\n\n` +
               `**预计完成**: ${new Date(Date.now() + claim.plannedDays * 24 * 60 * 60 * 1000).toLocaleDateString('zh-CN')}\n\n` +
-              (claim.remarks ? `**备注（不要留回向信息，请自行回向）**: ${claim.remarks}\n\n` : '') +
+              (claim.remarks ? `**备注**: ${claim.remarks}\n\n` : '') +
               `---\n认领时间: ${new Date().toLocaleString('zh-CN')}`
       }
     };
@@ -233,8 +239,127 @@ app.get('/api/claims', async (req, res) => {
 });
 
 
-// 认领记录页面 - 需要访问码
+// Mark a volume as completed
+app.post('/api/complete', async (req, res) => {
+  const rawVolumeId = req.body?.volumeId;
+  const volumeId = rawVolumeId === undefined || rawVolumeId === null ? '' : String(rawVolumeId).trim();
+  const part = Number(req.body?.part);
+  const scroll = Number(req.body?.scroll);
+  const volumeNumber = req.body?.volumeNumber ? String(req.body.volumeNumber).trim() : '';
+  console.log(`Complete request: volumeId="${volumeId}", part=${part}, scroll=${scroll}, volumeNumber="${volumeNumber}"`);
 
+  if (!volumeId) {
+    return res.status(400).json({ error: 'volumeId is required' });
+  }
+
+  try {
+    const supabase = getSupabaseClient();
+    if (!supabase) {
+      return res.status(500).json({ error: 'Supabase not configured' });
+    }
+
+    // Resolve a single target row first, then update by primary id.
+    let targetClaim = null;
+    const tryFind = async (builder, label) => {
+      if (targetClaim) return;
+      const { data, error } = await builder
+        .select('id, volumeId, volumeNumber, part, scroll, status, claimedAt')
+        .order('claimedAt', { ascending: false })
+        .limit(1);
+      if (error) {
+        console.warn(`Complete: lookup ${label} failed: ${error.message}`);
+        return;
+      }
+      if (Array.isArray(data) && data.length > 0) {
+        targetClaim = data[0];
+        console.log(`Complete: matched by ${label}:`, JSON.stringify(targetClaim));
+      }
+    };
+
+    await tryFind(supabase.from('claims').eq('volumeId', volumeId), `volumeId="${volumeId}"`);
+    if (volumeNumber) {
+      await tryFind(supabase.from('claims').eq('volumeNumber', volumeNumber), `volumeNumber="${volumeNumber}"`);
+    }
+    if (Number.isFinite(part) && Number.isFinite(scroll)) {
+      await tryFind(supabase.from('claims').eq('part', part).eq('scroll', scroll), `part=${part},scroll=${scroll}`);
+    }
+    if (Number.isFinite(scroll)) {
+      await tryFind(supabase.from('claims').eq('scroll', scroll), `scroll=${scroll}`);
+      await tryFind(supabase.from('claims').eq('scroll', String(scroll)), `scroll="${scroll}"`);
+    }
+    if (Number.isFinite(part) && Number.isFinite(scroll)) {
+      const canonicalVolumeId = `${part}${String(scroll).padStart(3, '0')}`;
+      await tryFind(supabase.from('claims').eq('volumeId', canonicalVolumeId), `canonical volumeId="${canonicalVolumeId}"`);
+    }
+
+    if (!targetClaim) {
+      console.warn(`Complete: no matching row found for volumeId="${volumeId}", part=${part}, scroll=${scroll}, volumeNumber="${volumeNumber}"`);
+      return res.status(404).json({
+        error: 'No matching claim found in database',
+        volumeId,
+        part,
+        scroll,
+        volumeNumber
+      });
+    }
+
+    const { data: updateRows, error: updateError } = await supabase
+      .from('claims')
+      .update({ status: 'completed' })
+      .eq('id', targetClaim.id)
+      .select('*')
+      .limit(1);
+
+    if (updateError) {
+      console.error(`Complete: update by id="${targetClaim.id}" failed:`, updateError.message);
+      return res.status(500).json({ error: 'Failed to complete volume' });
+    }
+
+    let updatedClaim = Array.isArray(updateRows) && updateRows.length > 0 ? updateRows[0] : null;
+
+    // Fan-out update: ensure duplicate rows for the same volume are also marked completed.
+    // This handles historical duplicate claims where /view could show a different row than the one updated by id.
+    if (Number.isFinite(part) && Number.isFinite(scroll)) {
+      const { data: siblingRows, error: siblingError } = await supabase
+        .from('claims')
+        .update({ status: 'completed' })
+        .eq('part', part)
+        .eq('scroll', scroll)
+        .select('*');
+
+      if (siblingError) {
+        console.warn(`Complete: sibling update by part=${part}, scroll=${scroll} failed: ${siblingError.message}`);
+      } else if (Array.isArray(siblingRows) && siblingRows.length > 0) {
+        const latestSibling = siblingRows
+          .slice()
+          .sort((a, b) => new Date(b.claimedAt || 0).getTime() - new Date(a.claimedAt || 0).getTime())[0];
+        updatedClaim = latestSibling || updatedClaim;
+        console.log(`Complete: sibling rows updated by part=${part}, scroll=${scroll}, count=${siblingRows.length}`);
+      }
+    }
+
+    // Invalidate cache
+    sheetCache = { data: null, timestamp: 0 };
+
+    if (!updatedClaim) {
+      console.warn(`Complete: update returned no row for id="${targetClaim.id}"`);
+      return res.status(404).json({
+        error: 'Claim matched but update returned no row',
+        volumeId,
+        part,
+        scroll,
+        volumeNumber
+      });
+    }
+
+    console.log(`Complete: successfully updated claim for volumeId="${updatedClaim.volumeId}" to status="${updatedClaim.status}"`);
+
+    res.json({ success: true, claim: updatedClaim });
+  } catch (error) {
+    console.error('Complete error:', error);
+    res.status(500).json({ error: 'Failed to complete volume' });
+  }
+});
 
 // CSV export for /view
 app.get('/view.csv', async (req, res) => {
@@ -255,7 +380,7 @@ app.get('/view.csv', async (req, res) => {
     const now = new Date();
     claims = claims.map(c => ({
       ...c,
-      displayStatus: c.expectedCompletionDate && now >= new Date(c.expectedCompletionDate) ? '\u5df2\u5b8c\u6210' : '\u5df2\u8ba4\u9886'
+      displayStatus: isCompletedStatus(c.status) ? '\u5df2\u5b8c\u6210' : '\u5df2\u8ba4\u9886'
     }));
 
     const headers = [
@@ -355,10 +480,9 @@ app.get('/view', async (req, res) => {
     }
 
     // 检查是否已完成（过了预计完成日期）
-    const now = new Date();
     claims = claims.map(c => ({
       ...c,
-      displayStatus: c.expectedCompletionDate && now >= new Date(c.expectedCompletionDate) ? '\u5df2\u5b8c\u6210' : '\u5df2\u8ba4\u9886'
+      displayStatus: isCompletedStatus(c.status) ? '\u5df2\u5b8c\u6210' : '\u5df2\u8ba4\u9886'
     }));
 
     const inProgressCount = claims.filter(c => c.displayStatus === '已认领').length;
@@ -477,6 +601,72 @@ app.get('/view', async (req, res) => {
 });
 
 // ============================================
+// SCROLL-TO-BOOK-ID MAPPING (mirrors data.ts)
+// ============================================
+// 15 section prefaces in the upstream catalog — each is an extra book entry
+// inserted before the scroll it introduces. Key = scroll number, value = preface bookId.
+const PREFACE_FOR_SCROLL = {
+  401: 2470,
+  479: 2549,
+  538: 2609,
+  556: 2628,
+  566: 2639,
+  574: 2648,
+  576: 2651,
+  577: 2653,
+  578: 2655,
+  579: 2657,
+  584: 2663,
+  589: 2669,
+  590: 2671,
+  591: 2673,
+  593: 2676
+};
+
+
+function getScrollMapping(scroll) {
+  // Count how many prefaces appear before this scroll's position
+  const prefacesBefore = Object.entries(PREFACE_FOR_SCROLL).reduce((count, [s]) => {
+    return Number(s) < scroll ? count + 1 : count;
+  }, 0);
+
+  // The scroll's own preface (if any) is at bookId position, content is at bookId + 1
+  const prefaceBookId = PREFACE_FOR_SCROLL[scroll];
+  const hasPreface = !!prefaceBookId;
+
+  // Content bookId: base (2069) + scroll + prefaces before this scroll + (1 if this scroll has a preface)
+  const bookId = 2069 + scroll + prefacesBefore + (hasPreface ? 1 : 0);
+
+  return { bookId, prefaceBookId: hasPreface ? prefaceBookId : undefined };
+}
+
+function getAudioMapping(scroll) {
+  const { bookId, prefaceBookId } = getScrollMapping(scroll);
+  if (prefaceBookId) {
+    // Split scrolls use 1_{scroll}a.mp3 / 1_{scroll}b.mp3 naming
+    return { audioSrc: `${scroll}a`, prefaceAudioSrc: undefined, secondaryAudioSrc: `${scroll}b` };
+  }
+  // Normal scrolls use 1_{index}.mp3 where index = bookId - 2069
+  const audioIndex = bookId - 2069;
+  return { audioSrc: String(audioIndex), prefaceAudioSrc: undefined, secondaryAudioSrc: undefined };
+}
+
+// Helper: fetch a single book's HTML from upstream
+async function fetchBookHtml(bookId) {
+  const response = await fetch('https://w1.xianmijingzang.com/wapajax/tripitaka/', {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/x-www-form-urlencoded; charset=UTF-8',
+      'X-Requested-With': 'XMLHttpRequest'
+    },
+    body: `menuid=43|67&book=${bookId}&lang=zh&only_content=1`
+  });
+  if (!response.ok) throw new Error(`Upstream returned ${response.status}`);
+  const buffer = await response.arrayBuffer();
+  return iconv.decode(Buffer.from(buffer), 'gbk');
+}
+
+// ============================================
 // SCRIPTURE TEXT AND PDF ENDPOINTS
 // ============================================
 
@@ -485,47 +675,45 @@ let scriptureCache = new Map();
 const SCRIPTURE_CACHE_DURATION = 60 * 60 * 1000; // 1 hour
 
 // Scripture text proxy endpoint (avoids CORS issues)
-// BOOK_ID = 2069 + scroll (e.g., scroll 1 → book 2070, scroll 200 → book 2269)
 app.get('/api/scripture/:scroll', async (req, res) => {
   const scroll = parseInt(req.params.scroll);
-  if (isNaN(scroll) || scroll < 1 || scroll > 200) {
-    return res.status(400).json({ error: 'Invalid scroll number (1-200)' });
+  if (isNaN(scroll) || scroll < 1 || scroll > 600) {
+    return res.status(400).json({ error: 'Invalid scroll number (1-600)' });
   }
 
-  const bookId = 2069 + scroll;
-  const cacheKey = `scripture_${scroll}`;
+  const { bookId, prefaceBookId } = getScrollMapping(scroll);
+  const cacheKey = `scripture_v3_${scroll}`;
 
   // Check cache first
   const cached = scriptureCache.get(cacheKey);
   if (cached && (Date.now() - cached.timestamp) < SCRIPTURE_CACHE_DURATION) {
     console.log(`Returning cached scripture for scroll ${scroll}`);
-    return res.json({ html: cached.html, scroll, bookId, cached: true });
+    return res.json({ ...cached.data, cached: true });
   }
 
   console.log(`Fetching scripture for scroll ${scroll}, book ID ${bookId}`);
 
   try {
-    const response = await fetch('https://w1.xianmijingzang.com/wapajax/tripitaka/', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/x-www-form-urlencoded; charset=UTF-8',
-        'X-Requested-With': 'XMLHttpRequest'
-      },
-      body: `menuid=43|67&book=${bookId}&lang=zh&only_content=1`
-    });
+    const html = await fetchBookHtml(bookId);
 
-    if (!response.ok) {
-      throw new Error(`Upstream returned ${response.status}`);
+    let prefaceHtml = undefined;
+    if (prefaceBookId) {
+      prefaceHtml = await fetchBookHtml(prefaceBookId);
     }
 
-    // Upstream returns GB2312 encoding, need to decode properly
-    const buffer = await response.arrayBuffer();
-    const html = iconv.decode(Buffer.from(buffer), 'gbk');
+    const { audioSrc, secondaryAudioSrc } = getAudioMapping(scroll);
 
-    // Cache the result
-    scriptureCache.set(cacheKey, { html, timestamp: Date.now() });
+    const data = {
+      html,
+      prefaceHtml,
+      scroll,
+      bookId,
+      audioSrc,
+      secondaryAudioSrc
+    };
+    scriptureCache.set(cacheKey, { data, timestamp: Date.now() });
 
-    res.json({ html, scroll, bookId, cached: false });
+    res.json({ ...data, cached: false });
   } catch (error) {
     console.error('Failed to fetch scripture:', error);
     res.status(500).json({ error: 'Failed to fetch scripture text: ' + error.message });
@@ -535,11 +723,12 @@ app.get('/api/scripture/:scroll', async (req, res) => {
 // MP3 audio proxy (same-origin download for WeChat compatibility)
 app.get('/api/scripture/:scroll/mp3', async (req, res) => {
   const scroll = parseInt(req.params.scroll);
-  if (isNaN(scroll) || scroll < 1 || scroll > 200) {
-    return res.status(400).json({ error: 'Invalid scroll number (1-200)' });
+  if (isNaN(scroll) || scroll < 1 || scroll > 600) {
+    return res.status(400).json({ error: 'Invalid scroll number (1-600)' });
   }
   try {
-    const upstream = `https://w1.xianmijingzang.com/fojing/1/1/1/1_${scroll}.mp3?_mt=`;
+    const { audioSrc } = getAudioMapping(scroll);
+    const upstream = `https://w1.xianmijingzang.com/fojing/1/1/1/1_${audioSrc}.mp3?_mt=`;
     const response = await fetch(upstream);
     if (!response.ok) throw new Error(`Upstream returned ${response.status}`);
     res.setHeader('Content-Type', 'audio/mpeg');
@@ -555,37 +744,28 @@ app.get('/api/scripture/:scroll/mp3', async (req, res) => {
 // Text file download endpoint (reliable Chinese support)
 app.get('/api/scripture/:scroll/txt', async (req, res) => {
   const scroll = parseInt(req.params.scroll);
-  if (isNaN(scroll) || scroll < 1 || scroll > 200) {
-    return res.status(400).json({ error: 'Invalid scroll number (1-200)' });
+  if (isNaN(scroll) || scroll < 1 || scroll > 600) {
+    return res.status(400).json({ error: 'Invalid scroll number (1-600)' });
   }
 
-  const bookId = 2069 + scroll;
+  const { bookId, prefaceBookId } = getScrollMapping(scroll);
   console.log(`Generating TXT for scroll ${scroll}, book ID ${bookId}`);
 
   try {
-    const cacheKey = `scripture_${scroll}`;
+    const cacheKey = `scripture_v3_${scroll}`;
     let scriptureHtml;
 
     const cached = scriptureCache.get(cacheKey);
     if (cached && (Date.now() - cached.timestamp) < SCRIPTURE_CACHE_DURATION) {
-      scriptureHtml = cached.html;
+      scriptureHtml = cached.data.html;
     } else {
-      const response = await fetch('https://w1.xianmijingzang.com/wapajax/tripitaka/', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/x-www-form-urlencoded; charset=UTF-8',
-          'X-Requested-With': 'XMLHttpRequest'
-        },
-        body: `menuid=43|67&book=${bookId}&lang=zh&only_content=1`
+      scriptureHtml = await fetchBookHtml(bookId);
+      const prefaceHtml = prefaceBookId ? await fetchBookHtml(prefaceBookId) : undefined;
+      const { audioSrc, secondaryAudioSrc } = getAudioMapping(scroll);
+      scriptureCache.set(cacheKey, {
+        data: { html: scriptureHtml, prefaceHtml, scroll, bookId, audioSrc, secondaryAudioSrc },
+        timestamp: Date.now()
       });
-
-      if (!response.ok) {
-        throw new Error(`Upstream returned ${response.status}`);
-      }
-
-      const buffer = await response.arrayBuffer();
-      scriptureHtml = iconv.decode(Buffer.from(buffer), 'gbk');
-      scriptureCache.set(cacheKey, { html: scriptureHtml, timestamp: Date.now() });
     }
 
     // Extract plain text - keep Chinese characters only
@@ -617,41 +797,32 @@ app.get('/api/scripture/:scroll/txt', async (req, res) => {
   }
 });
 
-// PDF generation endpoint using Puppeteer (proper Chinese support & styling)
+// PDF generation endpoint (styled HTML page with print button)
 app.get('/api/scripture/:scroll/pdf', async (req, res) => {
   const scroll = parseInt(req.params.scroll);
-  if (isNaN(scroll) || scroll < 1 || scroll > 200) {
-    return res.status(400).json({ error: 'Invalid scroll number (1-200)' });
+  if (isNaN(scroll) || scroll < 1 || scroll > 600) {
+    return res.status(400).json({ error: 'Invalid scroll number (1-600)' });
   }
 
-  const bookId = 2069 + scroll;
+  const { bookId, prefaceBookId } = getScrollMapping(scroll);
   console.log(`Generating PDF for scroll ${scroll}, book ID ${bookId}`);
 
   try {
     // First fetch the scripture content (check cache)
-    const cacheKey = `scripture_${scroll}`;
+    const cacheKey = `scripture_v3_${scroll}`;
     let scriptureHtml;
 
     const cached = scriptureCache.get(cacheKey);
     if (cached && (Date.now() - cached.timestamp) < SCRIPTURE_CACHE_DURATION) {
-      scriptureHtml = cached.html;
+      scriptureHtml = cached.data.html;
     } else {
-      const response = await fetch('https://w1.xianmijingzang.com/wapajax/tripitaka/', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/x-www-form-urlencoded; charset=UTF-8',
-          'X-Requested-With': 'XMLHttpRequest'
-        },
-        body: `menuid=43|67&book=${bookId}&lang=zh&only_content=1`
+      scriptureHtml = await fetchBookHtml(bookId);
+      const prefaceHtml = prefaceBookId ? await fetchBookHtml(prefaceBookId) : undefined;
+      const { audioSrc, secondaryAudioSrc } = getAudioMapping(scroll);
+      scriptureCache.set(cacheKey, {
+        data: { html: scriptureHtml, prefaceHtml, scroll, bookId, audioSrc, secondaryAudioSrc },
+        timestamp: Date.now()
       });
-
-      if (!response.ok) {
-        throw new Error(`Upstream returned ${response.status}`);
-      }
-
-      const buffer = await response.arrayBuffer();
-      scriptureHtml = iconv.decode(Buffer.from(buffer), 'gbk');
-      scriptureCache.set(cacheKey, { html: scriptureHtml, timestamp: Date.now() });
     }
 
     // Upstream nests punctuation inside the hanzi span:

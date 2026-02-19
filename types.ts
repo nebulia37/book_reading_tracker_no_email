@@ -19,6 +19,8 @@ export interface Volume {
   expectedCompletionDate?: string;
   readingUrl: string;
   remarks?: string;
+  bookId: number;              // upstream book ID for scripture content
+  prefaceBookId?: number;      // upstream book ID for section preface (if any)
 }
 
 export interface ClaimRequest {
