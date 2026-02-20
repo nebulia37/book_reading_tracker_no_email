@@ -261,87 +261,35 @@ app.post('/api/complete', async (req, res) => {
       return res.status(500).json({ error: 'Supabase not configured' });
     }
 
-    // Resolve a single target row first, then update by primary id.
-    let targetClaim = null;
-    const tryFind = async (builder, label) => {
-      if (targetClaim) return;
-      const { data, error } = await builder
-        .select('id, volumeId, volumeNumber, part, scroll, status, claimedAt')
-        .order('claimedAt', { ascending: false })
-        .limit(1);
-      if (error) {
-        console.warn(`Complete: lookup ${label} failed: ${error.message}`);
-        return;
-      }
-      if (Array.isArray(data) && data.length > 0) {
-        targetClaim = data[0];
-        console.log(`Complete: matched by ${label}:`, JSON.stringify(targetClaim));
-      }
-    };
+    let updatedClaim = null;
 
-    await tryFind(supabase.from('claims').eq('volumeId', volumeId), `volumeId="${volumeId}"`);
-    if (volumeNumber) {
-      await tryFind(supabase.from('claims').eq('volumeNumber', volumeNumber), `volumeNumber="${volumeNumber}"`);
-    }
-    if (Number.isFinite(part) && Number.isFinite(scroll)) {
-      await tryFind(supabase.from('claims').eq('part', part).eq('scroll', scroll), `part=${part},scroll=${scroll}`);
-    }
-    if (Number.isFinite(scroll)) {
-      await tryFind(supabase.from('claims').eq('scroll', scroll), `scroll=${scroll}`);
-      await tryFind(supabase.from('claims').eq('scroll', String(scroll)), `scroll="${scroll}"`);
-    }
-    if (Number.isFinite(part) && Number.isFinite(scroll)) {
-      const canonicalVolumeId = `${part}${String(scroll).padStart(3, '0')}`;
-      await tryFind(supabase.from('claims').eq('volumeId', canonicalVolumeId), `canonical volumeId="${canonicalVolumeId}"`);
-    }
-
-    if (!targetClaim) {
-      console.warn(`Complete: no matching row found for volumeId="${volumeId}", part=${part}, scroll=${scroll}, volumeNumber="${volumeNumber}"`);
-      return res.status(404).json({
-        error: 'No matching claim found in database',
-        volumeId,
-        part,
-        scroll,
-        volumeNumber
-      });
-    }
-
-    const { data: updateRows, error: updateError } = await supabase
+    // 1) Try update by volumeId
+    console.log(`Complete: trying update by volumeId="${volumeId}"`);
+    let result = await supabase
       .from('claims')
       .update({ status: 'completed' })
-      .eq('id', targetClaim.id)
-      .select('*')
-      .limit(1);
+      .eq('volumeId', volumeId)
+      .select('*');
 
-    if (updateError) {
-      console.error(`Complete: update by id="${targetClaim.id}" failed:`, updateError.message);
-      return res.status(500).json({
-        error: 'Failed to complete volume',
-        details: updateError.message,
-        code: updateError.code || null
-      });
+    console.log(`Complete: volumeId result: data=${JSON.stringify(result.data)}, error=${result.error?.message || 'none'}`);
+
+    if (!result.error && Array.isArray(result.data) && result.data.length > 0) {
+      updatedClaim = result.data[0];
     }
 
-    let updatedClaim = Array.isArray(updateRows) && updateRows.length > 0 ? updateRows[0] : null;
-
-    // Fan-out update: ensure duplicate rows for the same volume are also marked completed.
-    // This handles historical duplicate claims where /view could show a different row than the one updated by id.
-    if (Number.isFinite(part) && Number.isFinite(scroll)) {
-      const { data: siblingRows, error: siblingError } = await supabase
+    // 2) Fallback: volumeNumber
+    if (!updatedClaim && volumeNumber) {
+      console.log(`Complete: trying update by volumeNumber="${volumeNumber}"`);
+      result = await supabase
         .from('claims')
         .update({ status: 'completed' })
-        .eq('part', part)
-        .eq('scroll', scroll)
+        .eq('volumeNumber', volumeNumber)
         .select('*');
 
-      if (siblingError) {
-        console.warn(`Complete: sibling update by part=${part}, scroll=${scroll} failed: ${siblingError.message}`);
-      } else if (Array.isArray(siblingRows) && siblingRows.length > 0) {
-        const latestSibling = siblingRows
-          .slice()
-          .sort((a, b) => new Date(b.claimedAt || 0).getTime() - new Date(a.claimedAt || 0).getTime())[0];
-        updatedClaim = latestSibling || updatedClaim;
-        console.log(`Complete: sibling rows updated by part=${part}, scroll=${scroll}, count=${siblingRows.length}`);
+      console.log(`Complete: volumeNumber result: data=${JSON.stringify(result.data)}, error=${result.error?.message || 'none'}`);
+
+      if (!result.error && Array.isArray(result.data) && result.data.length > 0) {
+        updatedClaim = result.data[0];
       }
     }
 
@@ -349,12 +297,10 @@ app.post('/api/complete', async (req, res) => {
     sheetCache = { data: null, timestamp: 0 };
 
     if (!updatedClaim) {
-      console.warn(`Complete: update returned no row for id="${targetClaim.id}"`);
+      console.warn(`Complete: no matching row found for volumeId="${volumeId}", volumeNumber="${volumeNumber}"`);
       return res.status(404).json({
-        error: 'Claim matched but update returned no row',
+        error: 'No matching claim found in database',
         volumeId,
-        part,
-        scroll,
         volumeNumber
       });
     }
