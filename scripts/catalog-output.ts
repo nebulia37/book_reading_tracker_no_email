@@ -1,103 +1,20 @@
-import { Volume, VolumeStatus } from './types';
-
-/**
- * Prajna Section (Part 1)
- * Verified Source: Xianmi Jingzang (w1.xianmijingzang.com)
- * Collection ID: 43, Subid: 67
- */
-
-const PRAJNA_BASE_URL = 'https://w1.xianmijingzang.com/wap/tripitaka/id/43/subid/';
-
-// 15 section prefaces in the upstream catalog — each is an extra book entry
-// inserted before the scroll it introduces. Key = scroll number, value = preface bookId.
-const PREFACE_FOR_SCROLL: Record<number, number> = {
-  401: 2470,
-  479: 2549,
-  538: 2609,
-  556: 2628,
-  566: 2639,
-  574: 2648,
-  576: 2651,
-  577: 2653,
-  578: 2655,
-  579: 2657,
-  584: 2663,
-  589: 2669,
-  590: 2671,
-  591: 2673,
-  593: 2676
-};
-
-/**
- * Map scroll (1-600) to upstream book IDs for Part 1 (Prajna).
- * Scrolls with a section preface return prefaceBookId for the preface entry.
- */
-export function getScrollMapping(scroll: number): { bookId: number; prefaceBookId?: number } {
-  const prefacesBefore = Object.entries(PREFACE_FOR_SCROLL).reduce((count, [s]) => {
-    return Number(s) < scroll ? count + 1 : count;
-  }, 0);
-
-  const prefaceBookId = PREFACE_FOR_SCROLL[scroll];
-  const hasPreface = !!prefaceBookId;
-  const bookId = 2069 + scroll + prefacesBefore + (hasPreface ? 1 : 0);
-
-  return { bookId, prefaceBookId: hasPreface ? prefaceBookId : undefined };
-}
-
-const createPrajnaVolumes = (): Volume[] => {
-  const volumes: Volume[] = [];
-  for (let i = 301; i <= 600; i++) {
-    const { bookId, prefaceBookId } = getScrollMapping(i);
-    volumes.push({
-      id: `1${String(i).padStart(3, '0')}`,
-      part: 1,
-      scroll: i,
-      volumeNumber: `第1部-卷${i}`,
-      volumeTitle: `大般若波罗蜜多经 卷${i}`,
-      status: VolumeStatus.UNCLAIMED,
-      readingUrl: `${PRAJNA_BASE_URL}67/`,
-      bookId,
-      prefaceBookId,
-      collectionId: 43,
-      subid: 67
-    });
-  }
-  return volumes;
-};
-
-/**
- * Scripture Catalog: Parts 122-371
- * Collection ID: 47
- * Scraped from xianmijingzang.com
- */
-export interface ScriptureCatalogEntry {
-  part: number;
-  title: string;
-  subid: number;
-  scrollCount: number;
-  firstBookId: number;
-  collectionId: number;
-  has0aPreface?: boolean;  // True if first bookId is "0a" preface that merges with "0b" or "01" into scroll 1
-  mergeFileCount?: number; // Number of files to merge into scroll 1 (default: 2 for "0a+0b", but can be 3 for "0a+0b+1")
-}
-
 export const SCRIPTURE_CATALOG: ScriptureCatalogEntry[] = [
-  { part: 122, title: '金光明最勝王經', subid: 191, scrollCount: 11, firstBookId: 3470, collectionId: 47, has0aPreface: true },
-  { part: 123, title: '金光明經', subid: 192, scrollCount: 5, firstBookId: 3481, collectionId: 47, has0aPreface: true },
+  { part: 122, title: '金光明最勝王經', subid: 191, scrollCount: 11, firstBookId: 3470, collectionId: 47 },
+  { part: 123, title: '金光明經', subid: 192, scrollCount: 5, firstBookId: 3481, collectionId: 47 },
   { part: 124, title: '等集衆德三昧經', subid: 193, scrollCount: 3, firstBookId: 3486, collectionId: 47 },
   { part: 125, title: '集一切福德三昧經', subid: 194, scrollCount: 3, firstBookId: 3489, collectionId: 47 },
-  { part: 126, title: '合部金光明經', subid: 195, scrollCount: 9, firstBookId: 3492, collectionId: 47, has0aPreface: true },
-  { part: 127, title: '入定不定印經', subid: 196, scrollCount: 2, firstBookId: 3501, collectionId: 47, has0aPreface: true },
-  { part: 128, title: '不必定入定入印經', subid: 197, scrollCount: 2, firstBookId: 3503, collectionId: 47, has0aPreface: true },
-  { part: 129, title: '無量義經', subid: 198, scrollCount: 2, firstBookId: 3505, collectionId: 47, has0aPreface: true },
-  { part: 130, title: '妙法蓮華經', subid: 199, scrollCount: 9, firstBookId: 3507, collectionId: 47, has0aPreface: true },
+  { part: 126, title: '合部金光明經', subid: 195, scrollCount: 9, firstBookId: 3492, collectionId: 47 },
+  { part: 127, title: '入定不定印經', subid: 196, scrollCount: 2, firstBookId: 3501, collectionId: 47 },
+  { part: 128, title: '不必定入定入印經', subid: 197, scrollCount: 2, firstBookId: 3503, collectionId: 47 },
+  { part: 129, title: '無量義經', subid: 198, scrollCount: 2, firstBookId: 3505, collectionId: 47 },
+  { part: 130, title: '妙法蓮華經', subid: 199, scrollCount: 9, firstBookId: 3507, collectionId: 47 },
   { part: 131, title: '法華三昧經', subid: 200, scrollCount: 1, firstBookId: 3516, collectionId: 47 },
   { part: 132, title: '薩曇芬陀利經', subid: 201, scrollCount: 1, firstBookId: 3517, collectionId: 47 },
-  { part: 133, title: '妙法蓮華經觀世音菩薩普門品經', subid: 202, scrollCount: 2, firstBookId: 3518, collectionId: 47, has0aPreface: true },
+  { part: 133, title: '妙法蓮華經觀世音菩薩普門品經', subid: 202, scrollCount: 2, firstBookId: 3518, collectionId: 47 },
   { part: 134, title: '正法華經', subid: 203, scrollCount: 10, firstBookId: 3520, collectionId: 47 },
-  { part: 135, title: '妙法蓮華經', subid: 204, scrollCount: 9, firstBookId: 3530, collectionId: 47, has0aPreface: true },
+  { part: 135, title: '妙法蓮華經', subid: 204, scrollCount: 9, firstBookId: 3530, collectionId: 47 },
   { part: 136, title: '分别縁起初勝法門經', subid: 205, scrollCount: 2, firstBookId: 3539, collectionId: 47 },
-  { part: 137, title: '佛說縁生初勝分法本經', subid: 206, scrollCount: 3, firstBookId: 3541, collectionId: 47, has0aPreface: true },
+  { part: 137, title: '佛說縁生初勝分法本經', subid: 206, scrollCount: 3, firstBookId: 3541, collectionId: 47 },
   { part: 138, title: '悲華經', subid: 207, scrollCount: 10, firstBookId: 3544, collectionId: 47 },
   { part: 139, title: '六度集經', subid: 208, scrollCount: 8, firstBookId: 3554, collectionId: 47 },
   { part: 140, title: '大乗頂王經', subid: 209, scrollCount: 1, firstBookId: 3562, collectionId: 47 },
@@ -115,7 +32,7 @@ export const SCRIPTURE_CATALOG: ScriptureCatalogEntry[] = [
   { part: 152, title: '佛說解節經', subid: 221, scrollCount: 1, firstBookId: 3606, collectionId: 47 },
   { part: 153, title: '不退轉法輪經', subid: 222, scrollCount: 4, firstBookId: 3607, collectionId: 47 },
   { part: 154, title: '廣博嚴淨不退轉法輪經', subid: 223, scrollCount: 4, firstBookId: 3611, collectionId: 47 },
-  { part: 155, title: '方廣大莊嚴經', subid: 224, scrollCount: 13, firstBookId: 3615, collectionId: 47, has0aPreface: true },
+  { part: 155, title: '方廣大莊嚴經', subid: 224, scrollCount: 13, firstBookId: 3615, collectionId: 47 },
   { part: 156, title: '普曜經', subid: 225, scrollCount: 8, firstBookId: 3628, collectionId: 47 },
   { part: 157, title: '伅眞陀羅所問寳如來三昧經', subid: 226, scrollCount: 3, firstBookId: 3636, collectionId: 47 },
   { part: 158, title: '大樹緊那羅王所問經', subid: 227, scrollCount: 4, firstBookId: 3639, collectionId: 47 },
@@ -126,14 +43,14 @@ export const SCRIPTURE_CATALOG: ScriptureCatalogEntry[] = [
   { part: 163, title: '佛說大灌頂神呪經', subid: 232, scrollCount: 12, firstBookId: 3656, collectionId: 47 },
   { part: 164, title: '佛說文殊師利現寳藏經', subid: 233, scrollCount: 2, firstBookId: 3668, collectionId: 47 },
   { part: 165, title: '大方廣寳篋經', subid: 234, scrollCount: 2, firstBookId: 3670, collectionId: 47 },
-  { part: 166, title: '佛說藥師如來本願經', subid: 235, scrollCount: 2, firstBookId: 3672, collectionId: 47, has0aPreface: true },
+  { part: 166, title: '佛說藥師如來本願經', subid: 235, scrollCount: 2, firstBookId: 3672, collectionId: 47 },
   { part: 167, title: '藥師瑠璃光如來本願功徳經', subid: 236, scrollCount: 1, firstBookId: 3674, collectionId: 47 },
   { part: 168, title: '藥師瑠璃光七佛本願功徳經', subid: 237, scrollCount: 2, firstBookId: 3675, collectionId: 47 },
   { part: 169, title: '番字藥師七佛本願功徳經', subid: 238, scrollCount: 1, firstBookId: 3677, collectionId: 47 },
   { part: 170, title: '佛說阿闍世王經', subid: 239, scrollCount: 2, firstBookId: 3678, collectionId: 47 },
   { part: 171, title: '楞伽阿跋多羅寳經', subid: 240, scrollCount: 4, firstBookId: 3680, collectionId: 47 },
   { part: 172, title: '入楞伽經', subid: 241, scrollCount: 10, firstBookId: 3684, collectionId: 47 },
-  { part: 173, title: '大乗入楞伽經', subid: 242, scrollCount: 8, firstBookId: 3694, collectionId: 47, has0aPreface: true },
+  { part: 173, title: '大乗入楞伽經', subid: 242, scrollCount: 8, firstBookId: 3694, collectionId: 47 },
   { part: 174, title: '菩薩行方便境界神通變化經', subid: 243, scrollCount: 3, firstBookId: 3702, collectionId: 47 },
   { part: 175, title: '大薩遮尼乾子受記經', subid: 244, scrollCount: 11, firstBookId: 3705, collectionId: 47 },
   { part: 176, title: '大乗大悲分陀利經', subid: 245, scrollCount: 8, firstBookId: 3716, collectionId: 47 },
@@ -152,21 +69,21 @@ export const SCRIPTURE_CATALOG: ScriptureCatalogEntry[] = [
   { part: 189, title: '佛說象腋經', subid: 258, scrollCount: 1, firstBookId: 3760, collectionId: 47 },
   { part: 190, title: '佛說無所希望經', subid: 259, scrollCount: 1, firstBookId: 3761, collectionId: 47 },
   { part: 191, title: '佛說大乗同性經', subid: 260, scrollCount: 2, firstBookId: 3762, collectionId: 47 },
-  { part: 192, title: '佛說證契大乗經', subid: 261, scrollCount: 3, firstBookId: 3764, collectionId: 47, has0aPreface: true },
+  { part: 192, title: '佛說證契大乗經', subid: 261, scrollCount: 3, firstBookId: 3764, collectionId: 47 },
   { part: 193, title: '持心梵天所問經', subid: 262, scrollCount: 4, firstBookId: 3767, collectionId: 47 },
-  { part: 194, title: '佛說觀無量壽佛經', subid: 263, scrollCount: 2, firstBookId: 3771, collectionId: 47, has0aPreface: true },
+  { part: 194, title: '佛說觀無量壽佛經', subid: 263, scrollCount: 2, firstBookId: 3771, collectionId: 47 },
   { part: 195, title: '稱讃淨土佛攝受經', subid: 264, scrollCount: 1, firstBookId: 3773, collectionId: 47 },
   { part: 196, title: '佛說阿彌陀經', subid: 265, scrollCount: 1, firstBookId: 3774, collectionId: 47 },
   { part: 197, title: '拔一切業障根本得生淨土神呪', subid: 266, scrollCount: 1, firstBookId: 3775, collectionId: 47 },
   { part: 198, title: '後出阿彌陀佛偈經', subid: 267, scrollCount: 1, firstBookId: 3776, collectionId: 47 },
-  { part: 199, title: '佛說大阿彌陀經', subid: 268, scrollCount: 3, firstBookId: 3777, collectionId: 47, has0aPreface: true },
+  { part: 199, title: '佛說大阿彌陀經', subid: 268, scrollCount: 3, firstBookId: 3777, collectionId: 47 },
   { part: 200, title: '佛說觀彌勒菩薩上生兠率陀天經', subid: 269, scrollCount: 1, firstBookId: 3780, collectionId: 47 },
   { part: 201, title: '佛說彌勒下生經', subid: 270, scrollCount: 1, firstBookId: 3781, collectionId: 47 },
   { part: 202, title: '佛說彌勒來時經', subid: 272, scrollCount: 1, firstBookId: 3782, collectionId: 47 },
   { part: 203, title: '佛說彌勒下生成佛經', subid: 274, scrollCount: 1, firstBookId: 3783, collectionId: 47 },
   { part: 204, title: '佛說觀彌勒菩薩下生經', subid: 275, scrollCount: 1, firstBookId: 3784, collectionId: 47 },
   { part: 205, title: '佛說彌勒成佛經', subid: 276, scrollCount: 1, firstBookId: 3785, collectionId: 47 },
-  { part: 206, title: '佛說第一義法勝經', subid: 278, scrollCount: 2, firstBookId: 3786, collectionId: 47, has0aPreface: true },
+  { part: 206, title: '佛說第一義法勝經', subid: 278, scrollCount: 2, firstBookId: 3786, collectionId: 47 },
   { part: 207, title: '佛說大威燈光仙人問疑經', subid: 281, scrollCount: 1, firstBookId: 3788, collectionId: 47 },
   { part: 208, title: '一切法高王經', subid: 284, scrollCount: 1, firstBookId: 3789, collectionId: 47 },
   { part: 209, title: '佛說諸法勇王經', subid: 285, scrollCount: 1, firstBookId: 3790, collectionId: 47 },
@@ -202,7 +119,7 @@ export const SCRIPTURE_CATALOG: ScriptureCatalogEntry[] = [
   { part: 239, title: '佛說謗佛經', subid: 322, scrollCount: 1, firstBookId: 3822, collectionId: 47 },
   { part: 240, title: '大方等大雲經', subid: 323, scrollCount: 4, firstBookId: 3823, collectionId: 47 },
   { part: 241, title: '如來莊嚴智慧光明入一切佛境界經', subid: 325, scrollCount: 2, firstBookId: 3827, collectionId: 47 },
-  { part: 242, title: '深宻解脫經', subid: 327, scrollCount: 6, firstBookId: 3829, collectionId: 47, has0aPreface: true },
+  { part: 242, title: '深宻解脫經', subid: 327, scrollCount: 6, firstBookId: 3829, collectionId: 47 },
   { part: 243, title: '解深宻經', subid: 329, scrollCount: 5, firstBookId: 3835, collectionId: 47 },
   { part: 244, title: '佛說諫王經', subid: 331, scrollCount: 1, firstBookId: 3840, collectionId: 47 },
   { part: 245, title: '如來示敎勝軍王經', subid: 333, scrollCount: 1, firstBookId: 3841, collectionId: 47 },
@@ -263,20 +180,20 @@ export const SCRIPTURE_CATALOG: ScriptureCatalogEntry[] = [
   { part: 300, title: '佛說報恩奉盆經', subid: 392, scrollCount: 1, firstBookId: 3900, collectionId: 47 },
   { part: 301, title: '佛說觀藥王藥上二菩薩經', subid: 393, scrollCount: 1, firstBookId: 3901, collectionId: 47 },
   { part: 302, title: '佛說大孔雀呪王經', subid: 394, scrollCount: 3, firstBookId: 3902, collectionId: 47 },
-  { part: 303, title: '佛母大孔雀明王經', subid: 395, scrollCount: 4, firstBookId: 3905, collectionId: 47, has0aPreface: true },
+  { part: 303, title: '佛母大孔雀明王經', subid: 395, scrollCount: 4, firstBookId: 3905, collectionId: 47 },
   { part: 304, title: '佛說孔雀王呪經', subid: 396, scrollCount: 2, firstBookId: 3909, collectionId: 47 },
   { part: 305, title: '佛說大孔雀王神呪經', subid: 397, scrollCount: 1, firstBookId: 3911, collectionId: 47 },
   { part: 306, title: '佛說大孔雀王雜神呪經', subid: 398, scrollCount: 1, firstBookId: 3912, collectionId: 47 },
   { part: 307, title: '大金色孔雀王呪經', subid: 399, scrollCount: 1, firstBookId: 3913, collectionId: 47 },
   { part: 308, title: '佛說不空羂索呪經', subid: 400, scrollCount: 1, firstBookId: 3914, collectionId: 47 },
   { part: 309, title: '不空羂索心呪王經', subid: 401, scrollCount: 3, firstBookId: 3915, collectionId: 47 },
-  { part: 310, title: '不空羂索陀羅尼經', subid: 402, scrollCount: 3, firstBookId: 3918, collectionId: 47, has0aPreface: true },
+  { part: 310, title: '不空羂索陀羅尼經', subid: 402, scrollCount: 3, firstBookId: 3918, collectionId: 47 },
   { part: 311, title: '不空羂索呪心經', subid: 403, scrollCount: 1, firstBookId: 3921, collectionId: 47 },
-  { part: 312, title: '不空羂索神呪心經', subid: 404, scrollCount: 2, firstBookId: 3922, collectionId: 47, has0aPreface: true },
+  { part: 312, title: '不空羂索神呪心經', subid: 404, scrollCount: 2, firstBookId: 3922, collectionId: 47 },
   { part: 313, title: '不空羂索神變眞言經', subid: 405, scrollCount: 30, firstBookId: 3924, collectionId: 47 },
-  { part: 314, title: '千眼千臂觀世音菩薩陀羅尼神呪經', subid: 406, scrollCount: 3, firstBookId: 3954, collectionId: 47, has0aPreface: true },
+  { part: 314, title: '千眼千臂觀世音菩薩陀羅尼神呪經', subid: 406, scrollCount: 3, firstBookId: 3954, collectionId: 47 },
   { part: 315, title: '千手千眼觀世音菩薩姥陀羅尼身經', subid: 407, scrollCount: 1, firstBookId: 3957, collectionId: 47 },
-  { part: 316, title: '千手千眼觀世音菩薩廣大圎滿無礙大悲心陀羅尼經', subid: 408, scrollCount: 2, firstBookId: 3958, collectionId: 47, has0aPreface: true },
+  { part: 316, title: '千手千眼觀世音菩薩廣大圎滿無礙大悲心陀羅尼經', subid: 408, scrollCount: 2, firstBookId: 3958, collectionId: 47 },
   { part: 317, title: '觀世音菩薩祕密藏神呪經', subid: 409, scrollCount: 1, firstBookId: 3960, collectionId: 47 },
   { part: 318, title: '觀世音菩薩如意摩尼陀羅尼經', subid: 410, scrollCount: 1, firstBookId: 3961, collectionId: 47 },
   { part: 319, title: '觀自在菩薩如意心陀羅尼呪經', subid: 411, scrollCount: 1, firstBookId: 3962, collectionId: 47 },
@@ -305,10 +222,10 @@ export const SCRIPTURE_CATALOG: ScriptureCatalogEntry[] = [
   { part: 342, title: '七俱胝佛母所說准提陀羅尼經', subid: 435, scrollCount: 1, firstBookId: 3985, collectionId: 47 },
   { part: 343, title: '種種雜呪經', subid: 436, scrollCount: 1, firstBookId: 3986, collectionId: 47 },
   { part: 344, title: '佛頂尊勝陀羅尼經', subid: 437, scrollCount: 1, firstBookId: 3987, collectionId: 47 },
-  { part: 345, title: '佛頂尊勝陀羅尼經', subid: 438, scrollCount: 3, firstBookId: 3988, collectionId: 47, has0aPreface: true, mergeFileCount: 3 },
+  { part: 345, title: '佛頂尊勝陀羅尼經', subid: 438, scrollCount: 3, firstBookId: 3988, collectionId: 47 },
   { part: 346, title: '佛說佛頂尊勝陀羅尼經', subid: 439, scrollCount: 1, firstBookId: 3991, collectionId: 47 },
   { part: 347, title: '最勝佛頂陀羅尼淨除業障經', subid: 440, scrollCount: 1, firstBookId: 3992, collectionId: 47 },
-  { part: 348, title: '佛頂最勝陀羅尼經', subid: 441, scrollCount: 2, firstBookId: 3993, collectionId: 47, has0aPreface: true },
+  { part: 348, title: '佛頂最勝陀羅尼經', subid: 441, scrollCount: 2, firstBookId: 3993, collectionId: 47 },
   { part: 349, title: '舍利弗陁羅尼經', subid: 442, scrollCount: 1, firstBookId: 3995, collectionId: 47 },
   { part: 350, title: '佛說無量門破魔陀羅尼經', subid: 443, scrollCount: 1, firstBookId: 3996, collectionId: 47 },
   { part: 351, title: '佛說無量門微宻持經', subid: 444, scrollCount: 1, firstBookId: 3997, collectionId: 47 },
@@ -319,7 +236,7 @@ export const SCRIPTURE_CATALOG: ScriptureCatalogEntry[] = [
   { part: 356, title: '出生無邊門陀羅尼經', subid: 449, scrollCount: 1, firstBookId: 4002, collectionId: 47 },
   { part: 357, title: '勝幢臂印陀羅尼經', subid: 450, scrollCount: 1, firstBookId: 4003, collectionId: 47 },
   { part: 358, title: '妙臂印幢陀羅尼經', subid: 451, scrollCount: 1, firstBookId: 4004, collectionId: 47 },
-  { part: 359, title: '佛說陀羅尼集經', subid: 452, scrollCount: 14, firstBookId: 4005, collectionId: 47, has0aPreface: true },
+  { part: 359, title: '佛說陀羅尼集經', subid: 452, scrollCount: 14, firstBookId: 4005, collectionId: 47 },
   { part: 360, title: '佛說持句神呪經', subid: 453, scrollCount: 1, firstBookId: 4019, collectionId: 47 },
   { part: 361, title: '佛說陀鄰尼鉢經', subid: 454, scrollCount: 1, firstBookId: 4020, collectionId: 47 },
   { part: 362, title: '東方最勝燈王如來助護持世間神呪經', subid: 455, scrollCount: 1, firstBookId: 4021, collectionId: 47 },
@@ -333,47 +250,3 @@ export const SCRIPTURE_CATALOG: ScriptureCatalogEntry[] = [
   { part: 370, title: '佛說無崖際緫持法門經', subid: 463, scrollCount: 1, firstBookId: 4029, collectionId: 47 },
   { part: 371, title: '尊勝菩薩所問一切諸法入無量法門陀羅尼經', subid: 464, scrollCount: 1, firstBookId: 4030, collectionId: 47 },
 ];
-
-const CATALOG_BASE_URL = 'https://w1.xianmijingzang.com/wap/tripitaka/id/47/subid/';
-
-/**
- * Generate volumes from the scripture catalog.
- * Each scroll in each scripture becomes one claimable volume.
- */
-const createCatalogVolumes = (): Volume[] => {
-  const volumes: Volume[] = [];
-  for (const entry of SCRIPTURE_CATALOG) {
-    // Only merge 0a+0b/01 into scroll 1 if has0aPreface flag is set
-    const has0aPreface = entry.has0aPreface === true;
-    const mergeCount = entry.mergeFileCount || 2; // Default: merge 2 files (0a+0b), but can be 3 for (0a+0b+1)
-    const effectiveScrolls = has0aPreface ? entry.scrollCount - (mergeCount - 1) : entry.scrollCount;
-
-    for (let scroll = 1; scroll <= effectiveScrolls; scroll++) {
-      // If has0aPreface: scroll 1 → firstBookId (0a), scroll S>1 → firstBookId + S
-      // Otherwise: scroll N → firstBookId + (N-1)
-      const bookId = has0aPreface
-        ? (scroll === 1 ? entry.firstBookId : entry.firstBookId + scroll)
-        : entry.firstBookId + scroll - 1;
-
-      const hasMultipleScrolls = effectiveScrolls > 1;
-      volumes.push({
-        id: `${entry.part}_${scroll}`,
-        part: entry.part,
-        scroll,
-        volumeNumber: hasMultipleScrolls ? `第${entry.part}部-卷${scroll}` : `第${entry.part}部`,
-        volumeTitle: hasMultipleScrolls ? `${entry.title} 卷${scroll}` : entry.title,
-        status: VolumeStatus.UNCLAIMED,
-        readingUrl: `${CATALOG_BASE_URL}${entry.subid}/`,
-        bookId,
-        collectionId: entry.collectionId,
-        subid: entry.subid
-      });
-    }
-  }
-  return volumes;
-};
-
-const prajna: Volume[] = createPrajnaVolumes();
-const catalogVolumes: Volume[] = createCatalogVolumes();
-
-export const INITIAL_VOLUMES: Volume[] = [...prajna, ...catalogVolumes];

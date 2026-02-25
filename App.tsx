@@ -25,8 +25,10 @@ const App: React.FC = () => {
   const [scriptureError, setScriptureError] = useState<string>('');
   const audioRef = useRef<HTMLAudioElement>(null);
   const secondaryAudioRef = useRef<HTMLAudioElement>(null);
+  const tertiaryAudioRef = useRef<HTMLAudioElement>(null);
   const [audioSrc, setAudioSrc] = useState<string | null>(null);
   const [secondaryAudioSrc, setSecondaryAudioSrc] = useState<string | null>(null);
+  const [tertiaryAudioSrc, setTertiaryAudioSrc] = useState<string | null>(null);
   const [playbackSpeed, setPlaybackSpeed] = useState(1);
   const [completingVolumeId, setCompletingVolumeId] = useState<string | null>(null);
 
@@ -38,7 +40,7 @@ const App: React.FC = () => {
   });
 
   // Function to load scripture content
-  const loadScripture = async (scroll: number) => {
+  const loadScripture = async (volume: Volume) => {
     setScriptureLoading(true);
     setScriptureError('');
     setScriptureHtml('');
@@ -47,7 +49,11 @@ const App: React.FC = () => {
     setSecondaryAudioSrc(null);
 
     try {
-      const response = await fetch(`${API_BASE_URL}/api/scripture/${scroll}`);
+      // Route based on collection: collection 43 (prajna) uses single-param, collection 47 uses part/scroll
+      const url = volume.collectionId === 43
+        ? `${API_BASE_URL}/api/scripture/${volume.scroll}`
+        : `${API_BASE_URL}/api/scripture/${volume.part}/${volume.scroll}`;
+      const response = await fetch(url);
       if (!response.ok) {
         throw new Error(`Failed to load scripture: ${response.status}`);
       }
@@ -68,6 +74,7 @@ const App: React.FC = () => {
       // Use server-provided audio source suffixes (e.g. "580" or "574a")
       setAudioSrc(data.audioSrc || null);
       setSecondaryAudioSrc(data.secondaryAudioSrc || null);
+      setTertiaryAudioSrc(data.tertiaryAudioSrc || null);
 
       setScriptureHtml(mainHtml);
       setPrefaceHtml(preHtml);
@@ -83,7 +90,7 @@ const App: React.FC = () => {
   const goToScripture = (volume: Volume) => {
     setSelectedVolume(volume);
     setView('scripture');
-    loadScripture(volume.scroll);
+    loadScripture(volume);
   };
 
   // Extract unique name-phone pairs from claimed volumes for autocomplete
@@ -604,13 +611,13 @@ const App: React.FC = () => {
                 {/* Main Audio */}
                 <div className="flex-1 min-w-[280px]">
                   <label className="block text-xs font-bold text-[#8b7355] uppercase tracking-widest mb-2">
-                    {secondaryAudioSrc ? '音频 A' : '正文音频'}
+                    {secondaryAudioSrc || tertiaryAudioSrc ? '音频 A' : '正文音频'}
                   </label>
                   <audio
                     ref={audioRef}
                     controls
                     className="w-full"
-                    src={audioSrc ? `https://w1.xianmijingzang.com/fojing/1/1/1/1_${audioSrc}.mp3?_mt=` : undefined}
+                    src={audioSrc ? (audioSrc.startsWith('/') ? `https://w1.xianmijingzang.com${audioSrc}` : `https://w1.xianmijingzang.com/fojing/1/1/1/1_${audioSrc}.mp3?_mt=`) : undefined}
                   >
                     Your browser does not support the audio element.
                   </audio>
@@ -623,6 +630,7 @@ const App: React.FC = () => {
                         setPlaybackSpeed(next);
                         if (audioRef.current) audioRef.current.playbackRate = next;
                         if (secondaryAudioRef.current) secondaryAudioRef.current.playbackRate = next;
+                        if (tertiaryAudioRef.current) tertiaryAudioRef.current.playbackRate = next;
                       }}
                       className="inline-flex items-center px-4 py-2 border-2 border-[#8b7355] text-[#8b7355] hover:bg-[#f5f0eb] rounded-xl font-bold text-sm transition-all"
                     >
@@ -641,7 +649,24 @@ const App: React.FC = () => {
                       ref={secondaryAudioRef}
                       controls
                       className="w-full"
-                      src={`https://w1.xianmijingzang.com/fojing/1/1/1/1_${secondaryAudioSrc}.mp3?_mt=`}
+                      src={secondaryAudioSrc.startsWith('/') ? `https://w1.xianmijingzang.com${secondaryAudioSrc}` : `https://w1.xianmijingzang.com/fojing/1/1/1/1_${secondaryAudioSrc}.mp3?_mt=`}
+                    >
+                      Your browser does not support the audio element.
+                    </audio>
+                  </div>
+                )}
+
+                {/* Tertiary audio (part C for triple-merge scrolls like part 345) */}
+                {tertiaryAudioSrc && (
+                  <div className="flex-1 min-w-[280px]">
+                    <label className="block text-xs font-bold text-[#8b7355] uppercase tracking-widest mb-2">
+                      音频 C
+                    </label>
+                    <audio
+                      ref={tertiaryAudioRef}
+                      controls
+                      className="w-full"
+                      src={tertiaryAudioSrc.startsWith('/') ? `https://w1.xianmijingzang.com${tertiaryAudioSrc}` : `https://w1.xianmijingzang.com/fojing/1/1/1/1_${tertiaryAudioSrc}.mp3?_mt=`}
                     >
                       Your browser does not support the audio element.
                     </audio>
@@ -693,7 +718,7 @@ const App: React.FC = () => {
                     <p className="text-lg font-medium">{scriptureError}</p>
                   </div>
                   <button
-                    onClick={() => loadScripture(selectedVolume.scroll)}
+                    onClick={() => loadScripture(selectedVolume)}
                     className="px-6 py-3 bg-[#8b7355] hover:bg-[#5c4033] text-white rounded-xl font-bold transition-all"
                   >
                     重试

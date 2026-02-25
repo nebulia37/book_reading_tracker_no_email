@@ -21,6 +21,8 @@ export interface Volume {
   remarks?: string;
   bookId: number;              // upstream book ID for scripture content
   prefaceBookId?: number;      // upstream book ID for section preface (if any)
+  collectionId: number;        // upstream collection ID (43 = prajna, 47 = parts 122-371)
+  subid: number;               // upstream subid within collection
 }
 
 export interface ClaimRequest {

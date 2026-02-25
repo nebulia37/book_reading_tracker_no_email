@@ -10,7 +10,10 @@
       "Bash(python3:*)",
       "Bash(for:*)",
       "Bash(do echo -n \"Book $id: \")",
-      "Bash(done)"
+      "Bash(done)",
+      "WebFetch(domain:w1.xianmijingzang.com)",
+      "Bash(npx tsc:*)",
+      "Bash(npx vite build)"
     ]
   }
 }
