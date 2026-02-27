@@ -13,7 +13,11 @@
       "Bash(done)",
       "WebFetch(domain:w1.xianmijingzang.com)",
       "Bash(npx tsc:*)",
-      "Bash(npx vite build)"
+      "Bash(npx vite build)",
+      "Bash(do echo \"=== BookId $bookid ===\")",
+      "Bash(do echo \"=== Subid $subid, BookId 3811 ===\")",
+      "Bash(python -c:*)",
+      "Bash(do echo \"BookId $bookid:\")"
     ]
   }
 }

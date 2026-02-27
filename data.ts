@@ -79,6 +79,8 @@ export interface ScriptureCatalogEntry {
   collectionId: number;
   has0aPreface?: boolean;  // True if first bookId is "0a" preface that merges with "0b" or "01" into scroll 1
   mergeFileCount?: number; // Number of files to merge into scroll 1 (default: 2 for "0a+0b", but can be 3 for "0a+0b+1")
+  audioOverrides?: { [scroll: number]: string }; // Override audio URLs for specific scrolls
+  subidOverrides?: { [scroll: number]: number }; // Override subids for specific scrolls when using different parts' bookIds
 }
 
 export const SCRIPTURE_CATALOG: ScriptureCatalogEntry[] = [
@@ -188,7 +190,7 @@ export const SCRIPTURE_CATALOG: ScriptureCatalogEntry[] = [
   { part: 225, title: '佛說逝童子經', subid: 307, scrollCount: 1, firstBookId: 3807, collectionId: 47 },
   { part: 226, title: '佛說月光童子經', subid: 309, scrollCount: 1, firstBookId: 3808, collectionId: 47 },
   { part: 227, title: '佛說申日兒本經', subid: 310, scrollCount: 1, firstBookId: 3809, collectionId: 47 },
-  { part: 228, title: '佛說德護長者經', subid: 311, scrollCount: 2, firstBookId: 3811, collectionId: 47 },
+  { part: 228, title: '佛說德護長者經', subid: 311, scrollCount: 2, firstBookId: 3811, collectionId: 47, audioOverrides: { 1: 'https://w1.xianmijingzang.com/fojing/1/6/228/228_1.mp3', 2: 'https://mp3xm2.bohanjingzang.com/fojing/1/6/228/228_2.mp3' }, subidOverrides: { 2: 312 } },
   { part: 229, title: '佛說犢子經', subid: 312, scrollCount: 1, firstBookId: 3812, collectionId: 47 },
   { part: 230, title: '佛說乳光佛經', subid: 313, scrollCount: 1, firstBookId: 3813, collectionId: 47 },
   { part: 231, title: '佛說無垢賢女經', subid: 314, scrollCount: 1, firstBookId: 3814, collectionId: 47 },

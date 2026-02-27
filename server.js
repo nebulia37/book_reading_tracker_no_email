@@ -1,3 +1,6 @@
+// Disable SSL certificate verification for expired upstream certificates
+process.env.NODE_TLS_REJECT_UNAUTHORIZED = '0';
+
 import { fileURLToPath } from 'url';
 import path from 'path';
 import express from 'express';
@@ -758,7 +761,7 @@ const SCRIPTURE_CATALOG = [
   { part: 225, title: '佛說逝童子經', subid: 307, scrollCount: 1, firstBookId: 3807, collectionId: 47 },
   { part: 226, title: '佛說月光童子經', subid: 309, scrollCount: 1, firstBookId: 3808, collectionId: 47 },
   { part: 227, title: '佛說申日兒本經', subid: 310, scrollCount: 1, firstBookId: 3809, collectionId: 47 },
-  { part: 228, title: '佛說德護長者經', subid: 311, scrollCount: 2, firstBookId: 3811, collectionId: 47 },
+  { part: 228, title: '佛說德護長者經', subid: 311, scrollCount: 2, firstBookId: 3811, collectionId: 47, audioOverrides: { 1: 'https://w1.xianmijingzang.com/fojing/1/6/228/228_1.mp3', 2: 'https://mp3xm2.bohanjingzang.com/fojing/1/6/228/228_2.mp3' }, subidOverrides: { 2: 312 } },
   { part: 229, title: '佛說犢子經', subid: 312, scrollCount: 1, firstBookId: 3812, collectionId: 47 },
   { part: 230, title: '佛說乳光佛經', subid: 313, scrollCount: 1, firstBookId: 3813, collectionId: 47 },
   { part: 231, title: '佛說無垢賢女經', subid: 314, scrollCount: 1, firstBookId: 3814, collectionId: 47 },
@@ -1268,7 +1271,9 @@ app.get('/api/scripture/:part/:scroll', async (req, res) => {
   const bookId = has0aPreface
     ? (scroll === 1 ? entry.firstBookId : entry.firstBookId + mergeCount + (scroll - 2))
     : entry.firstBookId + scroll - 1;
-  const menuid = `${entry.collectionId}|${entry.subid}`;
+  // Use subid override if available for this scroll
+  const subid = (entry.subidOverrides && entry.subidOverrides[scroll]) || entry.subid;
+  const menuid = `${entry.collectionId}|${subid}`;
   const cacheKey = `scripture_cat_${part}_${scroll}`;
 
   const cached = scriptureCache.get(cacheKey);
@@ -1289,7 +1294,8 @@ app.get('/api/scripture/:part/:scroll', async (req, res) => {
         bookIdsToFetch.map(id => fetchBookWithAudio(id, menuid))
       );
       const html = results.map(r => r.html).join('');
-      const audioSrc = results[0]?.audioUrl || '';
+      // Check for audio overrides, fallback to fetched URLs
+      const audioSrc = (entry.audioOverrides && entry.audioOverrides[scroll]) || results[0]?.audioUrl || '';
       const secondaryAudioSrc = results[1]?.audioUrl || null;
       const tertiaryAudioSrc = results[2]?.audioUrl || null;
       const data = { html, scroll, part, bookId, audioSrc, secondaryAudioSrc, tertiaryAudioSrc, prefaceHtml: null };
@@ -1297,7 +1303,8 @@ app.get('/api/scripture/:part/:scroll', async (req, res) => {
       res.json({ ...data, cached: false });
     } else {
       const { html, audioUrl } = await fetchBookWithAudio(bookId, menuid);
-      const audioSrc = audioUrl || '';
+      // Check for audio override
+      const audioSrc = (entry.audioOverrides && entry.audioOverrides[scroll]) || audioUrl || '';
       const data = { html, scroll, part, bookId, audioSrc, secondaryAudioSrc: null, prefaceHtml: null };
       scriptureCache.set(cacheKey, { data, timestamp: Date.now() });
       res.json({ ...data, cached: false });
@@ -1325,7 +1332,8 @@ app.get('/api/scripture/:part/:scroll/txt', async (req, res) => {
   const bookId = has0aPreface
     ? (scroll === 1 ? entry.firstBookId : entry.firstBookId + mergeCount + (scroll - 2))
     : entry.firstBookId + scroll - 1;
-  const menuid = `${entry.collectionId}|${entry.subid}`;
+  const subid = (entry.subidOverrides && entry.subidOverrides[scroll]) || entry.subid;
+  const menuid = `${entry.collectionId}|${subid}`;
 
   try {
     const cacheKey = `scripture_cat_${part}_${scroll}`;
@@ -1390,31 +1398,38 @@ app.get('/api/scripture/:part/:scroll/mp3', async (req, res) => {
   const bookId = has0aPreface
     ? (scroll === 1 ? entry.firstBookId : entry.firstBookId + mergeCount + (scroll - 2))
     : entry.firstBookId + scroll - 1;
-  const menuid = `${entry.collectionId}|${entry.subid}`;
+  const subid = (entry.subidOverrides && entry.subidOverrides[scroll]) || entry.subid;
+  const menuid = `${entry.collectionId}|${subid}`;
   try {
-    // Get the audio URL from cache or upstream API
-    const cacheKey = `scripture_cat_${part}_${scroll}`;
+    // Check for audio override first
     let audioUrl;
-    const cached = scriptureCache.get(cacheKey);
-    if (cached && (Date.now() - cached.timestamp) < SCRIPTURE_CACHE_DURATION && cached.data.audioSrc) {
-      audioUrl = cached.data.audioSrc;
+    if (entry.audioOverrides && entry.audioOverrides[scroll]) {
+      audioUrl = entry.audioOverrides[scroll];
     } else {
-      const metaResp = await fetch('https://w1.xianmijingzang.com/wapajax/tripitaka/', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/x-www-form-urlencoded; charset=UTF-8',
-          'X-Requested-With': 'XMLHttpRequest'
-        },
-        body: `menuid=${menuid}&book=${bookId}&lang=zh`
-      });
-      if (!metaResp.ok) throw new Error(`Upstream returned ${metaResp.status}`);
-      const metaBuffer = await metaResp.arrayBuffer();
-      const metaJson = JSON.parse(iconv.decode(Buffer.from(metaBuffer), 'gbk'));
-      audioUrl = metaJson.links || metaJson.audiolinks || '';
+      // Get the audio URL from cache or upstream API
+      const cacheKey = `scripture_cat_${part}_${scroll}`;
+      const cached = scriptureCache.get(cacheKey);
+      if (cached && (Date.now() - cached.timestamp) < SCRIPTURE_CACHE_DURATION && cached.data.audioSrc) {
+        audioUrl = cached.data.audioSrc;
+      } else {
+        const metaResp = await fetch('https://w1.xianmijingzang.com/wapajax/tripitaka/', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/x-www-form-urlencoded; charset=UTF-8',
+            'X-Requested-With': 'XMLHttpRequest'
+          },
+          body: `menuid=${menuid}&book=${bookId}&lang=zh`
+        });
+        if (!metaResp.ok) throw new Error(`Upstream returned ${metaResp.status}`);
+        const metaBuffer = await metaResp.arrayBuffer();
+        const metaJson = JSON.parse(iconv.decode(Buffer.from(metaBuffer), 'gbk'));
+        audioUrl = metaJson.links || metaJson.audiolinks || '';
+      }
     }
     if (!audioUrl) throw new Error('No audio URL found');
 
-    const upstream = `https://w1.xianmijingzang.com${audioUrl}${audioUrl.includes('?') ? '' : '?_mt='}`;
+    // Handle full URLs vs path-only URLs
+    const upstream = audioUrl.startsWith('http') ? audioUrl : `https://w1.xianmijingzang.com${audioUrl}${audioUrl.includes('?') ? '' : '?_mt='}`;
     const response = await fetch(upstream);
     if (!response.ok) throw new Error(`Upstream returned ${response.status}`);
     res.setHeader('Content-Type', 'audio/mpeg');
