@@ -17,7 +17,9 @@
       "Bash(do echo \"=== BookId $bookid ===\")",
       "Bash(do echo \"=== Subid $subid, BookId 3811 ===\")",
       "Bash(python -c:*)",
-      "Bash(do echo \"BookId $bookid:\")"
+      "Bash(do echo \"BookId $bookid:\")",
+      "Bash(xxd:*)",
+      "Bash(ls:*)"
     ]
   }
 }

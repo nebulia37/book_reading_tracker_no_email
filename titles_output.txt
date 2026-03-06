@@ -1,0 +1,840 @@
+Fetching titles for parts 372-537...
+
+(node:40952) Warning: Setting the NODE_TLS_REJECT_UNAUTHORIZED environment variable to '0' makes TLS connections and HTTPS requests insecure by disabling certificate verification.
+(Use `node --trace-warnings ...` to show where the warning was created)
+Part 372: 
+Part 373: 
+Part 374: 
+Part 375: 
+Part 376: 
+Part 377: 
+Part 378: 
+Part 379: 
+Part 380: 
+Part 381: 
+Part 382: 
+Part 383: 
+Part 384: 
+Part 385: 
+Part 386: 
+Part 387: 
+Part 388: 
+Part 389: 
+Part 390: 
+Part 391: 
+Part 392: 
+Part 393: 
+Part 394: 
+Part 395: 
+Part 396: 
+Part 397: 
+Part 398: 
+Part 399: 
+Part 400: 
+Part 401: 
+Part 402: 
+Part 403: 
+Part 404: 
+Part 405: 
+Part 406: 
+Part 407: 
+Part 408: 
+Part 409: 
+Part 410: 
+Part 411: 
+Part 412: 
+Part 413: 
+Part 414: 
+Part 415: 
+Part 416: 
+Part 417: 
+Part 418: 
+Part 419: 
+Part 420: 
+Part 421: 
+Part 422: 
+Part 423: 
+Part 424: 
+Part 425: 
+Part 426: 
+Part 427: 
+Part 428: 
+Part 429: 
+Part 430: 
+Part 431: 
+Part 432: 
+Part 433: 
+Part 434: 
+Part 435: 
+Part 436: 
+Part 437: 
+Part 438: 
+Part 439: 
+Part 440: 
+Part 441: 
+Part 442: 
+Part 443: 
+Part 444: 
+Part 445: 
+Part 446: 
+Part 447: 
+Part 448: 
+Part 449: 
+Part 450: 
+Part 451: 
+Part 452: 
+Part 453: 
+Part 454: 
+Part 455: 
+Part 456: 
+Part 457: 
+Part 458: 
+Part 459: 
+Part 460: 
+Part 461: 
+Part 462: 
+Part 463: 
+Part 464: 
+Part 465: 
+Part 466: 
+Part 467: 
+Part 468: 
+Part 469: 
+Part 470: 
+Part 471: 
+Part 472: 
+Part 473: 
+Part 474: 
+Part 475: 
+Part 476: 
+Part 477: 
+Part 478: 
+Part 479: 
+Part 480: 
+Part 481: 
+Part 482: 
+Part 483: 
+Part 484: 
+Part 485: 
+Part 486: 
+Part 487: 
+Part 488: 
+Part 489: 
+Part 490: 
+Part 491: 
+Part 492: 
+Part 493: 
+Part 494: 
+Part 495: 
+Part 496: 
+Part 497: 
+Part 498: 
+Part 499: 
+Part 500: 
+Part 501: 
+Part 502: 
+Part 503: 
+Part 504: 
+Part 505: 
+Part 506: 
+Part 507: 
+Part 508: 
+Part 509: 
+Part 510: 
+Part 511: 
+Part 512: 
+Part 513: 
+Part 514: 
+Part 515: 
+Part 516: 
+Part 517: 
+Part 518: 
+Part 519: 
+Part 520: 
+Part 521: 
+Part 522: 
+Part 523: 
+Part 524: 
+Part 525: 
+Part 526: 
+Part 527: 
+Part 528: 
+Part 529: 
+Part 530: 
+Part 531: 
+Part 532: 
+Part 533: 
+Part 534: 
+Part 535: 
+Part 536: 
+Part 537: 
+
+
+=== JSON OUTPUT ===
+
+[
+  {
+    "part": 372,
+    "title": ""
+  },
+  {
+    "part": 373,
+    "title": ""
+  },
+  {
+    "part": 374,
+    "title": ""
+  },
+  {
+    "part": 375,
+    "title": ""
+  },
+  {
+    "part": 376,
+    "title": ""
+  },
+  {
+    "part": 377,
+    "title": ""
+  },
+  {
+    "part": 378,
+    "title": ""
+  },
+  {
+    "part": 379,
+    "title": ""
+  },
+  {
+    "part": 380,
+    "title": ""
+  },
+  {
+    "part": 381,
+    "title": ""
+  },
+  {
+    "part": 382,
+    "title": ""
+  },
+  {
+    "part": 383,
+    "title": ""
+  },
+  {
+    "part": 384,
+    "title": ""
+  },
+  {
+    "part": 385,
+    "title": ""
+  },
+  {
+    "part": 386,
+    "title": ""
+  },
+  {
+    "part": 387,
+    "title": ""
+  },
+  {
+    "part": 388,
+    "title": ""
+  },
+  {
+    "part": 389,
+    "title": ""
+  },
+  {
+    "part": 390,
+    "title": ""
+  },
+  {
+    "part": 391,
+    "title": ""
+  },
+  {
+    "part": 392,
+    "title": ""
+  },
+  {
+    "part": 393,
+    "title": ""
+  },
+  {
+    "part": 394,
+    "title": ""
+  },
+  {
+    "part": 395,
+    "title": ""
+  },
+  {
+    "part": 396,
+    "title": ""
+  },
+  {
+    "part": 397,
+    "title": ""
+  },
+  {
+    "part": 398,
+    "title": ""
+  },
+  {
+    "part": 399,
+    "title": ""
+  },
+  {
+    "part": 400,
+    "title": ""
+  },
+  {
+    "part": 401,
+    "title": ""
+  },
+  {
+    "part": 402,
+    "title": ""
+  },
+  {
+    "part": 403,
+    "title": ""
+  },
+  {
+    "part": 404,
+    "title": ""
+  },
+  {
+    "part": 405,
+    "title": ""
+  },
+  {
+    "part": 406,
+    "title": ""
+  },
+  {
+    "part": 407,
+    "title": ""
+  },
+  {
+    "part": 408,
+    "title": ""
+  },
+  {
+    "part": 409,
+    "title": ""
+  },
+  {
+    "part": 410,
+    "title": ""
+  },
+  {
+    "part": 411,
+    "title": ""
+  },
+  {
+    "part": 412,
+    "title": ""
+  },
+  {
+    "part": 413,
+    "title": ""
+  },
+  {
+    "part": 414,
+    "title": ""
+  },
+  {
+    "part": 415,
+    "title": ""
+  },
+  {
+    "part": 416,
+    "title": ""
+  },
+  {
+    "part": 417,
+    "title": ""
+  },
+  {
+    "part": 418,
+    "title": ""
+  },
+  {
+    "part": 419,
+    "title": ""
+  },
+  {
+    "part": 420,
+    "title": ""
+  },
+  {
+    "part": 421,
+    "title": ""
+  },
+  {
+    "part": 422,
+    "title": ""
+  },
+  {
+    "part": 423,
+    "title": ""
+  },
+  {
+    "part": 424,
+    "title": ""
+  },
+  {
+    "part": 425,
+    "title": ""
+  },
+  {
+    "part": 426,
+    "title": ""
+  },
+  {
+    "part": 427,
+    "title": ""
+  },
+  {
+    "part": 428,
+    "title": ""
+  },
+  {
+    "part": 429,
+    "title": ""
+  },
+  {
+    "part": 430,
+    "title": ""
+  },
+  {
+    "part": 431,
+    "title": ""
+  },
+  {
+    "part": 432,
+    "title": ""
+  },
+  {
+    "part": 433,
+    "title": ""
+  },
+  {
+    "part": 434,
+    "title": ""
+  },
+  {
+    "part": 435,
+    "title": ""
+  },
+  {
+    "part": 436,
+    "title": ""
+  },
+  {
+    "part": 437,
+    "title": ""
+  },
+  {
+    "part": 438,
+    "title": ""
+  },
+  {
+    "part": 439,
+    "title": ""
+  },
+  {
+    "part": 440,
+    "title": ""
+  },
+  {
+    "part": 441,
+    "title": ""
+  },
+  {
+    "part": 442,
+    "title": ""
+  },
+  {
+    "part": 443,
+    "title": ""
+  },
+  {
+    "part": 444,
+    "title": ""
+  },
+  {
+    "part": 445,
+    "title": ""
+  },
+  {
+    "part": 446,
+    "title": ""
+  },
+  {
+    "part": 447,
+    "title": ""
+  },
+  {
+    "part": 448,
+    "title": ""
+  },
+  {
+    "part": 449,
+    "title": ""
+  },
+  {
+    "part": 450,
+    "title": ""
+  },
+  {
+    "part": 451,
+    "title": ""
+  },
+  {
+    "part": 452,
+    "title": ""
+  },
+  {
+    "part": 453,
+    "title": ""
+  },
+  {
+    "part": 454,
+    "title": ""
+  },
+  {
+    "part": 455,
+    "title": ""
+  },
+  {
+    "part": 456,
+    "title": ""
+  },
+  {
+    "part": 457,
+    "title": ""
+  },
+  {
+    "part": 458,
+    "title": ""
+  },
+  {
+    "part": 459,
+    "title": ""
+  },
+  {
+    "part": 460,
+    "title": ""
+  },
+  {
+    "part": 461,
+    "title": ""
+  },
+  {
+    "part": 462,
+    "title": ""
+  },
+  {
+    "part": 463,
+    "title": ""
+  },
+  {
+    "part": 464,
+    "title": ""
+  },
+  {
+    "part": 465,
+    "title": ""
+  },
+  {
+    "part": 466,
+    "title": ""
+  },
+  {
+    "part": 467,
+    "title": ""
+  },
+  {
+    "part": 468,
+    "title": ""
+  },
+  {
+    "part": 469,
+    "title": ""
+  },
+  {
+    "part": 470,
+    "title": ""
+  },
+  {
+    "part": 471,
+    "title": ""
+  },
+  {
+    "part": 472,
+    "title": ""
+  },
+  {
+    "part": 473,
+    "title": ""
+  },
+  {
+    "part": 474,
+    "title": ""
+  },
+  {
+    "part": 475,
+    "title": ""
+  },
+  {
+    "part": 476,
+    "title": ""
+  },
+  {
+    "part": 477,
+    "title": ""
+  },
+  {
+    "part": 478,
+    "title": ""
+  },
+  {
+    "part": 479,
+    "title": ""
+  },
+  {
+    "part": 480,
+    "title": ""
+  },
+  {
+    "part": 481,
+    "title": ""
+  },
+  {
+    "part": 482,
+    "title": ""
+  },
+  {
+    "part": 483,
+    "title": ""
+  },
+  {
+    "part": 484,
+    "title": ""
+  },
+  {
+    "part": 485,
+    "title": ""
+  },
+  {
+    "part": 486,
+    "title": ""
+  },
+  {
+    "part": 487,
+    "title": ""
+  },
+  {
+    "part": 488,
+    "title": ""
+  },
+  {
+    "part": 489,
+    "title": ""
+  },
+  {
+    "part": 490,
+    "title": ""
+  },
+  {
+    "part": 491,
+    "title": ""
+  },
+  {
+    "part": 492,
+    "title": ""
+  },
+  {
+    "part": 493,
+    "title": ""
+  },
+  {
+    "part": 494,
+    "title": ""
+  },
+  {
+    "part": 495,
+    "title": ""
+  },
+  {
+    "part": 496,
+    "title": ""
+  },
+  {
+    "part": 497,
+    "title": ""
+  },
+  {
+    "part": 498,
+    "title": ""
+  },
+  {
+    "part": 499,
+    "title": ""
+  },
+  {
+    "part": 500,
+    "title": ""
+  },
+  {
+    "part": 501,
+    "title": ""
+  },
+  {
+    "part": 502,
+    "title": ""
+  },
+  {
+    "part": 503,
+    "title": ""
+  },
+  {
+    "part": 504,
+    "title": ""
+  },
+  {
+    "part": 505,
+    "title": ""
+  },
+  {
+    "part": 506,
+    "title": ""
+  },
+  {
+    "part": 507,
+    "title": ""
+  },
+  {
+    "part": 508,
+    "title": ""
+  },
+  {
+    "part": 509,
+    "title": ""
+  },
+  {
+    "part": 510,
+    "title": ""
+  },
+  {
+    "part": 511,
+    "title": ""
+  },
+  {
+    "part": 512,
+    "title": ""
+  },
+  {
+    "part": 513,
+    "title": ""
+  },
+  {
+    "part": 514,
+    "title": ""
+  },
+  {
+    "part": 515,
+    "title": ""
+  },
+  {
+    "part": 516,
+    "title": ""
+  },
+  {
+    "part": 517,
+    "title": ""
+  },
+  {
+    "part": 518,
+    "title": ""
+  },
+  {
+    "part": 519,
+    "title": ""
+  },
+  {
+    "part": 520,
+    "title": ""
+  },
+  {
+    "part": 521,
+    "title": ""
+  },
+  {
+    "part": 522,
+    "title": ""
+  },
+  {
+    "part": 523,
+    "title": ""
+  },
+  {
+    "part": 524,
+    "title": ""
+  },
+  {
+    "part": 525,
+    "title": ""
+  },
+  {
+    "part": 526,
+    "title": ""
+  },
+  {
+    "part": 527,
+    "title": ""
+  },
+  {
+    "part": 528,
+    "title": ""
+  },
+  {
+    "part": 529,
+    "title": ""
+  },
+  {
+    "part": 530,
+    "title": ""
+  },
+  {
+    "part": 531,
+    "title": ""
+  },
+  {
+    "part": 532,
+    "title": ""
+  },
+  {
+    "part": 533,
+    "title": ""
+  },
+  {
+    "part": 534,
+    "title": ""
+  },
+  {
+    "part": 535,
+    "title": ""
+  },
+  {
+    "part": 536,
+    "title": ""
+  },
+  {
+    "part": 537,
+    "title": ""
+  }
+]

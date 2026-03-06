@@ -20,8 +20,7 @@ export interface Volume {
   readingUrl: string;
   remarks?: string;
   bookId: number;              // upstream book ID for scripture content
-  prefaceBookId?: number;      // upstream book ID for section preface (if any)
-  collectionId: number;        // upstream collection ID (43 = prajna, 47 = parts 122-371)
+  collectionId: number;        // upstream collection ID (48 = parts 372-537)
   subid: number;               // upstream subid within collection
 }
 

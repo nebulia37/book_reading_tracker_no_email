@@ -49,10 +49,7 @@ const App: React.FC = () => {
     setSecondaryAudioSrc(null);
 
     try {
-      // Route based on collection: collection 43 (prajna) uses single-param, collection 47 uses part/scroll
-      const url = volume.collectionId === 43
-        ? `${API_BASE_URL}/api/scripture/${volume.scroll}`
-        : `${API_BASE_URL}/api/scripture/${volume.part}/${volume.scroll}`;
+      const url = `${API_BASE_URL}/api/scripture/${volume.part}/${volume.scroll}`;
       const response = await fetch(url);
       if (!response.ok) {
         throw new Error(`Failed to load scripture: ${response.status}`);
@@ -617,7 +614,7 @@ const App: React.FC = () => {
                     ref={audioRef}
                     controls
                     className="w-full"
-                    src={audioSrc ? (audioSrc.startsWith('/') ? `https://w1.xianmijingzang.com${audioSrc}` : `https://w1.xianmijingzang.com/fojing/1/1/1/1_${audioSrc}.mp3?_mt=`) : undefined}
+                    src={audioSrc ? (audioSrc.startsWith('/api/') ? `${API_BASE_URL}${audioSrc}` : audioSrc.startsWith('/') ? `https://w1.xianmijingzang.com${audioSrc}` : `https://w1.xianmijingzang.com/fojing/1/1/1/1_${audioSrc}.mp3?_mt=`) : undefined}
                   >
                     Your browser does not support the audio element.
                   </audio>
@@ -649,7 +646,7 @@ const App: React.FC = () => {
                       ref={secondaryAudioRef}
                       controls
                       className="w-full"
-                      src={secondaryAudioSrc.startsWith('/') ? `https://w1.xianmijingzang.com${secondaryAudioSrc}` : `https://w1.xianmijingzang.com/fojing/1/1/1/1_${secondaryAudioSrc}.mp3?_mt=`}
+                      src={secondaryAudioSrc.startsWith('/api/') ? `${API_BASE_URL}${secondaryAudioSrc}` : secondaryAudioSrc.startsWith('/') ? `https://w1.xianmijingzang.com${secondaryAudioSrc}` : `https://w1.xianmijingzang.com/fojing/1/1/1/1_${secondaryAudioSrc}.mp3?_mt=`}
                     >
                       Your browser does not support the audio element.
                     </audio>
@@ -666,7 +663,7 @@ const App: React.FC = () => {
                       ref={tertiaryAudioRef}
                       controls
                       className="w-full"
-                      src={tertiaryAudioSrc.startsWith('/') ? `https://w1.xianmijingzang.com${tertiaryAudioSrc}` : `https://w1.xianmijingzang.com/fojing/1/1/1/1_${tertiaryAudioSrc}.mp3?_mt=`}
+                      src={tertiaryAudioSrc.startsWith('/api/') ? `${API_BASE_URL}${tertiaryAudioSrc}` : tertiaryAudioSrc.startsWith('/') ? `https://w1.xianmijingzang.com${tertiaryAudioSrc}` : `https://w1.xianmijingzang.com/fojing/1/1/1/1_${tertiaryAudioSrc}.mp3?_mt=`}
                     >
                       Your browser does not support the audio element.
                     </audio>
