@@ -719,6 +719,11 @@ function getCatalogEntry(part) {
 let scriptureCache = new Map();
 const SCRIPTURE_CACHE_DURATION = 60 * 60 * 1000; // 1 hour
 
+// Cache for audio URLs: key = "part_scroll" → upstream audio URL string
+// Populated when scripture text is fetched (which already retrieves audio URLs)
+// Used by mp3 proxy to skip the redundant metadata request
+let audioUrlCache = new Map();
+
 // Scripture content for catalog entries
 // Only merge 0a+0b/01 into scroll 1 if has0aPreface flag is set
 app.get('/api/scripture/:part/:scroll', async (req, res) => {
@@ -764,6 +769,9 @@ app.get('/api/scripture/:part/:scroll', async (req, res) => {
         bookIdsToFetch.map(id => fetchBookWithAudio(id, menuid))
       );
       const html = results.map(r => r.html).join('');
+      // Cache audio URLs so mp3 proxy can skip the metadata request
+      const primaryAudioUrl = results[0]?.audioUrl || '';
+      if (primaryAudioUrl) audioUrlCache.set(`${part}_${scroll}`, primaryAudioUrl);
       // Use local proxy URL for catalog volumes to avoid SSL certificate issues
       const audioSrc = `/api/scripture/${part}/${scroll}/mp3`;
       const secondaryAudioSrc = results[1]?.audioUrl || null;
@@ -772,7 +780,9 @@ app.get('/api/scripture/:part/:scroll', async (req, res) => {
       scriptureCache.set(cacheKey, { data, timestamp: Date.now() });
       res.json({ ...data, cached: false });
     } else {
-      const { html } = await fetchBookWithAudio(bookId, menuid);
+      const { html, audioUrl: fetchedAudioUrl } = await fetchBookWithAudio(bookId, menuid);
+      // Cache audio URL so mp3 proxy can skip the metadata request
+      if (fetchedAudioUrl) audioUrlCache.set(`${part}_${scroll}`, fetchedAudioUrl);
       // Use local proxy URL for catalog volumes to avoid SSL certificate issues
       const audioSrc = `/api/scripture/${part}/${scroll}/mp3`;
       const data = { html, scroll, part, bookId, audioSrc, secondaryAudioSrc: null, prefaceHtml: null };
@@ -871,27 +881,38 @@ app.get('/api/scripture/:part/:scroll/mp3', async (req, res) => {
   const subid = (entry.subidOverrides && entry.subidOverrides[scroll]) || entry.subid;
   const menuid = `${entry.collectionId}|${subid}`;
   try {
-    // Always fetch fresh audio URL from upstream API (don't use cache since cache now contains local proxy URLs)
-    const metaResp = await fetch('https://w1.xianmijingzang.com/wapajax/tripitaka/', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/x-www-form-urlencoded; charset=UTF-8',
-        'X-Requested-With': 'XMLHttpRequest'
-      },
-      body: `menuid=${menuid}&book=${bookId}&lang=zh`
-    });
-    if (!metaResp.ok) throw new Error(`Upstream returned ${metaResp.status}`);
-    const metaBuffer = await metaResp.arrayBuffer();
-    const metaJson = JSON.parse(iconv.decode(Buffer.from(metaBuffer), 'gbk'));
-    const audioUrl = metaJson.links || metaJson.audiolinks || '';
+    // Use cached audio URL if available (populated when scripture text was loaded)
+    // This skips the redundant metadata request that was the main cause of slow audio start
+    const audioCacheKey = `${part}_${scroll}`;
+    let audioUrl = audioUrlCache.get(audioCacheKey) || '';
+
+    if (!audioUrl) {
+      // Fallback: fetch metadata if not cached (e.g. direct mp3 link without loading text first)
+      const metaResp = await fetch('https://w1.xianmijingzang.com/wapajax/tripitaka/', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/x-www-form-urlencoded; charset=UTF-8',
+          'X-Requested-With': 'XMLHttpRequest'
+        },
+        body: `menuid=${menuid}&book=${bookId}&lang=zh`
+      });
+      if (!metaResp.ok) throw new Error(`Upstream returned ${metaResp.status}`);
+      const metaBuffer = await metaResp.arrayBuffer();
+      const metaJson = JSON.parse(iconv.decode(Buffer.from(metaBuffer), 'gbk'));
+      audioUrl = metaJson.links || metaJson.audiolinks || '';
+      if (audioUrl) audioUrlCache.set(audioCacheKey, audioUrl);
+    }
     if (!audioUrl) throw new Error('No audio URL found');
 
     // Handle full URLs vs path-only URLs
     const upstream = audioUrl.startsWith('http') ? audioUrl : `https://w1.xianmijingzang.com${audioUrl}${audioUrl.includes('?') ? '' : '?_mt='}`;
     const response = await fetch(upstream);
     if (!response.ok) throw new Error(`Upstream returned ${response.status}`);
+    // Stream-friendly headers: no Content-Disposition (was forcing download), forward Content-Length
     res.setHeader('Content-Type', 'audio/mpeg');
-    res.setHeader('Content-Disposition', `attachment; filename="part${part}_scroll${scroll}.mp3"`);
+    res.setHeader('Accept-Ranges', 'none');
+    const contentLength = response.headers.get('content-length');
+    if (contentLength) res.setHeader('Content-Length', contentLength);
     const { Readable } = await import('stream');
     Readable.fromWeb(response.body).pipe(res);
   } catch (error) {
