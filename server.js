@@ -575,140 +575,364 @@ async function fetchBookHtml(bookId, menuid) {
   return iconv.decode(Buffer.from(buffer), 'gbk');
 }
 
-// Fetch both HTML content and audio URL from upstream
-// The upstream API returns audio links only when only_content is NOT set.
-// When content=='ajax_url', a second request with only_content=1 is needed for HTML.
+// Fetch both HTML content and audio URL from upstream in parallel.
+// Metadata request (no only_content) returns the audio URL.
+// HTML request (only_content=1) always returns HTML directly.
+// Both are independent so we fire them simultaneously.
 async function fetchBookWithAudio(bookId, menuid) {
   const headers = {
     'Content-Type': 'application/x-www-form-urlencoded; charset=UTF-8',
     'X-Requested-With': 'XMLHttpRequest'
   };
 
-  // First request: get audio URL (without only_content)
-  const metaResp = await fetch('https://w1.xianmijingzang.com/wapajax/tripitaka/', {
-    method: 'POST', headers,
-    body: `menuid=${menuid}&book=${bookId}&lang=zh`
-  });
-  if (!metaResp.ok) throw new Error(`Upstream returned ${metaResp.status}`);
-  const metaBuffer = await metaResp.arrayBuffer();
+  const [metaBuffer, html] = await Promise.all([
+    fetch('https://w1.xianmijingzang.com/wapajax/tripitaka/', {
+      method: 'POST', headers,
+      body: `menuid=${menuid}&book=${bookId}&lang=zh`
+    }).then(r => { if (!r.ok) throw new Error(`Upstream returned ${r.status}`); return r.arrayBuffer(); }),
+    fetchBookHtml(bookId, menuid)
+  ]);
+
   const metaJson = JSON.parse(iconv.decode(Buffer.from(metaBuffer), 'gbk'));
   const audioUrl = metaJson.links || metaJson.audiolinks || '';
-
-  // Second request: get HTML content
-  const html = await fetchBookHtml(bookId, menuid);
 
   return { html, audioUrl };
 }
 
 // ============================================
-// CATALOG FOR PARTS 675-776 (collection 50)
+// CATALOG FOR PARTS 777-1076 (collection 51)
 // ============================================
 const SCRIPTURE_CATALOG = [
-  { part: 675, title: '正法念處經', subid: 648, scrollCount: 71, firstBookId: 4794, collectionId: 50, has0aPreface: true },
-  { part: 676, title: '佛本行集經', subid: 782, scrollCount: 60, firstBookId: 4865, collectionId: 50 },
-  { part: 677, title: '佛說大安般守意經', subid: 783, scrollCount: 3, firstBookId: 4925, collectionId: 50, has0aPreface: true },
-  { part: 678, title: '佛說罵意經', subid: 784, scrollCount: 1, firstBookId: 4928, collectionId: 50 },
-  { part: 679, title: '禪行法想經', subid: 785, scrollCount: 1, firstBookId: 4929, collectionId: 50 },
-  { part: 680, title: '佛說處處經', subid: 786, scrollCount: 1, firstBookId: 4930, collectionId: 50 },
-  { part: 681, title: '佛說分别善惡所起經', subid: 787, scrollCount: 1, firstBookId: 4931, collectionId: 50 },
-  { part: 682, title: '佛說出家縁經', subid: 788, scrollCount: 1, firstBookId: 4932, collectionId: 50 },
-  { part: 683, title: '佛說阿含正行經', subid: 789, scrollCount: 1, firstBookId: 4933, collectionId: 50 },
-  { part: 684, title: '佛說十八泥犂經', subid: 790, scrollCount: 1, firstBookId: 4934, collectionId: 50 },
-  { part: 685, title: '佛說法受塵經', subid: 791, scrollCount: 1, firstBookId: 4935, collectionId: 50 },
-  { part: 686, title: '佛說進學經', subid: 792, scrollCount: 1, firstBookId: 4936, collectionId: 50 },
-  { part: 687, title: '佛說得道梯隥錫杖經', subid: 793, scrollCount: 1, firstBookId: 4937, collectionId: 50 },
-  { part: 688, title: '佛說貧窮老公經', subid: 794, scrollCount: 1, firstBookId: 4938, collectionId: 50 },
-  { part: 689, title: '須摩提長者經', subid: 795, scrollCount: 1, firstBookId: 4939, collectionId: 50 },
-  { part: 690, title: '長者懊惱三處經', subid: 796, scrollCount: 1, firstBookId: 4940, collectionId: 50 },
-  { part: 691, title: '犍陀國王經', subid: 797, scrollCount: 1, firstBookId: 4941, collectionId: 50 },
-  { part: 692, title: '阿難四事經', subid: 798, scrollCount: 1, firstBookId: 4942, collectionId: 50 },
-  { part: 693, title: '分别經', subid: 799, scrollCount: 1, firstBookId: 4943, collectionId: 50 },
-  { part: 694, title: '未生怨經', subid: 800, scrollCount: 1, firstBookId: 4944, collectionId: 50 },
-  { part: 695, title: '四願經', subid: 801, scrollCount: 1, firstBookId: 4945, collectionId: 50 },
-  { part: 696, title: '猘狗經', subid: 802, scrollCount: 1, firstBookId: 4946, collectionId: 50 },
-  { part: 697, title: '八關齋經', subid: 803, scrollCount: 1, firstBookId: 4947, collectionId: 50 },
-  { part: 698, title: '孝子經', subid: 804, scrollCount: 1, firstBookId: 4948, collectionId: 50 },
-  { part: 699, title: '黒氏梵志經', subid: 805, scrollCount: 1, firstBookId: 4949, collectionId: 50 },
-  { part: 700, title: '阿鳩留經', subid: 806, scrollCount: 1, firstBookId: 4950, collectionId: 50 },
-  { part: 701, title: '佛爲阿支羅迦葉自化作苦經', subid: 807, scrollCount: 1, firstBookId: 4951, collectionId: 50 },
-  { part: 702, title: '佛說罪業報應教化地獄經', subid: 808, scrollCount: 1, firstBookId: 4952, collectionId: 50 },
-  { part: 703, title: '佛說龍王兄弟經', subid: 809, scrollCount: 1, firstBookId: 4953, collectionId: 50 },
-  { part: 704, title: '佛說長者音恱經', subid: 810, scrollCount: 1, firstBookId: 4954, collectionId: 50 },
-  { part: 705, title: '佛說七女經', subid: 811, scrollCount: 1, firstBookId: 4955, collectionId: 50 },
-  { part: 706, title: '佛說八師經', subid: 812, scrollCount: 1, firstBookId: 4956, collectionId: 50 },
-  { part: 707, title: '佛說越難經', subid: 813, scrollCount: 1, firstBookId: 4957, collectionId: 50 },
-  { part: 708, title: '佛說所欲致患經', subid: 814, scrollCount: 1, firstBookId: 4958, collectionId: 50 },
-  { part: 709, title: '阿闍世王問五逆經', subid: 815, scrollCount: 1, firstBookId: 4959, collectionId: 50 },
-  { part: 710, title: '本事經', subid: 816, scrollCount: 7, firstBookId: 4960, collectionId: 50 },
-  { part: 711, title: '佛說中心經', subid: 817, scrollCount: 1, firstBookId: 4967, collectionId: 50 },
-  { part: 712, title: '佛說見正經', subid: 818, scrollCount: 1, firstBookId: 4968, collectionId: 50 },
-  { part: 713, title: '佛說大魚事經', subid: 819, scrollCount: 1, firstBookId: 4969, collectionId: 50 },
-  { part: 714, title: '佛說阿難七夢經', subid: 820, scrollCount: 1, firstBookId: 4970, collectionId: 50 },
-  { part: 715, title: '佛說呵鵰阿那含經', subid: 821, scrollCount: 1, firstBookId: 4971, collectionId: 50 },
-  { part: 716, title: '佛說燈指因縁經', subid: 822, scrollCount: 1, firstBookId: 4972, collectionId: 50 },
-  { part: 717, title: '佛說婦人遇辜經', subid: 823, scrollCount: 1, firstBookId: 4973, collectionId: 50 },
-  { part: 718, title: '佛說四天王經', subid: 824, scrollCount: 1, firstBookId: 4974, collectionId: 50 },
-  { part: 719, title: '佛說摩訶迦葉度貧母經', subid: 825, scrollCount: 1, firstBookId: 4975, collectionId: 50 },
-  { part: 720, title: '佛說禪行三十七品經', subid: 826, scrollCount: 1, firstBookId: 4976, collectionId: 50 },
-  { part: 721, title: '比丘避女惡名欲自殺經', subid: 827, scrollCount: 1, firstBookId: 4977, collectionId: 50 },
-  { part: 722, title: '佛說身觀經', subid: 828, scrollCount: 1, firstBookId: 4978, collectionId: 50 },
-  { part: 723, title: '佛說無常經', subid: 829, scrollCount: 1, firstBookId: 4979, collectionId: 50 },
-  { part: 724, title: '佛說八無暇有暇經', subid: 830, scrollCount: 1, firstBookId: 4980, collectionId: 50 },
-  { part: 725, title: '五百弟子自說本起經', subid: 831, scrollCount: 1, firstBookId: 4981, collectionId: 50 },
-  { part: 726, title: '佛說五苦章句經', subid: 832, scrollCount: 1, firstBookId: 4982, collectionId: 50 },
-  { part: 727, title: '佛說堅意經', subid: 833, scrollCount: 1, firstBookId: 4983, collectionId: 50 },
-  { part: 728, title: '佛說淨飯王般涅槃經', subid: 834, scrollCount: 1, firstBookId: 4984, collectionId: 50 },
-  { part: 729, title: '佛說興起行經', subid: 835, scrollCount: 3, firstBookId: 4985, collectionId: 50, has0aPreface: true },
-  { part: 730, title: '長爪梵志請問經', subid: 836, scrollCount: 1, firstBookId: 4988, collectionId: 50 },
-  { part: 731, title: '佛說譬喻經', subid: 837, scrollCount: 1, firstBookId: 4989, collectionId: 50 },
-  { part: 732, title: '佛說比丘聽施經', subid: 838, scrollCount: 1, firstBookId: 4990, collectionId: 50 },
-  { part: 733, title: '佛說畧敎誡經', subid: 839, scrollCount: 1, firstBookId: 4991, collectionId: 50 },
-  { part: 734, title: '佛說療痔病經', subid: 840, scrollCount: 1, firstBookId: 4992, collectionId: 50 },
-  { part: 735, title: '佛說業報差别經', subid: 841, scrollCount: 1, firstBookId: 4993, collectionId: 50 },
-  { part: 736, title: '佛說十二品生死經', subid: 842, scrollCount: 1, firstBookId: 4994, collectionId: 50 },
-  { part: 737, title: '佛說輪轉五道罪福報應經', subid: 843, scrollCount: 1, firstBookId: 4995, collectionId: 50 },
-  { part: 738, title: '佛說五無返復經', subid: 844, scrollCount: 2, firstBookId: 4996, collectionId: 50 },
-  { part: 739, title: '佛說佛大僧大經', subid: 846, scrollCount: 1, firstBookId: 4998, collectionId: 50 },
-  { part: 740, title: '佛說大迦葉本經', subid: 847, scrollCount: 1, firstBookId: 4999, collectionId: 50 },
-  { part: 741, title: '佛說四自侵經', subid: 848, scrollCount: 1, firstBookId: 5000, collectionId: 50 },
-  { part: 742, title: '佛說羅云忍辱經', subid: 849, scrollCount: 1, firstBookId: 5001, collectionId: 50 },
-  { part: 743, title: '佛爲年少比丘說正事經', subid: 850, scrollCount: 1, firstBookId: 5002, collectionId: 50 },
-  { part: 744, title: '佛說沙曷比丘功德經', subid: 851, scrollCount: 1, firstBookId: 5003, collectionId: 50 },
-  { part: 745, title: '佛說時非時經', subid: 852, scrollCount: 1, firstBookId: 5004, collectionId: 50 },
-  { part: 746, title: '佛說自愛經', subid: 853, scrollCount: 1, firstBookId: 5005, collectionId: 50 },
-  { part: 747, title: '佛說賢者五福德經', subid: 854, scrollCount: 1, firstBookId: 5006, collectionId: 50 },
-  { part: 748, title: '天請問經', subid: 855, scrollCount: 1, firstBookId: 5007, collectionId: 50 },
-  { part: 749, title: '佛說護淨經', subid: 856, scrollCount: 1, firstBookId: 5008, collectionId: 50 },
-  { part: 750, title: '佛說木槵經', subid: 857, scrollCount: 1, firstBookId: 5009, collectionId: 50 },
-  { part: 751, title: '佛說無上處經', subid: 858, scrollCount: 1, firstBookId: 5010, collectionId: 50 },
-  { part: 752, title: '盧至長者因縁經', subid: 859, scrollCount: 1, firstBookId: 5011, collectionId: 50 },
-  { part: 753, title: '佛說普達王經', subid: 860, scrollCount: 1, firstBookId: 5012, collectionId: 50 },
-  { part: 754, title: '佛說鬼子母經', subid: 861, scrollCount: 1, firstBookId: 5013, collectionId: 50 },
-  { part: 755, title: '佛說梵摩難國王經', subid: 862, scrollCount: 1, firstBookId: 5014, collectionId: 50 },
-  { part: 756, title: '佛說孫多耶致經', subid: 863, scrollCount: 1, firstBookId: 5015, collectionId: 50 },
-  { part: 757, title: '佛說父母恩難報經', subid: 864, scrollCount: 1, firstBookId: 5016, collectionId: 50 },
-  { part: 758, title: '佛說新歳經', subid: 865, scrollCount: 1, firstBookId: 5017, collectionId: 50 },
-  { part: 759, title: '佛說群牛譬經', subid: 866, scrollCount: 1, firstBookId: 5018, collectionId: 50 },
-  { part: 760, title: '佛說九横經', subid: 867, scrollCount: 1, firstBookId: 5019, collectionId: 50 },
-  { part: 761, title: '佛說五恐怖世經', subid: 868, scrollCount: 1, firstBookId: 5020, collectionId: 50 },
-  { part: 762, title: '佛說弟子死復生經', subid: 869, scrollCount: 1, firstBookId: 5021, collectionId: 50 },
-  { part: 763, title: '佛說懈怠耕者經', subid: 870, scrollCount: 1, firstBookId: 5022, collectionId: 50 },
-  { part: 764, title: '佛說辯意長者子所問經', subid: 871, scrollCount: 1, firstBookId: 5023, collectionId: 50 },
-  { part: 765, title: '無垢優婆夷問經', subid: 872, scrollCount: 1, firstBookId: 5024, collectionId: 50 },
-  { part: 766, title: '佛說耶祇經', subid: 873, scrollCount: 1, firstBookId: 5025, collectionId: 50 },
-  { part: 767, title: '佛說末羅王經', subid: 874, scrollCount: 1, firstBookId: 5026, collectionId: 50 },
-  { part: 768, title: '佛說摩達國王經', subid: 875, scrollCount: 1, firstBookId: 5027, collectionId: 50 },
-  { part: 769, title: '佛說旃陀越國王經', subid: 876, scrollCount: 1, firstBookId: 5028, collectionId: 50 },
-  { part: 770, title: '佛說五王經', subid: 877, scrollCount: 1, firstBookId: 5029, collectionId: 50 },
-  { part: 771, title: '佛說出家功德經', subid: 878, scrollCount: 1, firstBookId: 5030, collectionId: 50 },
-  { part: 772, title: '佛說栴檀樹經', subid: 879, scrollCount: 1, firstBookId: 5031, collectionId: 50 },
-  { part: 773, title: '佛說頞多和多耆經', subid: 880, scrollCount: 1, firstBookId: 5032, collectionId: 50 },
-  { part: 774, title: '禪秘要法經', subid: 881, scrollCount: 3, firstBookId: 5033, collectionId: 50 },
-  { part: 775, title: '隂持入經', subid: 882, scrollCount: 2, firstBookId: 5036, collectionId: 50 },
-  { part: 776, title: '佛說因縁僧護經', subid: 883, scrollCount: 1, firstBookId: 5038, collectionId: 50 }
+  { part: 777, title: '佛說大乗莊嚴寳王經', subid: 884, scrollCount: 4, firstBookId: 5039, collectionId: 51 },
+  { part: 778, title: '分别善惡報應經', subid: 885, scrollCount: 2, firstBookId: 5043, collectionId: 51 },
+  { part: 779, title: '佛說守護大千國土經', subid: 886, scrollCount: 3, firstBookId: 5045, collectionId: 51 },
+  { part: 780, title: '大方廣總持寳光明經', subid: 887, scrollCount: 5, firstBookId: 5048, collectionId: 51 },
+  { part: 781, title: '佛說大乗聖無量壽決定光明王如來陀羅尼經', subid: 888, scrollCount: 1, firstBookId: 5053, collectionId: 51 },
+  { part: 782, title: '佛說大乗聖吉祥持世陀羅尼經', subid: 889, scrollCount: 1, firstBookId: 5054, collectionId: 51 },
+  { part: 783, title: '佛說大乗日子王所問經', subid: 890, scrollCount: 1, firstBookId: 5055, collectionId: 51 },
+  { part: 784, title: '佛說金耀童子經', subid: 891, scrollCount: 1, firstBookId: 5056, collectionId: 51 },
+  { part: 785, title: '佛頂放無垢光明入普門觀察一切如來心陀羅尼經', subid: 892, scrollCount: 2, firstBookId: 5057, collectionId: 51 },
+  { part: 786, title: '佛說樓閣正法甘露鼓經', subid: 893, scrollCount: 1, firstBookId: 5059, collectionId: 51 },
+  { part: 787, title: '佛說大乗善見變化文殊師利問法經', subid: 894, scrollCount: 1, firstBookId: 5060, collectionId: 51 },
+  { part: 788, title: '聖虚空藏菩薩陀羅尼經', subid: 895, scrollCount: 1, firstBookId: 5061, collectionId: 51 },
+  { part: 789, title: '佛說大護明大陀羅尼經', subid: 896, scrollCount: 1, firstBookId: 5062, collectionId: 51 },
+  { part: 790, title: '佛說無能勝旛王如來莊嚴陀羅尼經', subid: 897, scrollCount: 1, firstBookId: 5063, collectionId: 51 },
+  { part: 791, title: '最勝佛頂陀羅尼經', subid: 898, scrollCount: 1, firstBookId: 5064, collectionId: 51 },
+  { part: 792, title: '聖佛母小字般若波羅蜜多經', subid: 899, scrollCount: 1, firstBookId: 5065, collectionId: 51 },
+  { part: 793, title: '消除一切閃電障難隨求如意陀羅尼經', subid: 900, scrollCount: 1, firstBookId: 5066, collectionId: 51 },
+  { part: 794, title: '聖最上燈明如來陀羅尼經', subid: 901, scrollCount: 1, firstBookId: 5067, collectionId: 51 },
+  { part: 795, title: '大寒林聖難拏陀羅尼經', subid: 902, scrollCount: 1, firstBookId: 5068, collectionId: 51 },
+  { part: 796, title: '佛說諸行有爲經', subid: 903, scrollCount: 1, firstBookId: 5069, collectionId: 51 },
+  { part: 797, title: '息除中夭陀羅尼經', subid: 904, scrollCount: 1, firstBookId: 5070, collectionId: 51 },
+  { part: 798, title: '一切如來正法秘密篋印心陀羅尼經', subid: 905, scrollCount: 1, firstBookId: 5071, collectionId: 51 },
+  { part: 799, title: '妙法聖念處經', subid: 906, scrollCount: 8, firstBookId: 5072, collectionId: 51 },
+  { part: 800, title: '佛說大迦葉問大寳積正法經', subid: 907, scrollCount: 5, firstBookId: 5080, collectionId: 51 },
+  { part: 801, title: '嗟韈曩法天子受三歸依獲免惡道經', subid: 908, scrollCount: 1, firstBookId: 5085, collectionId: 51 },
+  { part: 802, title: '佛說較量壽命經', subid: 909, scrollCount: 1, firstBookId: 5086, collectionId: 51 },
+  { part: 803, title: '佛說沙彌十戒儀則經', subid: 910, scrollCount: 1, firstBookId: 5087, collectionId: 51 },
+  { part: 804, title: '佛說聖持世陀羅尼經', subid: 911, scrollCount: 1, firstBookId: 5088, collectionId: 51 },
+  { part: 805, title: '佛說布施經', subid: 913, scrollCount: 1, firstBookId: 5089, collectionId: 51 },
+  { part: 806, title: '佛說聖曜母陀羅尼經', subid: 914, scrollCount: 1, firstBookId: 5090, collectionId: 51 },
+  { part: 807, title: '法集名數經', subid: 915, scrollCount: 1, firstBookId: 5091, collectionId: 51 },
+  { part: 808, title: '聖多羅菩薩一百八名陀羅尼經', subid: 916, scrollCount: 1, firstBookId: 5092, collectionId: 51 },
+  { part: 809, title: '十二縁生祥瑞經', subid: 917, scrollCount: 2, firstBookId: 5093, collectionId: 51 },
+  { part: 810, title: '讃揚聖德多羅菩薩一百八名經', subid: 918, scrollCount: 1, firstBookId: 5095, collectionId: 51 },
+  { part: 811, title: '聖觀自在菩薩一百八名經', subid: 919, scrollCount: 1, firstBookId: 5096, collectionId: 51 },
+  { part: 812, title: '佛說目連所問經', subid: 920, scrollCount: 1, firstBookId: 5097, collectionId: 51 },
+  { part: 813, title: '外道問聖大乗法無我義經', subid: 921, scrollCount: 1, firstBookId: 5098, collectionId: 51 },
+  { part: 814, title: '毗俱胝菩薩一百八名經', subid: 922, scrollCount: 1, firstBookId: 5099, collectionId: 51 },
+  { part: 815, title: '勝軍化世百喻伽他經', subid: 923, scrollCount: 1, firstBookId: 5100, collectionId: 51 },
+  { part: 816, title: '六道伽陀經', subid: 924, scrollCount: 1, firstBookId: 5101, collectionId: 51 },
+  { part: 817, title: '妙臂菩薩所問經', subid: 925, scrollCount: 4, firstBookId: 5102, collectionId: 51 },
+  { part: 818, title: '佛說苾芻五法經', subid: 926, scrollCount: 1, firstBookId: 5106, collectionId: 51 },
+  { part: 819, title: '佛說苾芻迦尸迦十法經', subid: 927, scrollCount: 1, firstBookId: 5107, collectionId: 51 },
+  { part: 820, title: '諸佛心印陀羅尼經', subid: 928, scrollCount: 1, firstBookId: 5108, collectionId: 51 },
+  { part: 821, title: '大乗寳月童子問法經', subid: 929, scrollCount: 1, firstBookId: 5109, collectionId: 51 },
+  { part: 822, title: '佛說蓮華眼陀羅尼經', subid: 930, scrollCount: 1, firstBookId: 5110, collectionId: 51 },
+  { part: 823, title: '佛說觀想佛母般若波羅蜜多菩薩經', subid: 931, scrollCount: 1, firstBookId: 5111, collectionId: 51 },
+  { part: 824, title: '佛說如意摩尼陀羅尼經', subid: 932, scrollCount: 1, firstBookId: 5112, collectionId: 51 },
+  { part: 825, title: '佛說聖大緫持王經', subid: 933, scrollCount: 1, firstBookId: 5113, collectionId: 51 },
+  { part: 826, title: '佛說最上意陀羅尼經', subid: 934, scrollCount: 1, firstBookId: 5114, collectionId: 51 },
+  { part: 827, title: '佛說持明藏八大緫持王經', subid: 935, scrollCount: 1, firstBookId: 5115, collectionId: 51 },
+  { part: 828, title: '聖無能勝金剛火陀羅尼經', subid: 936, scrollCount: 1, firstBookId: 5116, collectionId: 51 },
+  { part: 829, title: '佛說尊勝大明王經', subid: 937, scrollCount: 1, firstBookId: 5117, collectionId: 51 },
+  { part: 830, title: '佛說智光滅一切業障陀羅尼經', subid: 938, scrollCount: 1, firstBookId: 5118, collectionId: 51 },
+  { part: 831, title: '佛說如意寳緫持王經', subid: 939, scrollCount: 1, firstBookId: 5119, collectionId: 51 },
+  { part: 832, title: '佛說大自在天子因地經', subid: 940, scrollCount: 1, firstBookId: 5120, collectionId: 51 },
+  { part: 833, title: '佛說寳生陀羅尼經', subid: 941, scrollCount: 1, firstBookId: 5121, collectionId: 51 },
+  { part: 834, title: '佛說十號經', subid: 942, scrollCount: 1, firstBookId: 5122, collectionId: 51 },
+  { part: 835, title: '佛爲娑伽羅龍王所說大乗法經', subid: 943, scrollCount: 1, firstBookId: 5123, collectionId: 51 },
+  { part: 836, title: '佛說普賢菩薩陀羅尼經', subid: 944, scrollCount: 1, firstBookId: 5124, collectionId: 51 },
+  { part: 837, title: '大金剛妙髙山樓閣陀羅尼', subid: 945, scrollCount: 1, firstBookId: 5125, collectionId: 51 },
+  { part: 838, title: '廣大蓮華莊嚴曼拏羅滅一切罪陀羅尼經', subid: 946, scrollCount: 1, firstBookId: 5126, collectionId: 51 },
+  { part: 839, title: '佛說大摩里支菩薩經', subid: 947, scrollCount: 8, firstBookId: 5127, collectionId: 51, has0aPreface: true },
+  { part: 840, title: '佛說末利支提婆華鬘經', subid: 948, scrollCount: 1, firstBookId: 5135, collectionId: 51 },
+  { part: 841, title: '佛說摩利支天經', subid: 949, scrollCount: 1, firstBookId: 5136, collectionId: 51 },
+  { part: 842, title: '佛說摩利支天陀羅尼呪經', subid: 950, scrollCount: 1, firstBookId: 5137, collectionId: 51 },
+  { part: 843, title: '佛說長者施報經', subid: 951, scrollCount: 1, firstBookId: 5138, collectionId: 51 },
+  { part: 844, title: '佛說毗沙門天王經', subid: 952, scrollCount: 1, firstBookId: 5139, collectionId: 51 },
+  { part: 845, title: '毗婆尸佛經', subid: 953, scrollCount: 2, firstBookId: 5140, collectionId: 51 },
+  { part: 846, title: '佛說大三摩惹經', subid: 954, scrollCount: 1, firstBookId: 5142, collectionId: 51 },
+  { part: 847, title: '佛說月光菩薩經', subid: 955, scrollCount: 1, firstBookId: 5143, collectionId: 51 },
+  { part: 848, title: '佛說普賢曼拏羅經', subid: 956, scrollCount: 1, firstBookId: 5144, collectionId: 51 },
+  { part: 849, title: '佛說聖莊嚴陀羅尼經', subid: 957, scrollCount: 2, firstBookId: 5145, collectionId: 51 },
+  { part: 850, title: '佛說聖六字大明王陀羅尼經', subid: 958, scrollCount: 1, firstBookId: 5147, collectionId: 51 },
+  { part: 851, title: '千轉大明陀羅尼經', subid: 959, scrollCount: 1, firstBookId: 5148, collectionId: 51 },
+  { part: 852, title: '佛說華積樓閣陀羅尼經', subid: 960, scrollCount: 1, firstBookId: 5149, collectionId: 51 },
+  { part: 853, title: '佛說勝旛瓔珞陀羅尼經', subid: 961, scrollCount: 1, firstBookId: 5150, collectionId: 51 },
+  { part: 854, title: '衆許摩訶帝經', subid: 962, scrollCount: 13, firstBookId: 5151, collectionId: 51 },
+  { part: 855, title: '佛說七佛經', subid: 963, scrollCount: 1, firstBookId: 5164, collectionId: 51 },
+  { part: 856, title: '佛說解憂經', subid: 964, scrollCount: 1, firstBookId: 5165, collectionId: 51 },
+  { part: 857, title: '佛說徧照般若波羅蜜經', subid: 965, scrollCount: 1, firstBookId: 5166, collectionId: 51 },
+  { part: 858, title: '佛說大乗無量壽莊嚴經', subid: 966, scrollCount: 3, firstBookId: 5167, collectionId: 51 },
+  { part: 859, title: '佛母寳徳藏般若波羅蜜經', subid: 967, scrollCount: 3, firstBookId: 5170, collectionId: 51 },
+  { part: 860, title: '佛說帝釋般若波羅蜜多心經', subid: 968, scrollCount: 1, firstBookId: 5173, collectionId: 51 },
+  { part: 861, title: '佛說諸佛經', subid: 969, scrollCount: 1, firstBookId: 5174, collectionId: 51 },
+  { part: 862, title: '大乗舍黎娑擔摩經', subid: 970, scrollCount: 1, firstBookId: 5175, collectionId: 51 },
+  { part: 863, title: '佛說大金剛香陀羅尼經', subid: 971, scrollCount: 1, firstBookId: 5176, collectionId: 51 },
+  { part: 864, title: '最上大乗金剛大教寳王經', subid: 972, scrollCount: 2, firstBookId: 5177, collectionId: 51 },
+  { part: 865, title: '佛說薩鉢多酥哩踰捺野經', subid: 973, scrollCount: 1, firstBookId: 5179, collectionId: 51 },
+  { part: 866, title: '佛說一切如來烏瑟膩沙最勝緫持經', subid: 974, scrollCount: 1, firstBookId: 5180, collectionId: 51 },
+  { part: 867, title: '菩提心觀釋', subid: 975, scrollCount: 1, firstBookId: 5181, collectionId: 51 },
+  { part: 868, title: '佛說護國尊者所問大乗經', subid: 976, scrollCount: 4, firstBookId: 5182, collectionId: 51 },
+  { part: 869, title: '佛說四無所畏經', subid: 977, scrollCount: 1, firstBookId: 5186, collectionId: 51 },
+  { part: 870, title: '増慧陀羅尼經', subid: 978, scrollCount: 1, firstBookId: 5187, collectionId: 51 },
+  { part: 871, title: '聖六字増壽大明陀羅尼經', subid: 979, scrollCount: 1, firstBookId: 5188, collectionId: 51 },
+  { part: 872, title: '佛說大乗戒經', subid: 980, scrollCount: 1, firstBookId: 5189, collectionId: 51 },
+  { part: 873, title: '佛說聖最勝陀羅尼經', subid: 981, scrollCount: 1, firstBookId: 5190, collectionId: 51 },
+  { part: 874, title: '佛說五十頌聖般若波羅蜜經', subid: 982, scrollCount: 1, firstBookId: 5191, collectionId: 51 },
+  { part: 875, title: '大乗八大曼拏羅經', subid: 983, scrollCount: 1, firstBookId: 5192, collectionId: 51 },
+  { part: 876, title: '佛說較量一切佛刹功徳經', subid: 984, scrollCount: 1, firstBookId: 5193, collectionId: 51 },
+  { part: 877, title: '囉嚩拏說救療小兒疾病經', subid: 985, scrollCount: 1, firstBookId: 5194, collectionId: 51 },
+  { part: 878, title: '迦葉仙人說醫女人經', subid: 986, scrollCount: 1, firstBookId: 5195, collectionId: 51 },
+  { part: 879, title: '佛說俱枳羅陀羅尼經', subid: 987, scrollCount: 1, firstBookId: 5196, collectionId: 51 },
+  { part: 880, title: '佛說消除一切災障寳髻陀羅尼經', subid: 988, scrollCount: 1, firstBookId: 5197, collectionId: 51 },
+  { part: 881, title: '佛說妙色陀羅尼經', subid: 990, scrollCount: 1, firstBookId: 5198, collectionId: 51 },
+  { part: 882, title: '佛說栴檀香身陀羅尼經', subid: 991, scrollCount: 1, firstBookId: 5199, collectionId: 51 },
+  { part: 883, title: '佛說鉢蘭那賖嚩哩大陀羅尼經', subid: 992, scrollCount: 1, firstBookId: 5200, collectionId: 51 },
+  { part: 884, title: '佛說宿命智陀羅尼經', subid: 993, scrollCount: 1, firstBookId: 5201, collectionId: 51 },
+  { part: 885, title: '佛說慈氏菩薩誓願陀羅尼經', subid: 994, scrollCount: 1, firstBookId: 5202, collectionId: 51 },
+  { part: 886, title: '佛說滅除五逆罪大陀羅尼經', subid: 995, scrollCount: 1, firstBookId: 5203, collectionId: 51 },
+  { part: 887, title: '佛說無量功徳陀羅尼經', subid: 996, scrollCount: 1, firstBookId: 5204, collectionId: 51 },
+  { part: 888, title: '佛說十八臂陀羅尼經', subid: 997, scrollCount: 1, firstBookId: 5205, collectionId: 51 },
+  { part: 889, title: '佛說洛叉陀羅尼經', subid: 998, scrollCount: 1, firstBookId: 5206, collectionId: 51 },
+  { part: 890, title: '佛說辟除諸惡陀羅尼經', subid: 999, scrollCount: 1, firstBookId: 5207, collectionId: 51 },
+  { part: 891, title: '佛說大愛陀羅尼經', subid: 1000, scrollCount: 1, firstBookId: 5208, collectionId: 51 },
+  { part: 892, title: '佛說阿羅漢具徳經', subid: 1001, scrollCount: 1, firstBookId: 5209, collectionId: 51 },
+  { part: 893, title: '佛說八大靈塔名號經', subid: 1002, scrollCount: 1, firstBookId: 5210, collectionId: 51 },
+  { part: 894, title: '佛說尊那經', subid: 1003, scrollCount: 1, firstBookId: 5211, collectionId: 51 },
+  { part: 895, title: '佛說頻婆娑羅王經', subid: 1004, scrollCount: 1, firstBookId: 5212, collectionId: 51 },
+  { part: 896, title: '佛說人仙經', subid: 1005, scrollCount: 1, firstBookId: 5213, collectionId: 51 },
+  { part: 897, title: '佛說舊城喻經', subid: 1006, scrollCount: 1, firstBookId: 5214, collectionId: 51 },
+  { part: 898, title: '佛說信解智力經', subid: 1007, scrollCount: 1, firstBookId: 5215, collectionId: 51 },
+  { part: 899, title: '大正句王經', subid: 1008, scrollCount: 2, firstBookId: 5216, collectionId: 51 },
+  { part: 900, title: '佛說善樂長者經', subid: 1009, scrollCount: 1, firstBookId: 5218, collectionId: 51 },
+  { part: 901, title: '佛說聖多羅菩薩經', subid: 1010, scrollCount: 1, firstBookId: 5219, collectionId: 51 },
+  { part: 902, title: '佛說大吉祥陀羅尼經', subid: 1011, scrollCount: 1, firstBookId: 5220, collectionId: 51 },
+  { part: 903, title: '寳賢陀羅尼經', subid: 1012, scrollCount: 1, firstBookId: 5221, collectionId: 51 },
+  { part: 904, title: '佛說秘宻八名陀羅尼經', subid: 1013, scrollCount: 1, firstBookId: 5222, collectionId: 51 },
+  { part: 905, title: '觀自在菩薩母陀羅尼經', subid: 1014, scrollCount: 1, firstBookId: 5223, collectionId: 51 },
+  { part: 906, title: '佛說戒香經', subid: 1015, scrollCount: 1, firstBookId: 5224, collectionId: 51 },
+  { part: 907, title: '佛說妙吉祥菩薩陀羅尼', subid: 1016, scrollCount: 1, firstBookId: 5225, collectionId: 51 },
+  { part: 908, title: '佛說無量壽大智陀羅尼', subid: 1017, scrollCount: 1, firstBookId: 5226, collectionId: 51 },
+  { part: 909, title: '佛說宿命智陀羅尼', subid: 1018, scrollCount: 1, firstBookId: 5227, collectionId: 51 },
+  { part: 910, title: '佛說慈氏菩薩陀羅尼', subid: 1019, scrollCount: 1, firstBookId: 5228, collectionId: 51 },
+  { part: 911, title: '佛說虚空藏菩薩陀羅尼', subid: 1020, scrollCount: 1, firstBookId: 5229, collectionId: 51 },
+  { part: 912, title: '寳授菩薩菩提行經', subid: 1021, scrollCount: 1, firstBookId: 5230, collectionId: 51 },
+  { part: 913, title: '佛說延壽妙門陀羅尼經', subid: 1022, scrollCount: 1, firstBookId: 5231, collectionId: 51 },
+  { part: 914, title: '一切如來名號陀羅尼經', subid: 1023, scrollCount: 1, firstBookId: 5232, collectionId: 51 },
+  { part: 915, title: '佛說息除賊難陀羅尼經', subid: 1024, scrollCount: 1, firstBookId: 5233, collectionId: 51 },
+  { part: 916, title: '佛說法身經', subid: 1025, scrollCount: 1, firstBookId: 5234, collectionId: 51 },
+  { part: 917, title: '信佛功德經', subid: 1026, scrollCount: 1, firstBookId: 5235, collectionId: 51 },
+  { part: 918, title: '佛說解夏經', subid: 1027, scrollCount: 1, firstBookId: 5236, collectionId: 51 },
+  { part: 919, title: '佛說帝釋所問經', subid: 1028, scrollCount: 1, firstBookId: 5237, collectionId: 51 },
+  { part: 920, title: '佛說未曽有正法經', subid: 1029, scrollCount: 6, firstBookId: 5238, collectionId: 51 },
+  { part: 921, title: '佛說大方廣善巧方便經', subid: 1030, scrollCount: 4, firstBookId: 5244, collectionId: 51 },
+  { part: 922, title: '佛母出生三法藏般若波羅蜜多經', subid: 1031, scrollCount: 25, firstBookId: 5248, collectionId: 51 },
+  { part: 923, title: '佛說決定義經', subid: 1032, scrollCount: 1, firstBookId: 5273, collectionId: 51 },
+  { part: 924, title: '佛說護國經', subid: 1033, scrollCount: 1, firstBookId: 5274, collectionId: 51 },
+  { part: 925, title: '佛說分别布施經', subid: 1034, scrollCount: 1, firstBookId: 5275, collectionId: 51 },
+  { part: 926, title: '佛說分别縁生經', subid: 1035, scrollCount: 1, firstBookId: 5276, collectionId: 51 },
+  { part: 927, title: '佛說法印經', subid: 1036, scrollCount: 1, firstBookId: 5277, collectionId: 51 },
+  { part: 928, title: '佛說大生義經', subid: 1037, scrollCount: 1, firstBookId: 5278, collectionId: 51 },
+  { part: 929, title: '佛說發菩提心破諸魔經', subid: 1038, scrollCount: 2, firstBookId: 5279, collectionId: 51 },
+  { part: 930, title: '佛說聖佛母般若波羅蜜多經', subid: 1039, scrollCount: 1, firstBookId: 5281, collectionId: 51 },
+  { part: 931, title: '佛說大乗不思議神通境界經', subid: 1040, scrollCount: 3, firstBookId: 5282, collectionId: 51 },
+  { part: 932, title: '佛說給孤長者女得度因縁經', subid: 1041, scrollCount: 3, firstBookId: 5285, collectionId: 51 },
+  { part: 933, title: '佛說大集法門經', subid: 1042, scrollCount: 2, firstBookId: 5288, collectionId: 51 },
+  { part: 934, title: '佛說光明童子因縁經', subid: 1043, scrollCount: 4, firstBookId: 5290, collectionId: 51 },
+  { part: 935, title: '佛說寳帶陀羅尼經', subid: 1044, scrollCount: 1, firstBookId: 5294, collectionId: 51 },
+  { part: 936, title: '佛說金身陀羅尼經', subid: 1045, scrollCount: 1, firstBookId: 5295, collectionId: 51 },
+  { part: 937, title: '佛說入無分别法門經', subid: 1046, scrollCount: 1, firstBookId: 5296, collectionId: 51 },
+  { part: 938, title: '佛說淨意優婆塞所問經', subid: 1047, scrollCount: 1, firstBookId: 5297, collectionId: 51 },
+  { part: 939, title: '佛說金剛場莊嚴般若波羅蜜多教中一分', subid: 1048, scrollCount: 1, firstBookId: 5298, collectionId: 51 },
+  { part: 940, title: '佛說息諍因縁經', subid: 1049, scrollCount: 1, firstBookId: 5299, collectionId: 51 },
+  { part: 941, title: '佛說初分說經', subid: 1050, scrollCount: 2, firstBookId: 5300, collectionId: 51 },
+  { part: 942, title: '佛說無畏授所問大乘經', subid: 1051, scrollCount: 3, firstBookId: 5302, collectionId: 51 },
+  { part: 943, title: '佛說月喻經', subid: 1052, scrollCount: 1, firstBookId: 5305, collectionId: 51 },
+  { part: 944, title: '佛說醫喻經', subid: 1053, scrollCount: 1, firstBookId: 5306, collectionId: 51 },
+  { part: 945, title: '佛說灌頂王喻經', subid: 1054, scrollCount: 1, firstBookId: 5307, collectionId: 51 },
+  { part: 946, title: '佛說尼拘陀梵志經', subid: 1055, scrollCount: 2, firstBookId: 5308, collectionId: 51 },
+  { part: 947, title: '佛說白衣金幢二婆羅門縁起經', subid: 1056, scrollCount: 3, firstBookId: 5310, collectionId: 51 },
+  { part: 948, title: '佛說福力太子因縁經', subid: 1057, scrollCount: 3, firstBookId: 5313, collectionId: 51 },
+  { part: 949, title: '佛說身毛喜豎經', subid: 1058, scrollCount: 3, firstBookId: 5316, collectionId: 51 },
+  { part: 950, title: '大乗本生心地觀經', subid: 1059, scrollCount: 9, firstBookId: 5319, collectionId: 51, has0aPreface: true },
+  { part: 951, title: '佛說出生無邊門陀羅尼經', subid: 1060, scrollCount: 1, firstBookId: 5328, collectionId: 51 },
+  { part: 952, title: '一切如來心祕宻全身舍利寳篋印陀羅尼經', subid: 1061, scrollCount: 1, firstBookId: 5329, collectionId: 51 },
+  { part: 953, title: '佛說大吉祥天女十二名號經', subid: 1062, scrollCount: 1, firstBookId: 5330, collectionId: 51 },
+  { part: 954, title: '佛說大吉祥天女十二契一百八名無垢大乗經', subid: 1063, scrollCount: 1, firstBookId: 5331, collectionId: 51 },
+  { part: 955, title: '佛說一切如來金剛壽命陀羅尼經', subid: 1064, scrollCount: 1, firstBookId: 5332, collectionId: 51 },
+  { part: 956, title: '佛說穰麌梨童女經', subid: 1065, scrollCount: 1, firstBookId: 5333, collectionId: 51 },
+  { part: 957, title: '佛說雨寳陀羅尼經', subid: 1066, scrollCount: 1, firstBookId: 5334, collectionId: 51 },
+  { part: 958, title: '慈氏菩薩所說大乗縁生稻[卄/幹]喻經', subid: 1067, scrollCount: 1, firstBookId: 5335, collectionId: 51 },
+  { part: 959, title: '佛說除蓋障菩薩所問經', subid: 1068, scrollCount: 20, firstBookId: 5336, collectionId: 51 },
+  { part: 960, title: '仁王護國般若波羅蜜多經', subid: 1069, scrollCount: 3, firstBookId: 5356, collectionId: 51, has0aPreface: true },
+  { part: 961, title: '穢跡金剛說神通大滿陀羅尼法術靈要門經', subid: 1070, scrollCount: 1, firstBookId: 5359, collectionId: 51 },
+  { part: 962, title: '穢跡金剛法禁百變法門經', subid: 1071, scrollCount: 1, firstBookId: 5360, collectionId: 51 },
+  { part: 963, title: '佛說大乗大方廣佛冠經', subid: 1072, scrollCount: 2, firstBookId: 5361, collectionId: 51 },
+  { part: 964, title: '佛說八種長養功德經', subid: 1073, scrollCount: 1, firstBookId: 5363, collectionId: 51 },
+  { part: 965, title: '大雲輪請雨經', subid: 1074, scrollCount: 2, firstBookId: 5364, collectionId: 51 },
+  { part: 966, title: '大乗密嚴經', subid: 1075, scrollCount: 4, firstBookId: 5366, collectionId: 51, has0aPreface: true },
+  { part: 967, title: '佛說大集會正法經', subid: 1076, scrollCount: 5, firstBookId: 5370, collectionId: 51 },
+  { part: 968, title: '葉衣觀自在菩薩經', subid: 1077, scrollCount: 1, firstBookId: 5375, collectionId: 51 },
+  { part: 969, title: '毗沙門天王經', subid: 1078, scrollCount: 1, firstBookId: 5376, collectionId: 51 },
+  { part: 970, title: '文殊問經字母品', subid: 1079, scrollCount: 1, firstBookId: 5377, collectionId: 51 },
+  { part: 971, title: '海意菩薩所問淨印法門經', subid: 1080, scrollCount: 9, firstBookId: 5378, collectionId: 51 },
+  { part: 972, title: '佛說如幻三摩地無量印法門經', subid: 1081, scrollCount: 3, firstBookId: 5387, collectionId: 51 },
+  { part: 973, title: '守護國界主陀羅尼經', subid: 1082, scrollCount: 10, firstBookId: 5390, collectionId: 51 },
+  { part: 974, title: '佛說三十五佛名禮懴文', subid: 1083, scrollCount: 1, firstBookId: 5400, collectionId: 51 },
+  { part: 975, title: '觀自在菩薩說普賢陀羅尼經', subid: 1084, scrollCount: 1, firstBookId: 5401, collectionId: 51 },
+  { part: 976, title: '佛說八大菩薩曼荼羅經', subid: 1085, scrollCount: 1, firstBookId: 5402, collectionId: 51 },
+  { part: 977, title: '佛說能淨一切眼疾病陀羅尼經', subid: 1086, scrollCount: 1, firstBookId: 5403, collectionId: 51 },
+  { part: 978, title: '佛說除一切疾病陀羅尼經', subid: 1087, scrollCount: 1, firstBookId: 5404, collectionId: 51 },
+  { part: 979, title: '佛說救拔焰口餓鬼陀羅尼經', subid: 1088, scrollCount: 1, firstBookId: 5405, collectionId: 51 },
+  { part: 980, title: '瑜伽集要救阿難陀羅尼焰口儀軌經', subid: 1089, scrollCount: 1, firstBookId: 5406, collectionId: 51 },
+  { part: 981, title: '佛說蟻喻經', subid: 1090, scrollCount: 1, firstBookId: 5407, collectionId: 51 },
+  { part: 982, title: '聖觀自在菩薩不空王秘宻心陀羅尼', subid: 1091, scrollCount: 1, firstBookId: 5408, collectionId: 51 },
+  { part: 983, title: '佛說勝軍王所問經', subid: 1092, scrollCount: 1, firstBookId: 5409, collectionId: 51 },
+  { part: 984, title: '佛說輪王七寳經', subid: 1093, scrollCount: 1, firstBookId: 5410, collectionId: 51 },
+  { part: 985, title: '佛說園生樹經', subid: 1094, scrollCount: 1, firstBookId: 5411, collectionId: 51 },
+  { part: 986, title: '佛說了義般若波羅蜜多經', subid: 1095, scrollCount: 1, firstBookId: 5412, collectionId: 51 },
+  { part: 987, title: '佛說大方廣未曽有經善巧方便品', subid: 1096, scrollCount: 1, firstBookId: 5413, collectionId: 51 },
+  { part: 988, title: '佛說大堅固婆羅門縁起經', subid: 1097, scrollCount: 2, firstBookId: 5414, collectionId: 51 },
+  { part: 989, title: '佛說巨力長者所問大乗經', subid: 1098, scrollCount: 3, firstBookId: 5416, collectionId: 51 },
+  { part: 990, title: '佛說妙吉祥菩薩所問大乗法螺經', subid: 1099, scrollCount: 1, firstBookId: 5419, collectionId: 51 },
+  { part: 991, title: '佛說四品法門經', subid: 1100, scrollCount: 1, firstBookId: 5420, collectionId: 51 },
+  { part: 992, title: '佛說八大菩薩經', subid: 1101, scrollCount: 1, firstBookId: 5421, collectionId: 51 },
+  { part: 993, title: '佛說施一切無畏陀羅尼經', subid: 1102, scrollCount: 1, firstBookId: 5422, collectionId: 51 },
+  { part: 994, title: '聖八千頌般若波羅蜜多一百八名眞實圎義陀羅尼經', subid: 1103, scrollCount: 1, firstBookId: 5423, collectionId: 51 },
+  { part: 995, title: '佛說一髻尊陀羅尼經', subid: 1104, scrollCount: 1, firstBookId: 5424, collectionId: 51 },
+  { part: 996, title: '金剛摧碎陀羅尼', subid: 1105, scrollCount: 1, firstBookId: 5425, collectionId: 51 },
+  { part: 997, title: '不空罥索毘盧遮那佛大灌頂光眞言經', subid: 1106, scrollCount: 1, firstBookId: 5426, collectionId: 51 },
+  { part: 998, title: '地藏菩薩本願經', subid: 1107, scrollCount: 2, firstBookId: 5427, collectionId: 51 },
+  { part: 999, title: '大乘理趣六波羅蜜多經', subid: 1108, scrollCount: 11, firstBookId: 5429, collectionId: 51, has0aPreface: true },
+  { part: 1000, title: '佛說大乗菩薩藏正法經', subid: 1109, scrollCount: 40, firstBookId: 5440, collectionId: 51 },
+  { part: 1001, title: '佛爲優塡王說王法政論經', subid: 1110, scrollCount: 1, firstBookId: 5480, collectionId: 51 },
+  { part: 1002, title: '佛說五大施經', subid: 1111, scrollCount: 1, firstBookId: 5481, collectionId: 51 },
+  { part: 1003, title: '佛說無畏陀羅尼經', subid: 1112, scrollCount: 1, firstBookId: 5482, collectionId: 51 },
+  { part: 1004, title: '佛說大威德金輪佛頂熾盛光如來消除一切災難陀羅尼經', subid: 1113, scrollCount: 1, firstBookId: 5483, collectionId: 51 },
+  { part: 1005, title: '佛說熾盛光大威德消災吉祥陀羅尼經', subid: 1114, scrollCount: 2, firstBookId: 5484, collectionId: 51, has0aPreface: true },
+  { part: 1006, title: '佛說頂生王因縁經', subid: 1115, scrollCount: 6, firstBookId: 5486, collectionId: 51 },
+  { part: 1007, title: '佛說大乗隨轉宣說諸法經', subid: 1116, scrollCount: 3, firstBookId: 5492, collectionId: 51 },
+  { part: 1008, title: '佛說大乗入諸佛境界智光明莊嚴經', subid: 1117, scrollCount: 5, firstBookId: 5495, collectionId: 51 },
+  { part: 1009, title: '佛說大乗智印經', subid: 1118, scrollCount: 5, firstBookId: 5500, collectionId: 51 },
+  { part: 1010, title: '佛說法乗義決定經', subid: 1119, scrollCount: 3, firstBookId: 5505, collectionId: 51 },
+  { part: 1011, title: '佛說大白傘蓋緫持陀羅尼', subid: 1120, scrollCount: 1, firstBookId: 5508, collectionId: 51 },
+  { part: 1012, title: '佛說一切如來眞實攝大乗現證三昧大教王經', subid: 1121, scrollCount: 30, firstBookId: 5509, collectionId: 51 },
+  { part: 1013, title: '一切如來大祕密王未曽有最上微妙大曼拏羅經', subid: 1122, scrollCount: 5, firstBookId: 5539, collectionId: 51 },
+  { part: 1014, title: '出生一切如來法眼徧照大力明王經', subid: 1123, scrollCount: 2, firstBookId: 5544, collectionId: 51 },
+  { part: 1015, title: '金剛頂一切如來眞實攝大乗現證大敎王經', subid: 1124, scrollCount: 3, firstBookId: 5546, collectionId: 51 },
+  { part: 1016, title: '阿唎多羅陀羅尼阿嚕力經', subid: 1125, scrollCount: 1, firstBookId: 5549, collectionId: 51 },
+  { part: 1017, title: '佛說瑜伽大敎王經', subid: 1126, scrollCount: 5, firstBookId: 5550, collectionId: 51 },
+  { part: 1018, title: '一字竒特佛頂經', subid: 1127, scrollCount: 3, firstBookId: 5555, collectionId: 51 },
+  { part: 1019, title: '菩提場所說一字頂輪王經', subid: 1128, scrollCount: 5, firstBookId: 5558, collectionId: 51 },
+  { part: 1020, title: '菩提場莊嚴陀羅尼經', subid: 1129, scrollCount: 1, firstBookId: 5563, collectionId: 51 },
+  { part: 1021, title: '佛說祕宻相經', subid: 1130, scrollCount: 3, firstBookId: 5564, collectionId: 51 },
+  { part: 1022, title: '佛說一切如來金剛三業最上祕宻大教王經', subid: 1131, scrollCount: 7, firstBookId: 5567, collectionId: 51 },
+  { part: 1023, title: '大寳廣博樓閣善住祕宻陀羅尼經', subid: 1132, scrollCount: 3, firstBookId: 5574, collectionId: 51 },
+  { part: 1024, title: '佛說祕宻三昧大教王經', subid: 1133, scrollCount: 4, firstBookId: 5577, collectionId: 51 },
+  { part: 1025, title: '佛說無二平等最上瑜伽大教王經', subid: 1134, scrollCount: 6, firstBookId: 5581, collectionId: 51 },
+  { part: 1026, title: '佛說金剛手菩薩降伏一切部多大教王經', subid: 1135, scrollCount: 3, firstBookId: 5587, collectionId: 51 },
+  { part: 1027, title: '聖妙吉祥眞實名經', subid: 1136, scrollCount: 2, firstBookId: 5590, collectionId: 51, has0aPreface: true },
+  { part: 1028, title: '金剛頂瑜伽理趣般若經', subid: 1137, scrollCount: 1, firstBookId: 5592, collectionId: 51 },
+  { part: 1029, title: '大樂金剛不空眞實三麽耶般若波羅蜜多理趣經', subid: 1138, scrollCount: 1, firstBookId: 5593, collectionId: 51 },
+  { part: 1030, title: '佛說佛母般若波羅蜜多大明觀想儀軌經', subid: 1139, scrollCount: 1, firstBookId: 5594, collectionId: 51 },
+  { part: 1031, title: '金剛頂瑜伽念珠經', subid: 1140, scrollCount: 1, firstBookId: 5595, collectionId: 51 },
+  { part: 1032, title: '佛說最上根本大樂金剛不空三昧大教王經', subid: 1141, scrollCount: 8, firstBookId: 5596, collectionId: 51, has0aPreface: true },
+  { part: 1033, title: '佛說最上祕宻那拏天經', subid: 1142, scrollCount: 3, firstBookId: 5604, collectionId: 51 },
+  { part: 1034, title: '金剛峯樓閣一切瑜伽瑜祇經', subid: 1143, scrollCount: 2, firstBookId: 5607, collectionId: 51 },
+  { part: 1035, title: '佛說妙吉祥最勝根本大教經', subid: 1144, scrollCount: 3, firstBookId: 5609, collectionId: 51 },
+  { part: 1036, title: '妙吉祥平等祕密最上觀門大教王經', subid: 1145, scrollCount: 5, firstBookId: 5612, collectionId: 51 },
+  { part: 1037, title: '普徧光明焰鬘清淨熾盛如意寳印心無能勝大明王大隨求陀羅尼經', subid: 1146, scrollCount: 2, firstBookId: 5617, collectionId: 51 },
+  { part: 1038, title: '佛說如來不思議祕宻大乗經', subid: 1147, scrollCount: 20, firstBookId: 5619, collectionId: 51 },
+  { part: 1039, title: '大乗瑜伽金剛性海曼殊室利千臂千鉢大教王經', subid: 1148, scrollCount: 11, firstBookId: 5639, collectionId: 51, has0aPreface: true },
+  { part: 1040, title: '佛說聖寳藏神儀軌經', subid: 1149, scrollCount: 2, firstBookId: 5650, collectionId: 51 },
+  { part: 1041, title: '佛說寳藏神大明曼拏羅儀軌經', subid: 1150, scrollCount: 2, firstBookId: 5652, collectionId: 51 },
+  { part: 1042, title: '金剛恐怖集會方廣軌儀觀自在菩薩三世最勝心明王經', subid: 1151, scrollCount: 1, firstBookId: 5654, collectionId: 51 },
+  { part: 1043, title: '金剛恐怖集會方廣軌儀觀自在菩薩三世最勝心明王大威力烏樞瑟摩明王經', subid: 1152, scrollCount: 3, firstBookId: 5655, collectionId: 51 },
+  { part: 1044, title: '佛說大乗觀想曼拏羅淨諸惡趣經', subid: 1153, scrollCount: 2, firstBookId: 5658, collectionId: 51 },
+  { part: 1045, title: '佛說大方廣曼殊室利經觀自在多羅菩薩儀軌經', subid: 1155, scrollCount: 1, firstBookId: 5660, collectionId: 51 },
+  { part: 1046, title: '佛說一切佛攝相應大教王經聖觀自在菩薩念誦儀軌經', subid: 1158, scrollCount: 1, firstBookId: 5661, collectionId: 51 },
+  { part: 1047, title: '瑜伽金剛頂經釋字母品', subid: 1161, scrollCount: 1, firstBookId: 5662, collectionId: 51 },
+  { part: 1048, title: '佛說一切如來安像三昧儀軌經', subid: 1163, scrollCount: 1, firstBookId: 5663, collectionId: 51 },
+  { part: 1049, title: '文殊師利菩薩根本大教王金翅鳥王品', subid: 1167, scrollCount: 1, firstBookId: 5664, collectionId: 51 },
+  { part: 1050, title: '十一面觀自在菩薩心宻言念誦儀軌經', subid: 1170, scrollCount: 3, firstBookId: 5665, collectionId: 51 },
+  { part: 1051, title: '大方廣菩薩藏文殊師利根本儀軌經', subid: 1173, scrollCount: 20, firstBookId: 5668, collectionId: 51 },
+  { part: 1052, title: '佛說持明藏瑜伽大教尊那菩薩大明成就儀軌經', subid: 1176, scrollCount: 4, firstBookId: 5688, collectionId: 51 },
+  { part: 1053, title: '佛說金剛香菩薩大明成就儀軌經', subid: 1179, scrollCount: 3, firstBookId: 5692, collectionId: 51 },
+  { part: 1054, title: '金剛薩埵說頻那夜迦天成就儀軌經', subid: 1184, scrollCount: 4, firstBookId: 5695, collectionId: 51 },
+  { part: 1055, title: '佛說大悲空智金剛大教王儀軌經', subid: 1186, scrollCount: 5, firstBookId: 5699, collectionId: 51 },
+  { part: 1056, title: '佛說幻化網大瑜伽教十忿怒明王大明觀想儀軌經', subid: 1189, scrollCount: 1, firstBookId: 5704, collectionId: 51 },
+  { part: 1057, title: '佛說妙吉祥瑜伽大教金剛陪囉嚩輪觀想成就儀軌經', subid: 1192, scrollCount: 1, firstBookId: 5705, collectionId: 51 },
+  { part: 1058, title: '底哩三昧耶不動尊威怒王使者念誦法', subid: 1194, scrollCount: 1, firstBookId: 5706, collectionId: 51 },
+  { part: 1059, title: '聖迦柅忿怒金剛童子菩薩成就儀軌經', subid: 1195, scrollCount: 3, firstBookId: 5707, collectionId: 51 },
+  { part: 1060, title: '七佛讃唄伽陀', subid: 1197, scrollCount: 1, firstBookId: 5710, collectionId: 51 },
+  { part: 1061, title: '佛三身讃', subid: 1200, scrollCount: 1, firstBookId: 5711, collectionId: 51 },
+  { part: 1062, title: '佛一百八名讃經', subid: 1204, scrollCount: 1, firstBookId: 5712, collectionId: 51 },
+  { part: 1063, title: '聖救度佛母二十一種禮讃經', subid: 1206, scrollCount: 2, firstBookId: 5713, collectionId: 51, has0aPreface: true },
+  { part: 1064, title: '佛說一切如來頂輪王一百八名讃經', subid: 1207, scrollCount: 1, firstBookId: 5715, collectionId: 51 },
+  { part: 1065, title: '讃法界頌', subid: 1208, scrollCount: 1, firstBookId: 5716, collectionId: 51 },
+  { part: 1066, title: '八大靈塔梵讃', subid: 1209, scrollCount: 1, firstBookId: 5717, collectionId: 51 },
+  { part: 1067, title: '三身梵讃', subid: 1210, scrollCount: 1, firstBookId: 5718, collectionId: 51 },
+  { part: 1068, title: '佛說文殊師利一百八名梵讃', subid: 1211, scrollCount: 1, firstBookId: 5719, collectionId: 51 },
+  { part: 1069, title: '曼殊室利菩薩吉祥伽陀', subid: 1212, scrollCount: 1, firstBookId: 5720, collectionId: 51 },
+  { part: 1070, title: '聖金剛手菩薩一百八名梵讃', subid: 1213, scrollCount: 1, firstBookId: 5721, collectionId: 51 },
+  { part: 1071, title: '聖觀自在菩薩功徳讃', subid: 1214, scrollCount: 3, firstBookId: 5722, collectionId: 51, has0aPreface: true, mergeFileCount: 3 },
+  { part: 1072, title: '讃觀世音菩薩頌', subid: 1215, scrollCount: 1, firstBookId: 5725, collectionId: 51 },
+  { part: 1073, title: '佛說聖觀自在菩薩梵讃', subid: 1216, scrollCount: 1, firstBookId: 5726, collectionId: 51 },
+  { part: 1074, title: '聖多羅菩薩梵讃', subid: 1217, scrollCount: 1, firstBookId: 5727, collectionId: 51 },
+  { part: 1075, title: '事師法五十頌', subid: 1218, scrollCount: 1, firstBookId: 5728, collectionId: 51 },
+  { part: 1076, title: '揵椎梵讃', subid: 1219, scrollCount: 1, firstBookId: 5729, collectionId: 51 },
 ];
 function getCatalogEntry(part) {
   return SCRIPTURE_CATALOG.find(e => e.part === part);
+}
+
+/**
+ * Returns the effective number of claimable scrolls for a catalog entry.
+ * Supports both new (bookIdGroups) and legacy (formula-based) entries.
+ */
+function getEffectiveScrollCount(entry) {
+  if (entry.bookIdGroups) return entry.bookIdGroups.length;
+  const mergeCount = entry.mergeFileCount || 2;
+  return entry.has0aPreface ? entry.scrollCount - (mergeCount - 1) : entry.scrollCount;
+}
+
+/**
+ * Returns the array of upstream bookIds to fetch and merge for a given scroll.
+ * Most scrolls return a single-element array; merged scrolls (0a+0b, 1a+1b, etc.) return multiple.
+ * Supports both new (bookIdGroups) and legacy (formula-based) entries.
+ */
+function getScrollBookIds(entry, scroll) {
+  if (entry.bookIdGroups) return entry.bookIdGroups[scroll - 1] || null;
+  const mergeCount = entry.mergeFileCount || 2;
+  if (entry.has0aPreface && scroll === 1) {
+    return Array.from({ length: mergeCount }, (_, i) => entry.firstBookId + i);
+  }
+  const bookId = entry.has0aPreface
+    ? entry.firstBookId + mergeCount + (scroll - 2)
+    : entry.firstBookId + scroll - 1;
+  return [bookId];
 }
 
 // ============================================
@@ -725,28 +949,18 @@ const SCRIPTURE_CACHE_DURATION = 60 * 60 * 1000; // 1 hour
 let audioUrlCache = new Map();
 
 // Scripture content for catalog entries
-// Only merge 0a+0b/01 into scroll 1 if has0aPreface flag is set
 app.get('/api/scripture/:part/:scroll', async (req, res) => {
   const part = parseInt(req.params.part);
   const scroll = parseInt(req.params.scroll);
   const entry = getCatalogEntry(part);
 
-  if (!entry) {
-    return res.status(400).json({ error: `Unknown part ${part}` });
-  }
-  const has0aPreface = entry.has0aPreface === true;
-  const mergeCount = entry.mergeFileCount || 2; // Default: merge 2 files (0a+0b), but can be 3 for (0a+0b+1)
-  const effectiveScrolls = has0aPreface ? entry.scrollCount - (mergeCount - 1) : entry.scrollCount;
+  if (!entry) return res.status(400).json({ error: `Unknown part ${part}` });
+  const effectiveScrolls = getEffectiveScrollCount(entry);
   if (isNaN(scroll) || scroll < 1 || scroll > effectiveScrolls) {
     return res.status(400).json({ error: `Invalid scroll ${scroll} for part ${part} (1-${effectiveScrolls})` });
   }
 
-  // If has0aPreface: scroll 1 → firstBookId (0a), scroll S>1 → firstBookId + mergeCount + (S-2)
-  // Otherwise: scroll N → firstBookId + (N-1)
-  const bookId = has0aPreface
-    ? (scroll === 1 ? entry.firstBookId : entry.firstBookId + mergeCount + (scroll - 2))
-    : entry.firstBookId + scroll - 1;
-  // Use subid override if available for this scroll
+  const bookIds = getScrollBookIds(entry, scroll);
   const subid = (entry.subidOverrides && entry.subidOverrides[scroll]) || entry.subid;
   const menuid = `${entry.collectionId}|${subid}`;
   const cacheKey = `scripture_cat_${part}_${scroll}`;
@@ -756,39 +970,21 @@ app.get('/api/scripture/:part/:scroll', async (req, res) => {
     return res.json({ ...cached.data, cached: true });
   }
 
-  console.log(`Fetching scripture for part ${part} scroll ${scroll}, bookId ${bookId}, menuid ${menuid}`);
+  console.log(`Fetching scripture for part ${part} scroll ${scroll}, bookIds ${bookIds}, menuid ${menuid}`);
 
   try {
-    if (has0aPreface && scroll === 1) {
-      // Merge multiple files (0a, 0b, 1, etc.) into scroll 1
-      const bookIdsToFetch = [];
-      for (let i = 0; i < mergeCount; i++) {
-        bookIdsToFetch.push(entry.firstBookId + i);
-      }
-      const results = await Promise.all(
-        bookIdsToFetch.map(id => fetchBookWithAudio(id, menuid))
-      );
-      const html = results.map(r => r.html).join('');
-      // Cache audio URLs so mp3 proxy can skip the metadata request
-      const primaryAudioUrl = results[0]?.audioUrl || '';
-      if (primaryAudioUrl) audioUrlCache.set(`${part}_${scroll}`, primaryAudioUrl);
-      // Use local proxy URL for catalog volumes to avoid SSL certificate issues
-      const audioSrc = `/api/scripture/${part}/${scroll}/mp3`;
-      const secondaryAudioSrc = results[1]?.audioUrl || null;
-      const tertiaryAudioSrc = results[2]?.audioUrl || null;
-      const data = { html, scroll, part, bookId, audioSrc, secondaryAudioSrc, tertiaryAudioSrc, prefaceHtml: null };
-      scriptureCache.set(cacheKey, { data, timestamp: Date.now() });
-      res.json({ ...data, cached: false });
-    } else {
-      const { html, audioUrl: fetchedAudioUrl } = await fetchBookWithAudio(bookId, menuid);
-      // Cache audio URL so mp3 proxy can skip the metadata request
-      if (fetchedAudioUrl) audioUrlCache.set(`${part}_${scroll}`, fetchedAudioUrl);
-      // Use local proxy URL for catalog volumes to avoid SSL certificate issues
-      const audioSrc = `/api/scripture/${part}/${scroll}/mp3`;
-      const data = { html, scroll, part, bookId, audioSrc, secondaryAudioSrc: null, prefaceHtml: null };
-      scriptureCache.set(cacheKey, { data, timestamp: Date.now() });
-      res.json({ ...data, cached: false });
-    }
+    const results = await Promise.all(bookIds.map(id => fetchBookWithAudio(id, menuid)));
+    const html = results.map(r => r.html).join('');
+    // Cache primary audio URL so mp3 proxy can skip the redundant metadata request
+    const primaryAudioUrl = results[0]?.audioUrl || '';
+    if (primaryAudioUrl) audioUrlCache.set(`${part}_${scroll}`, primaryAudioUrl);
+    // Use local proxy URL for primary audio to avoid SSL certificate issues
+    const audioSrc = `/api/scripture/${part}/${scroll}/mp3`;
+    const secondaryAudioSrc = results[1]?.audioUrl || null;
+    const tertiaryAudioSrc = results[2]?.audioUrl || null;
+    const data = { html, scroll, part, bookId: bookIds[0], audioSrc, secondaryAudioSrc, tertiaryAudioSrc, prefaceHtml: null };
+    scriptureCache.set(cacheKey, { data, timestamp: Date.now() });
+    res.json({ ...data, cached: false });
   } catch (error) {
     console.error('Failed to fetch scripture:', error);
     res.status(500).json({ error: 'Failed to fetch scripture text: ' + error.message });
@@ -802,16 +998,12 @@ app.get('/api/scripture/:part/:scroll/txt', async (req, res) => {
   const entry = getCatalogEntry(part);
 
   if (!entry) return res.status(400).json({ error: `Unknown part ${part}` });
-  const has0aPreface = entry.has0aPreface === true;
-  const mergeCount = entry.mergeFileCount || 2;
-  const effectiveScrolls = has0aPreface ? entry.scrollCount - (mergeCount - 1) : entry.scrollCount;
+  const effectiveScrolls = getEffectiveScrollCount(entry);
   if (isNaN(scroll) || scroll < 1 || scroll > effectiveScrolls) {
     return res.status(400).json({ error: `Invalid scroll ${scroll}` });
   }
 
-  const bookId = has0aPreface
-    ? (scroll === 1 ? entry.firstBookId : entry.firstBookId + mergeCount + (scroll - 2))
-    : entry.firstBookId + scroll - 1;
+  const bookIds = getScrollBookIds(entry, scroll);
   const subid = (entry.subidOverrides && entry.subidOverrides[scroll]) || entry.subid;
   const menuid = `${entry.collectionId}|${subid}`;
 
@@ -821,16 +1013,9 @@ app.get('/api/scripture/:part/:scroll/txt', async (req, res) => {
     const cached = scriptureCache.get(cacheKey);
     if (cached && (Date.now() - cached.timestamp) < SCRIPTURE_CACHE_DURATION) {
       scriptureHtml = cached.data.html;
-    } else if (has0aPreface && scroll === 1) {
-      // Merge multiple files (0a, 0b, 1, etc.)
-      const htmlPromises = [];
-      for (let i = 0; i < mergeCount; i++) {
-        htmlPromises.push(fetchBookHtml(entry.firstBookId + i, menuid));
-      }
-      const htmlResults = await Promise.all(htmlPromises);
-      scriptureHtml = htmlResults.join('');
     } else {
-      scriptureHtml = await fetchBookHtml(bookId, menuid);
+      const htmlParts = await Promise.all(bookIds.map(id => fetchBookHtml(id, menuid)));
+      scriptureHtml = htmlParts.join('');
     }
 
     const plainText = scriptureHtml
@@ -868,16 +1053,13 @@ app.get('/api/scripture/:part/:scroll/mp3', async (req, res) => {
   const entry = getCatalogEntry(part);
 
   if (!entry) return res.status(400).json({ error: `Unknown part ${part}` });
-  const has0aPreface = entry.has0aPreface === true;
-  const mergeCount = entry.mergeFileCount || 2;
-  const effectiveScrolls = has0aPreface ? entry.scrollCount - (mergeCount - 1) : entry.scrollCount;
+  const effectiveScrolls = getEffectiveScrollCount(entry);
   if (isNaN(scroll) || scroll < 1 || scroll > effectiveScrolls) {
     return res.status(400).json({ error: `Invalid scroll ${scroll}` });
   }
 
-  const bookId = has0aPreface
-    ? (scroll === 1 ? entry.firstBookId : entry.firstBookId + mergeCount + (scroll - 2))
-    : entry.firstBookId + scroll - 1;
+  // Audio is per-file; use the first bookId of the scroll group
+  const bookId = getScrollBookIds(entry, scroll)[0];
   const subid = (entry.subidOverrides && entry.subidOverrides[scroll]) || entry.subid;
   const menuid = `${entry.collectionId}|${subid}`;
   try {
@@ -928,13 +1110,12 @@ app.get('/api/scripture/:part/:scroll/pdf', async (req, res) => {
   const entry = getCatalogEntry(part);
 
   if (!entry) return res.status(400).json({ error: `Unknown part ${part}` });
-  const isMulti = entry.scrollCount > 1;
-  const effectiveScrolls = isMulti ? entry.scrollCount - 1 : 1;
+  const effectiveScrolls = getEffectiveScrollCount(entry);
   if (isNaN(scroll) || scroll < 1 || scroll > effectiveScrolls) {
     return res.status(400).json({ error: `Invalid scroll ${scroll}` });
   }
 
-  const bookId = isMulti ? (scroll === 1 ? entry.firstBookId : entry.firstBookId + scroll) : entry.firstBookId;
+  const bookIds = getScrollBookIds(entry, scroll);
   const menuid = `${entry.collectionId}|${entry.subid}`;
 
   try {
@@ -943,14 +1124,9 @@ app.get('/api/scripture/:part/:scroll/pdf', async (req, res) => {
     const cached = scriptureCache.get(cacheKey);
     if (cached && (Date.now() - cached.timestamp) < SCRIPTURE_CACHE_DURATION) {
       scriptureHtml = cached.data.html;
-    } else if (isMulti && scroll === 1) {
-      const [html1, html2] = await Promise.all([
-        fetchBookHtml(entry.firstBookId, menuid),
-        fetchBookHtml(entry.firstBookId + 1, menuid)
-      ]);
-      scriptureHtml = html1 + html2;
     } else {
-      scriptureHtml = await fetchBookHtml(bookId, menuid);
+      const htmlParts = await Promise.all(bookIds.map(id => fetchBookHtml(id, menuid)));
+      scriptureHtml = htmlParts.join('');
     }
 
     let cleanedHtml = scriptureHtml;

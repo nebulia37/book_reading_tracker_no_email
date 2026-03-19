@@ -1,0 +1,4984 @@
+[
+  {
+    "partNum": 777,
+    "title": "佛說大乗莊嚴寳王經",
+    "subid": 884,
+    "bookIds": [
+      5039,
+      5040,
+      5041,
+      5042
+    ],
+    "scrollLabels": [
+      "1卷",
+      "2卷",
+      "3卷",
+      "4卷"
+    ],
+    "firstBookId": 5039,
+    "scrollCount": 4,
+    "has0a": false
+  },
+  {
+    "partNum": 778,
+    "title": "分别善惡報應經",
+    "subid": 885,
+    "bookIds": [
+      5043,
+      5044
+    ],
+    "scrollLabels": [
+      "1卷",
+      "2卷"
+    ],
+    "firstBookId": 5043,
+    "scrollCount": 2,
+    "has0a": false
+  },
+  {
+    "partNum": 779,
+    "title": "佛說守護大千國土經",
+    "subid": 886,
+    "bookIds": [
+      5045,
+      5046,
+      5047
+    ],
+    "scrollLabels": [
+      "1卷",
+      "2卷",
+      "3卷"
+    ],
+    "firstBookId": 5045,
+    "scrollCount": 3,
+    "has0a": false
+  },
+  {
+    "partNum": 780,
+    "title": "大方廣總持寳光明經",
+    "subid": 887,
+    "bookIds": [
+      5048,
+      5049,
+      5050,
+      5051,
+      5052
+    ],
+    "scrollLabels": [
+      "1卷",
+      "2卷",
+      "3卷",
+      "4卷",
+      "5卷"
+    ],
+    "firstBookId": 5048,
+    "scrollCount": 5,
+    "has0a": false
+  },
+  {
+    "partNum": 781,
+    "title": "佛說大乗聖無量壽決定光明王如來陀羅尼經",
+    "subid": 888,
+    "bookIds": [
+      5053
+    ],
+    "scrollLabels": [
+      "1卷"
+    ],
+    "firstBookId": 5053,
+    "scrollCount": 1,
+    "has0a": false
+  },
+  {
+    "partNum": 782,
+    "title": "佛說大乗聖吉祥持世陀羅尼經",
+    "subid": 889,
+    "bookIds": [
+      5054
+    ],
+    "scrollLabels": [
+      "1卷"
+    ],
+    "firstBookId": 5054,
+    "scrollCount": 1,
+    "has0a": false
+  },
+  {
+    "partNum": 783,
+    "title": "佛說大乗日子王所問經",
+    "subid": 890,
+    "bookIds": [
+      5055
+    ],
+    "scrollLabels": [
+      "1卷"
+    ],
+    "firstBookId": 5055,
+    "scrollCount": 1,
+    "has0a": false
+  },
+  {
+    "partNum": 784,
+    "title": "佛說金耀童子經",
+    "subid": 891,
+    "bookIds": [
+      5056
+    ],
+    "scrollLabels": [
+      "1卷"
+    ],
+    "firstBookId": 5056,
+    "scrollCount": 1,
+    "has0a": false
+  },
+  {
+    "partNum": 785,
+    "title": "佛頂放無垢光明入普門觀察一切如來心陀羅尼經",
+    "subid": 892,
+    "bookIds": [
+      5057,
+      5058
+    ],
+    "scrollLabels": [
+      "1卷",
+      "2卷"
+    ],
+    "firstBookId": 5057,
+    "scrollCount": 2,
+    "has0a": false
+  },
+  {
+    "partNum": 786,
+    "title": "佛說樓閣正法甘露鼓經",
+    "subid": 893,
+    "bookIds": [
+      5059
+    ],
+    "scrollLabels": [
+      "1卷"
+    ],
+    "firstBookId": 5059,
+    "scrollCount": 1,
+    "has0a": false
+  },
+  {
+    "partNum": 787,
+    "title": "佛說大乗善見變化文殊師利問法經",
+    "subid": 894,
+    "bookIds": [
+      5060
+    ],
+    "scrollLabels": [
+      "1卷"
+    ],
+    "firstBookId": 5060,
+    "scrollCount": 1,
+    "has0a": false
+  },
+  {
+    "partNum": 788,
+    "title": "聖虚空藏菩薩陀羅尼經",
+    "subid": 895,
+    "bookIds": [
+      5061
+    ],
+    "scrollLabels": [
+      "1卷"
+    ],
+    "firstBookId": 5061,
+    "scrollCount": 1,
+    "has0a": false
+  },
+  {
+    "partNum": 789,
+    "title": "佛說大護明大陀羅尼經",
+    "subid": 896,
+    "bookIds": [
+      5062
+    ],
+    "scrollLabels": [
+      "1卷"
+    ],
+    "firstBookId": 5062,
+    "scrollCount": 1,
+    "has0a": false
+  },
+  {
+    "partNum": 790,
+    "title": "佛說無能勝旛王如來莊嚴陀羅尼經",
+    "subid": 897,
+    "bookIds": [
+      5063
+    ],
+    "scrollLabels": [
+      "1卷"
+    ],
+    "firstBookId": 5063,
+    "scrollCount": 1,
+    "has0a": false
+  },
+  {
+    "partNum": 791,
+    "title": "最勝佛頂陀羅尼經",
+    "subid": 898,
+    "bookIds": [
+      5064
+    ],
+    "scrollLabels": [
+      "1卷"
+    ],
+    "firstBookId": 5064,
+    "scrollCount": 1,
+    "has0a": false
+  },
+  {
+    "partNum": 792,
+    "title": "聖佛母小字般若波羅蜜多經",
+    "subid": 899,
+    "bookIds": [
+      5065
+    ],
+    "scrollLabels": [
+      "1卷"
+    ],
+    "firstBookId": 5065,
+    "scrollCount": 1,
+    "has0a": false
+  },
+  {
+    "partNum": 793,
+    "title": "消除一切閃電障難隨求如意陀羅尼經",
+    "subid": 900,
+    "bookIds": [
+      5066
+    ],
+    "scrollLabels": [
+      "1卷"
+    ],
+    "firstBookId": 5066,
+    "scrollCount": 1,
+    "has0a": false
+  },
+  {
+    "partNum": 794,
+    "title": "聖最上燈明如來陀羅尼經",
+    "subid": 901,
+    "bookIds": [
+      5067
+    ],
+    "scrollLabels": [
+      "1卷"
+    ],
+    "firstBookId": 5067,
+    "scrollCount": 1,
+    "has0a": false
+  },
+  {
+    "partNum": 795,
+    "title": "大寒林聖難拏陀羅尼經",
+    "subid": 902,
+    "bookIds": [
+      5068
+    ],
+    "scrollLabels": [
+      "1卷"
+    ],
+    "firstBookId": 5068,
+    "scrollCount": 1,
+    "has0a": false
+  },
+  {
+    "partNum": 796,
+    "title": "佛說諸行有爲經",
+    "subid": 903,
+    "bookIds": [
+      5069
+    ],
+    "scrollLabels": [
+      "1卷"
+    ],
+    "firstBookId": 5069,
+    "scrollCount": 1,
+    "has0a": false
+  },
+  {
+    "partNum": 797,
+    "title": "息除中夭陀羅尼經",
+    "subid": 904,
+    "bookIds": [
+      5070
+    ],
+    "scrollLabels": [
+      "1卷"
+    ],
+    "firstBookId": 5070,
+    "scrollCount": 1,
+    "has0a": false
+  },
+  {
+    "partNum": 798,
+    "title": "一切如來正法秘密篋印心陀羅尼經",
+    "subid": 905,
+    "bookIds": [
+      5071
+    ],
+    "scrollLabels": [
+      "1卷"
+    ],
+    "firstBookId": 5071,
+    "scrollCount": 1,
+    "has0a": false
+  },
+  {
+    "partNum": 799,
+    "title": "妙法聖念處經",
+    "subid": 906,
+    "bookIds": [
+      5072,
+      5073,
+      5074,
+      5075,
+      5076,
+      5077,
+      5078,
+      5079
+    ],
+    "scrollLabels": [
+      "1卷",
+      "2卷",
+      "3卷",
+      "4卷",
+      "5卷",
+      "6卷",
+      "7卷",
+      "8卷"
+    ],
+    "firstBookId": 5072,
+    "scrollCount": 8,
+    "has0a": false
+  },
+  {
+    "partNum": 800,
+    "title": "佛說大迦葉問大寳積正法經",
+    "subid": 907,
+    "bookIds": [
+      5080,
+      5081,
+      5082,
+      5083,
+      5084
+    ],
+    "scrollLabels": [
+      "1卷",
+      "2卷",
+      "3卷",
+      "4卷",
+      "5卷"
+    ],
+    "firstBookId": 5080,
+    "scrollCount": 5,
+    "has0a": false
+  },
+  {
+    "partNum": 801,
+    "title": "嗟韈曩法天子受三歸依獲免惡道經",
+    "subid": 908,
+    "bookIds": [
+      5085
+    ],
+    "scrollLabels": [
+      "1卷"
+    ],
+    "firstBookId": 5085,
+    "scrollCount": 1,
+    "has0a": false
+  },
+  {
+    "partNum": 802,
+    "title": "佛說較量壽命經",
+    "subid": 909,
+    "bookIds": [
+      5086
+    ],
+    "scrollLabels": [
+      "1卷"
+    ],
+    "firstBookId": 5086,
+    "scrollCount": 1,
+    "has0a": false
+  },
+  {
+    "partNum": 803,
+    "title": "佛說沙彌十戒儀則經",
+    "subid": 910,
+    "bookIds": [
+      5087
+    ],
+    "scrollLabels": [
+      "1卷"
+    ],
+    "firstBookId": 5087,
+    "scrollCount": 1,
+    "has0a": false
+  },
+  {
+    "partNum": 804,
+    "title": "佛說聖持世陀羅尼經",
+    "subid": 911,
+    "bookIds": [
+      5088
+    ],
+    "scrollLabels": [
+      "1卷"
+    ],
+    "firstBookId": 5088,
+    "scrollCount": 1,
+    "has0a": false
+  },
+  {
+    "partNum": 805,
+    "title": "佛說布施經",
+    "subid": 913,
+    "bookIds": [
+      5089
+    ],
+    "scrollLabels": [
+      "1卷"
+    ],
+    "firstBookId": 5089,
+    "scrollCount": 1,
+    "has0a": false
+  },
+  {
+    "partNum": 806,
+    "title": "佛說聖曜母陀羅尼經",
+    "subid": 914,
+    "bookIds": [
+      5090
+    ],
+    "scrollLabels": [
+      "1卷"
+    ],
+    "firstBookId": 5090,
+    "scrollCount": 1,
+    "has0a": false
+  },
+  {
+    "partNum": 807,
+    "title": "法集名數經",
+    "subid": 915,
+    "bookIds": [
+      5091
+    ],
+    "scrollLabels": [
+      "1卷"
+    ],
+    "firstBookId": 5091,
+    "scrollCount": 1,
+    "has0a": false
+  },
+  {
+    "partNum": 808,
+    "title": "聖多羅菩薩一百八名陀羅尼經",
+    "subid": 916,
+    "bookIds": [
+      5092
+    ],
+    "scrollLabels": [
+      "1卷"
+    ],
+    "firstBookId": 5092,
+    "scrollCount": 1,
+    "has0a": false
+  },
+  {
+    "partNum": 809,
+    "title": "十二縁生祥瑞經",
+    "subid": 917,
+    "bookIds": [
+      5093,
+      5094
+    ],
+    "scrollLabels": [
+      "1卷",
+      "2卷"
+    ],
+    "firstBookId": 5093,
+    "scrollCount": 2,
+    "has0a": false
+  },
+  {
+    "partNum": 810,
+    "title": "讃揚聖德多羅菩薩一百八名經",
+    "subid": 918,
+    "bookIds": [
+      5095
+    ],
+    "scrollLabels": [
+      "1卷"
+    ],
+    "firstBookId": 5095,
+    "scrollCount": 1,
+    "has0a": false
+  },
+  {
+    "partNum": 811,
+    "title": "聖觀自在菩薩一百八名經",
+    "subid": 919,
+    "bookIds": [
+      5096
+    ],
+    "scrollLabels": [
+      "1卷"
+    ],
+    "firstBookId": 5096,
+    "scrollCount": 1,
+    "has0a": false
+  },
+  {
+    "partNum": 812,
+    "title": "佛說目連所問經",
+    "subid": 920,
+    "bookIds": [
+      5097
+    ],
+    "scrollLabels": [
+      "1卷"
+    ],
+    "firstBookId": 5097,
+    "scrollCount": 1,
+    "has0a": false
+  },
+  {
+    "partNum": 813,
+    "title": "外道問聖大乗法無我義經",
+    "subid": 921,
+    "bookIds": [
+      5098
+    ],
+    "scrollLabels": [
+      "1卷"
+    ],
+    "firstBookId": 5098,
+    "scrollCount": 1,
+    "has0a": false
+  },
+  {
+    "partNum": 814,
+    "title": "毗俱胝菩薩一百八名經",
+    "subid": 922,
+    "bookIds": [
+      5099
+    ],
+    "scrollLabels": [
+      "1卷"
+    ],
+    "firstBookId": 5099,
+    "scrollCount": 1,
+    "has0a": false
+  },
+  {
+    "partNum": 815,
+    "title": "勝軍化世百喻伽他經",
+    "subid": 923,
+    "bookIds": [
+      5100
+    ],
+    "scrollLabels": [
+      "1卷"
+    ],
+    "firstBookId": 5100,
+    "scrollCount": 1,
+    "has0a": false
+  },
+  {
+    "partNum": 816,
+    "title": "六道伽陀經",
+    "subid": 924,
+    "bookIds": [
+      5101
+    ],
+    "scrollLabels": [
+      "1卷"
+    ],
+    "firstBookId": 5101,
+    "scrollCount": 1,
+    "has0a": false
+  },
+  {
+    "partNum": 817,
+    "title": "妙臂菩薩所問經",
+    "subid": 925,
+    "bookIds": [
+      5102,
+      5103,
+      5104,
+      5105
+    ],
+    "scrollLabels": [
+      "1卷",
+      "2卷",
+      "3卷",
+      "4卷"
+    ],
+    "firstBookId": 5102,
+    "scrollCount": 4,
+    "has0a": false
+  },
+  {
+    "partNum": 818,
+    "title": "佛說苾芻五法經",
+    "subid": 926,
+    "bookIds": [
+      5106
+    ],
+    "scrollLabels": [
+      "1卷"
+    ],
+    "firstBookId": 5106,
+    "scrollCount": 1,
+    "has0a": false
+  },
+  {
+    "partNum": 819,
+    "title": "佛說苾芻迦尸迦十法經",
+    "subid": 927,
+    "bookIds": [
+      5107
+    ],
+    "scrollLabels": [
+      "1卷"
+    ],
+    "firstBookId": 5107,
+    "scrollCount": 1,
+    "has0a": false
+  },
+  {
+    "partNum": 820,
+    "title": "諸佛心印陀羅尼經",
+    "subid": 928,
+    "bookIds": [
+      5108
+    ],
+    "scrollLabels": [
+      "1卷"
+    ],
+    "firstBookId": 5108,
+    "scrollCount": 1,
+    "has0a": false
+  },
+  {
+    "partNum": 821,
+    "title": "大乗寳月童子問法經",
+    "subid": 929,
+    "bookIds": [
+      5109
+    ],
+    "scrollLabels": [
+      "1卷"
+    ],
+    "firstBookId": 5109,
+    "scrollCount": 1,
+    "has0a": false
+  },
+  {
+    "partNum": 822,
+    "title": "佛說蓮華眼陀羅尼經",
+    "subid": 930,
+    "bookIds": [
+      5110
+    ],
+    "scrollLabels": [
+      "1卷"
+    ],
+    "firstBookId": 5110,
+    "scrollCount": 1,
+    "has0a": false
+  },
+  {
+    "partNum": 823,
+    "title": "佛說觀想佛母般若波羅蜜多菩薩經",
+    "subid": 931,
+    "bookIds": [
+      5111
+    ],
+    "scrollLabels": [
+      "1卷"
+    ],
+    "firstBookId": 5111,
+    "scrollCount": 1,
+    "has0a": false
+  },
+  {
+    "partNum": 824,
+    "title": "佛說如意摩尼陀羅尼經",
+    "subid": 932,
+    "bookIds": [
+      5112
+    ],
+    "scrollLabels": [
+      "1卷"
+    ],
+    "firstBookId": 5112,
+    "scrollCount": 1,
+    "has0a": false
+  },
+  {
+    "partNum": 825,
+    "title": "佛說聖大緫持王經",
+    "subid": 933,
+    "bookIds": [
+      5113
+    ],
+    "scrollLabels": [
+      "1卷"
+    ],
+    "firstBookId": 5113,
+    "scrollCount": 1,
+    "has0a": false
+  },
+  {
+    "partNum": 826,
+    "title": "佛說最上意陀羅尼經",
+    "subid": 934,
+    "bookIds": [
+      5114
+    ],
+    "scrollLabels": [
+      "1卷"
+    ],
+    "firstBookId": 5114,
+    "scrollCount": 1,
+    "has0a": false
+  },
+  {
+    "partNum": 827,
+    "title": "佛說持明藏八大緫持王經",
+    "subid": 935,
+    "bookIds": [
+      5115
+    ],
+    "scrollLabels": [
+      "1卷"
+    ],
+    "firstBookId": 5115,
+    "scrollCount": 1,
+    "has0a": false
+  },
+  {
+    "partNum": 828,
+    "title": "聖無能勝金剛火陀羅尼經",
+    "subid": 936,
+    "bookIds": [
+      5116
+    ],
+    "scrollLabels": [
+      "1卷"
+    ],
+    "firstBookId": 5116,
+    "scrollCount": 1,
+    "has0a": false
+  },
+  {
+    "partNum": 829,
+    "title": "佛說尊勝大明王經",
+    "subid": 937,
+    "bookIds": [
+      5117
+    ],
+    "scrollLabels": [
+      "1卷"
+    ],
+    "firstBookId": 5117,
+    "scrollCount": 1,
+    "has0a": false
+  },
+  {
+    "partNum": 830,
+    "title": "佛說智光滅一切業障陀羅尼經",
+    "subid": 938,
+    "bookIds": [
+      5118
+    ],
+    "scrollLabels": [
+      "1卷"
+    ],
+    "firstBookId": 5118,
+    "scrollCount": 1,
+    "has0a": false
+  },
+  {
+    "partNum": 831,
+    "title": "佛說如意寳緫持王經",
+    "subid": 939,
+    "bookIds": [
+      5119
+    ],
+    "scrollLabels": [
+      "1卷"
+    ],
+    "firstBookId": 5119,
+    "scrollCount": 1,
+    "has0a": false
+  },
+  {
+    "partNum": 832,
+    "title": "佛說大自在天子因地經",
+    "subid": 940,
+    "bookIds": [
+      5120
+    ],
+    "scrollLabels": [
+      "1卷"
+    ],
+    "firstBookId": 5120,
+    "scrollCount": 1,
+    "has0a": false
+  },
+  {
+    "partNum": 833,
+    "title": "佛說寳生陀羅尼經",
+    "subid": 941,
+    "bookIds": [
+      5121
+    ],
+    "scrollLabels": [
+      "1卷"
+    ],
+    "firstBookId": 5121,
+    "scrollCount": 1,
+    "has0a": false
+  },
+  {
+    "partNum": 834,
+    "title": "佛說十號經",
+    "subid": 942,
+    "bookIds": [
+      5122
+    ],
+    "scrollLabels": [
+      "1卷"
+    ],
+    "firstBookId": 5122,
+    "scrollCount": 1,
+    "has0a": false
+  },
+  {
+    "partNum": 835,
+    "title": "佛爲娑伽羅龍王所說大乗法經",
+    "subid": 943,
+    "bookIds": [
+      5123
+    ],
+    "scrollLabels": [
+      "1卷"
+    ],
+    "firstBookId": 5123,
+    "scrollCount": 1,
+    "has0a": false
+  },
+  {
+    "partNum": 836,
+    "title": "佛說普賢菩薩陀羅尼經",
+    "subid": 944,
+    "bookIds": [
+      5124
+    ],
+    "scrollLabels": [
+      "1卷"
+    ],
+    "firstBookId": 5124,
+    "scrollCount": 1,
+    "has0a": false
+  },
+  {
+    "partNum": 837,
+    "title": "大金剛妙髙山樓閣陀羅尼",
+    "subid": 945,
+    "bookIds": [
+      5125
+    ],
+    "scrollLabels": [
+      "1卷"
+    ],
+    "firstBookId": 5125,
+    "scrollCount": 1,
+    "has0a": false
+  },
+  {
+    "partNum": 838,
+    "title": "廣大蓮華莊嚴曼拏羅滅一切罪陀羅尼經",
+    "subid": 946,
+    "bookIds": [
+      5126
+    ],
+    "scrollLabels": [
+      "1卷"
+    ],
+    "firstBookId": 5126,
+    "scrollCount": 1,
+    "has0a": false
+  },
+  {
+    "partNum": 839,
+    "title": "佛說大摩里支菩薩經",
+    "subid": 947,
+    "bookIds": [
+      5127,
+      5128,
+      5129,
+      5130,
+      5131,
+      5132,
+      5133,
+      5134
+    ],
+    "scrollLabels": [
+      "0a卷",
+      "1卷",
+      "2卷",
+      "3卷",
+      "4卷",
+      "5卷",
+      "6卷",
+      "7卷"
+    ],
+    "firstBookId": 5127,
+    "scrollCount": 8,
+    "has0a": true
+  },
+  {
+    "partNum": 840,
+    "title": "佛說末利支提婆華鬘經",
+    "subid": 948,
+    "bookIds": [
+      5135
+    ],
+    "scrollLabels": [
+      "1卷"
+    ],
+    "firstBookId": 5135,
+    "scrollCount": 1,
+    "has0a": false
+  },
+  {
+    "partNum": 841,
+    "title": "佛說摩利支天經",
+    "subid": 949,
+    "bookIds": [
+      5136
+    ],
+    "scrollLabels": [
+      "1卷"
+    ],
+    "firstBookId": 5136,
+    "scrollCount": 1,
+    "has0a": false
+  },
+  {
+    "partNum": 842,
+    "title": "佛說摩利支天陀羅尼呪經",
+    "subid": 950,
+    "bookIds": [
+      5137
+    ],
+    "scrollLabels": [
+      "1卷"
+    ],
+    "firstBookId": 5137,
+    "scrollCount": 1,
+    "has0a": false
+  },
+  {
+    "partNum": 843,
+    "title": "佛說長者施報經",
+    "subid": 951,
+    "bookIds": [
+      5138
+    ],
+    "scrollLabels": [
+      "1卷"
+    ],
+    "firstBookId": 5138,
+    "scrollCount": 1,
+    "has0a": false
+  },
+  {
+    "partNum": 844,
+    "title": "佛說毗沙門天王經",
+    "subid": 952,
+    "bookIds": [
+      5139
+    ],
+    "scrollLabels": [
+      "1卷"
+    ],
+    "firstBookId": 5139,
+    "scrollCount": 1,
+    "has0a": false
+  },
+  {
+    "partNum": 845,
+    "title": "毗婆尸佛經",
+    "subid": 953,
+    "bookIds": [
+      5140,
+      5141
+    ],
+    "scrollLabels": [
+      "1卷",
+      "2卷"
+    ],
+    "firstBookId": 5140,
+    "scrollCount": 2,
+    "has0a": false
+  },
+  {
+    "partNum": 846,
+    "title": "佛說大三摩惹經",
+    "subid": 954,
+    "bookIds": [
+      5142
+    ],
+    "scrollLabels": [
+      "1卷"
+    ],
+    "firstBookId": 5142,
+    "scrollCount": 1,
+    "has0a": false
+  },
+  {
+    "partNum": 847,
+    "title": "佛說月光菩薩經",
+    "subid": 955,
+    "bookIds": [
+      5143
+    ],
+    "scrollLabels": [
+      "1卷"
+    ],
+    "firstBookId": 5143,
+    "scrollCount": 1,
+    "has0a": false
+  },
+  {
+    "partNum": 848,
+    "title": "佛說普賢曼拏羅經",
+    "subid": 956,
+    "bookIds": [
+      5144
+    ],
+    "scrollLabels": [
+      "1卷"
+    ],
+    "firstBookId": 5144,
+    "scrollCount": 1,
+    "has0a": false
+  },
+  {
+    "partNum": 849,
+    "title": "佛說聖莊嚴陀羅尼經",
+    "subid": 957,
+    "bookIds": [
+      5145,
+      5146
+    ],
+    "scrollLabels": [
+      "1卷",
+      "2卷"
+    ],
+    "firstBookId": 5145,
+    "scrollCount": 2,
+    "has0a": false
+  },
+  {
+    "partNum": 850,
+    "title": "佛說聖六字大明王陀羅尼經",
+    "subid": 958,
+    "bookIds": [
+      5147
+    ],
+    "scrollLabels": [
+      "1卷"
+    ],
+    "firstBookId": 5147,
+    "scrollCount": 1,
+    "has0a": false
+  },
+  {
+    "partNum": 851,
+    "title": "千轉大明陀羅尼經",
+    "subid": 959,
+    "bookIds": [
+      5148
+    ],
+    "scrollLabels": [
+      "1卷"
+    ],
+    "firstBookId": 5148,
+    "scrollCount": 1,
+    "has0a": false
+  },
+  {
+    "partNum": 852,
+    "title": "佛說華積樓閣陀羅尼經",
+    "subid": 960,
+    "bookIds": [
+      5149
+    ],
+    "scrollLabels": [
+      "1卷"
+    ],
+    "firstBookId": 5149,
+    "scrollCount": 1,
+    "has0a": false
+  },
+  {
+    "partNum": 853,
+    "title": "佛說勝旛瓔珞陀羅尼經",
+    "subid": 961,
+    "bookIds": [
+      5150
+    ],
+    "scrollLabels": [
+      "1卷"
+    ],
+    "firstBookId": 5150,
+    "scrollCount": 1,
+    "has0a": false
+  },
+  {
+    "partNum": 854,
+    "title": "衆許摩訶帝經",
+    "subid": 962,
+    "bookIds": [
+      5151,
+      5152,
+      5153,
+      5154,
+      5155,
+      5156,
+      5157,
+      5158,
+      5159,
+      5160,
+      5161,
+      5162,
+      5163
+    ],
+    "scrollLabels": [
+      "1卷",
+      "2卷",
+      "3卷",
+      "4卷",
+      "5卷",
+      "6卷",
+      "7卷",
+      "8卷",
+      "9卷",
+      "10卷",
+      "11卷",
+      "12卷",
+      "13卷"
+    ],
+    "firstBookId": 5151,
+    "scrollCount": 13,
+    "has0a": false
+  },
+  {
+    "partNum": 855,
+    "title": "佛說七佛經",
+    "subid": 963,
+    "bookIds": [
+      5164
+    ],
+    "scrollLabels": [
+      "1卷"
+    ],
+    "firstBookId": 5164,
+    "scrollCount": 1,
+    "has0a": false
+  },
+  {
+    "partNum": 856,
+    "title": "佛說解憂經",
+    "subid": 964,
+    "bookIds": [
+      5165
+    ],
+    "scrollLabels": [
+      "1卷"
+    ],
+    "firstBookId": 5165,
+    "scrollCount": 1,
+    "has0a": false
+  },
+  {
+    "partNum": 857,
+    "title": "佛說徧照般若波羅蜜經",
+    "subid": 965,
+    "bookIds": [
+      5166
+    ],
+    "scrollLabels": [
+      "1卷"
+    ],
+    "firstBookId": 5166,
+    "scrollCount": 1,
+    "has0a": false
+  },
+  {
+    "partNum": 858,
+    "title": "佛說大乗無量壽莊嚴經",
+    "subid": 966,
+    "bookIds": [
+      5167,
+      5168,
+      5169
+    ],
+    "scrollLabels": [
+      "1卷",
+      "2卷",
+      "3卷"
+    ],
+    "firstBookId": 5167,
+    "scrollCount": 3,
+    "has0a": false
+  },
+  {
+    "partNum": 859,
+    "title": "佛母寳徳藏般若波羅蜜經",
+    "subid": 967,
+    "bookIds": [
+      5170,
+      5171,
+      5172
+    ],
+    "scrollLabels": [
+      "1卷",
+      "2卷",
+      "3卷"
+    ],
+    "firstBookId": 5170,
+    "scrollCount": 3,
+    "has0a": false
+  },
+  {
+    "partNum": 860,
+    "title": "佛說帝釋般若波羅蜜多心經",
+    "subid": 968,
+    "bookIds": [
+      5173
+    ],
+    "scrollLabels": [
+      "1卷"
+    ],
+    "firstBookId": 5173,
+    "scrollCount": 1,
+    "has0a": false
+  },
+  {
+    "partNum": 861,
+    "title": "佛說諸佛經",
+    "subid": 969,
+    "bookIds": [
+      5174
+    ],
+    "scrollLabels": [
+      "1卷"
+    ],
+    "firstBookId": 5174,
+    "scrollCount": 1,
+    "has0a": false
+  },
+  {
+    "partNum": 862,
+    "title": "大乗舍黎娑擔摩經",
+    "subid": 970,
+    "bookIds": [
+      5175
+    ],
+    "scrollLabels": [
+      "1卷"
+    ],
+    "firstBookId": 5175,
+    "scrollCount": 1,
+    "has0a": false
+  },
+  {
+    "partNum": 863,
+    "title": "佛說大金剛香陀羅尼經",
+    "subid": 971,
+    "bookIds": [
+      5176
+    ],
+    "scrollLabels": [
+      "1卷"
+    ],
+    "firstBookId": 5176,
+    "scrollCount": 1,
+    "has0a": false
+  },
+  {
+    "partNum": 864,
+    "title": "最上大乗金剛大教寳王經",
+    "subid": 972,
+    "bookIds": [
+      5177,
+      5178
+    ],
+    "scrollLabels": [
+      "1卷",
+      "2卷"
+    ],
+    "firstBookId": 5177,
+    "scrollCount": 2,
+    "has0a": false
+  },
+  {
+    "partNum": 865,
+    "title": "佛說薩鉢多酥哩踰捺野經",
+    "subid": 973,
+    "bookIds": [
+      5179
+    ],
+    "scrollLabels": [
+      "1卷"
+    ],
+    "firstBookId": 5179,
+    "scrollCount": 1,
+    "has0a": false
+  },
+  {
+    "partNum": 866,
+    "title": "佛說一切如來烏瑟膩沙最勝緫持經",
+    "subid": 974,
+    "bookIds": [
+      5180
+    ],
+    "scrollLabels": [
+      "1卷"
+    ],
+    "firstBookId": 5180,
+    "scrollCount": 1,
+    "has0a": false
+  },
+  {
+    "partNum": 867,
+    "title": "菩提心觀釋",
+    "subid": 975,
+    "bookIds": [
+      5181
+    ],
+    "scrollLabels": [
+      "1卷"
+    ],
+    "firstBookId": 5181,
+    "scrollCount": 1,
+    "has0a": false
+  },
+  {
+    "partNum": 868,
+    "title": "佛說護國尊者所問大乗經",
+    "subid": 976,
+    "bookIds": [
+      5182,
+      5183,
+      5184,
+      5185
+    ],
+    "scrollLabels": [
+      "1卷",
+      "2卷",
+      "3卷",
+      "4卷"
+    ],
+    "firstBookId": 5182,
+    "scrollCount": 4,
+    "has0a": false
+  },
+  {
+    "partNum": 869,
+    "title": "佛說四無所畏經",
+    "subid": 977,
+    "bookIds": [
+      5186
+    ],
+    "scrollLabels": [
+      "1卷"
+    ],
+    "firstBookId": 5186,
+    "scrollCount": 1,
+    "has0a": false
+  },
+  {
+    "partNum": 870,
+    "title": "増慧陀羅尼經",
+    "subid": 978,
+    "bookIds": [
+      5187
+    ],
+    "scrollLabels": [
+      "1卷"
+    ],
+    "firstBookId": 5187,
+    "scrollCount": 1,
+    "has0a": false
+  },
+  {
+    "partNum": 871,
+    "title": "聖六字増壽大明陀羅尼經",
+    "subid": 979,
+    "bookIds": [
+      5188
+    ],
+    "scrollLabels": [
+      "1卷"
+    ],
+    "firstBookId": 5188,
+    "scrollCount": 1,
+    "has0a": false
+  },
+  {
+    "partNum": 872,
+    "title": "佛說大乗戒經",
+    "subid": 980,
+    "bookIds": [
+      5189
+    ],
+    "scrollLabels": [
+      "1卷"
+    ],
+    "firstBookId": 5189,
+    "scrollCount": 1,
+    "has0a": false
+  },
+  {
+    "partNum": 873,
+    "title": "佛說聖最勝陀羅尼經",
+    "subid": 981,
+    "bookIds": [
+      5190
+    ],
+    "scrollLabels": [
+      "1卷"
+    ],
+    "firstBookId": 5190,
+    "scrollCount": 1,
+    "has0a": false
+  },
+  {
+    "partNum": 874,
+    "title": "佛說五十頌聖般若波羅蜜經",
+    "subid": 982,
+    "bookIds": [
+      5191
+    ],
+    "scrollLabels": [
+      "1卷"
+    ],
+    "firstBookId": 5191,
+    "scrollCount": 1,
+    "has0a": false
+  },
+  {
+    "partNum": 875,
+    "title": "大乗八大曼拏羅經",
+    "subid": 983,
+    "bookIds": [
+      5192
+    ],
+    "scrollLabels": [
+      "1卷"
+    ],
+    "firstBookId": 5192,
+    "scrollCount": 1,
+    "has0a": false
+  },
+  {
+    "partNum": 876,
+    "title": "佛說較量一切佛刹功徳經",
+    "subid": 984,
+    "bookIds": [
+      5193
+    ],
+    "scrollLabels": [
+      "1卷"
+    ],
+    "firstBookId": 5193,
+    "scrollCount": 1,
+    "has0a": false
+  },
+  {
+    "partNum": 877,
+    "title": "囉嚩拏說救療小兒疾病經",
+    "subid": 985,
+    "bookIds": [
+      5194
+    ],
+    "scrollLabels": [
+      "1卷"
+    ],
+    "firstBookId": 5194,
+    "scrollCount": 1,
+    "has0a": false
+  },
+  {
+    "partNum": 878,
+    "title": "迦葉仙人說醫女人經",
+    "subid": 986,
+    "bookIds": [
+      5195
+    ],
+    "scrollLabels": [
+      "1卷"
+    ],
+    "firstBookId": 5195,
+    "scrollCount": 1,
+    "has0a": false
+  },
+  {
+    "partNum": 879,
+    "title": "佛說俱枳羅陀羅尼經",
+    "subid": 987,
+    "bookIds": [
+      5196
+    ],
+    "scrollLabels": [
+      "1卷"
+    ],
+    "firstBookId": 5196,
+    "scrollCount": 1,
+    "has0a": false
+  },
+  {
+    "partNum": 880,
+    "title": "佛說消除一切災障寳髻陀羅尼經",
+    "subid": 988,
+    "bookIds": [
+      5197
+    ],
+    "scrollLabels": [
+      "1卷"
+    ],
+    "firstBookId": 5197,
+    "scrollCount": 1,
+    "has0a": false
+  },
+  {
+    "partNum": 881,
+    "title": "佛說妙色陀羅尼經",
+    "subid": 990,
+    "bookIds": [
+      5198
+    ],
+    "scrollLabels": [
+      "1卷"
+    ],
+    "firstBookId": 5198,
+    "scrollCount": 1,
+    "has0a": false
+  },
+  {
+    "partNum": 882,
+    "title": "佛說栴檀香身陀羅尼經",
+    "subid": 991,
+    "bookIds": [
+      5199
+    ],
+    "scrollLabels": [
+      "1卷"
+    ],
+    "firstBookId": 5199,
+    "scrollCount": 1,
+    "has0a": false
+  },
+  {
+    "partNum": 883,
+    "title": "佛說鉢蘭那賖嚩哩大陀羅尼經",
+    "subid": 992,
+    "bookIds": [
+      5200
+    ],
+    "scrollLabels": [
+      "1卷"
+    ],
+    "firstBookId": 5200,
+    "scrollCount": 1,
+    "has0a": false
+  },
+  {
+    "partNum": 884,
+    "title": "佛說宿命智陀羅尼經",
+    "subid": 993,
+    "bookIds": [
+      5201
+    ],
+    "scrollLabels": [
+      "1卷"
+    ],
+    "firstBookId": 5201,
+    "scrollCount": 1,
+    "has0a": false
+  },
+  {
+    "partNum": 885,
+    "title": "佛說慈氏菩薩誓願陀羅尼經",
+    "subid": 994,
+    "bookIds": [
+      5202
+    ],
+    "scrollLabels": [
+      "1卷"
+    ],
+    "firstBookId": 5202,
+    "scrollCount": 1,
+    "has0a": false
+  },
+  {
+    "partNum": 886,
+    "title": "佛說滅除五逆罪大陀羅尼經",
+    "subid": 995,
+    "bookIds": [
+      5203
+    ],
+    "scrollLabels": [
+      "1卷"
+    ],
+    "firstBookId": 5203,
+    "scrollCount": 1,
+    "has0a": false
+  },
+  {
+    "partNum": 887,
+    "title": "佛說無量功徳陀羅尼經",
+    "subid": 996,
+    "bookIds": [
+      5204
+    ],
+    "scrollLabels": [
+      "1卷"
+    ],
+    "firstBookId": 5204,
+    "scrollCount": 1,
+    "has0a": false
+  },
+  {
+    "partNum": 888,
+    "title": "佛說十八臂陀羅尼經",
+    "subid": 997,
+    "bookIds": [
+      5205
+    ],
+    "scrollLabels": [
+      "1卷"
+    ],
+    "firstBookId": 5205,
+    "scrollCount": 1,
+    "has0a": false
+  },
+  {
+    "partNum": 889,
+    "title": "佛說洛叉陀羅尼經",
+    "subid": 998,
+    "bookIds": [
+      5206
+    ],
+    "scrollLabels": [
+      "1卷"
+    ],
+    "firstBookId": 5206,
+    "scrollCount": 1,
+    "has0a": false
+  },
+  {
+    "partNum": 890,
+    "title": "佛說辟除諸惡陀羅尼經",
+    "subid": 999,
+    "bookIds": [
+      5207
+    ],
+    "scrollLabels": [
+      "1卷"
+    ],
+    "firstBookId": 5207,
+    "scrollCount": 1,
+    "has0a": false
+  },
+  {
+    "partNum": 891,
+    "title": "佛說大愛陀羅尼經",
+    "subid": 1000,
+    "bookIds": [
+      5208
+    ],
+    "scrollLabels": [
+      "1卷"
+    ],
+    "firstBookId": 5208,
+    "scrollCount": 1,
+    "has0a": false
+  },
+  {
+    "partNum": 892,
+    "title": "佛說阿羅漢具徳經",
+    "subid": 1001,
+    "bookIds": [
+      5209
+    ],
+    "scrollLabels": [
+      "1卷"
+    ],
+    "firstBookId": 5209,
+    "scrollCount": 1,
+    "has0a": false
+  },
+  {
+    "partNum": 893,
+    "title": "佛說八大靈塔名號經",
+    "subid": 1002,
+    "bookIds": [
+      5210
+    ],
+    "scrollLabels": [
+      "1卷"
+    ],
+    "firstBookId": 5210,
+    "scrollCount": 1,
+    "has0a": false
+  },
+  {
+    "partNum": 894,
+    "title": "佛說尊那經",
+    "subid": 1003,
+    "bookIds": [
+      5211
+    ],
+    "scrollLabels": [
+      "1卷"
+    ],
+    "firstBookId": 5211,
+    "scrollCount": 1,
+    "has0a": false
+  },
+  {
+    "partNum": 895,
+    "title": "佛說頻婆娑羅王經",
+    "subid": 1004,
+    "bookIds": [
+      5212
+    ],
+    "scrollLabels": [
+      "1卷"
+    ],
+    "firstBookId": 5212,
+    "scrollCount": 1,
+    "has0a": false
+  },
+  {
+    "partNum": 896,
+    "title": "佛說人仙經",
+    "subid": 1005,
+    "bookIds": [
+      5213
+    ],
+    "scrollLabels": [
+      "1卷"
+    ],
+    "firstBookId": 5213,
+    "scrollCount": 1,
+    "has0a": false
+  },
+  {
+    "partNum": 897,
+    "title": "佛說舊城喻經",
+    "subid": 1006,
+    "bookIds": [
+      5214
+    ],
+    "scrollLabels": [
+      "1卷"
+    ],
+    "firstBookId": 5214,
+    "scrollCount": 1,
+    "has0a": false
+  },
+  {
+    "partNum": 898,
+    "title": "佛說信解智力經",
+    "subid": 1007,
+    "bookIds": [
+      5215
+    ],
+    "scrollLabels": [
+      "1卷"
+    ],
+    "firstBookId": 5215,
+    "scrollCount": 1,
+    "has0a": false
+  },
+  {
+    "partNum": 899,
+    "title": "大正句王經",
+    "subid": 1008,
+    "bookIds": [
+      5216,
+      5217
+    ],
+    "scrollLabels": [
+      "1卷",
+      "2卷"
+    ],
+    "firstBookId": 5216,
+    "scrollCount": 2,
+    "has0a": false
+  },
+  {
+    "partNum": 900,
+    "title": "佛說善樂長者經",
+    "subid": 1009,
+    "bookIds": [
+      5218
+    ],
+    "scrollLabels": [
+      "1卷"
+    ],
+    "firstBookId": 5218,
+    "scrollCount": 1,
+    "has0a": false
+  },
+  {
+    "partNum": 901,
+    "title": "佛說聖多羅菩薩經",
+    "subid": 1010,
+    "bookIds": [
+      5219
+    ],
+    "scrollLabels": [
+      "1卷"
+    ],
+    "firstBookId": 5219,
+    "scrollCount": 1,
+    "has0a": false
+  },
+  {
+    "partNum": 902,
+    "title": "佛說大吉祥陀羅尼經",
+    "subid": 1011,
+    "bookIds": [
+      5220
+    ],
+    "scrollLabels": [
+      "1卷"
+    ],
+    "firstBookId": 5220,
+    "scrollCount": 1,
+    "has0a": false
+  },
+  {
+    "partNum": 903,
+    "title": "寳賢陀羅尼經",
+    "subid": 1012,
+    "bookIds": [
+      5221
+    ],
+    "scrollLabels": [
+      "1卷"
+    ],
+    "firstBookId": 5221,
+    "scrollCount": 1,
+    "has0a": false
+  },
+  {
+    "partNum": 904,
+    "title": "佛說秘宻八名陀羅尼經",
+    "subid": 1013,
+    "bookIds": [
+      5222
+    ],
+    "scrollLabels": [
+      "1卷"
+    ],
+    "firstBookId": 5222,
+    "scrollCount": 1,
+    "has0a": false
+  },
+  {
+    "partNum": 905,
+    "title": "觀自在菩薩母陀羅尼經",
+    "subid": 1014,
+    "bookIds": [
+      5223
+    ],
+    "scrollLabels": [
+      "1卷"
+    ],
+    "firstBookId": 5223,
+    "scrollCount": 1,
+    "has0a": false
+  },
+  {
+    "partNum": 906,
+    "title": "佛說戒香經",
+    "subid": 1015,
+    "bookIds": [
+      5224
+    ],
+    "scrollLabels": [
+      "1卷"
+    ],
+    "firstBookId": 5224,
+    "scrollCount": 1,
+    "has0a": false
+  },
+  {
+    "partNum": 907,
+    "title": "佛說妙吉祥菩薩陀羅尼",
+    "subid": 1016,
+    "bookIds": [
+      5225
+    ],
+    "scrollLabels": [
+      "1卷"
+    ],
+    "firstBookId": 5225,
+    "scrollCount": 1,
+    "has0a": false
+  },
+  {
+    "partNum": 908,
+    "title": "佛說無量壽大智陀羅尼",
+    "subid": 1017,
+    "bookIds": [
+      5226
+    ],
+    "scrollLabels": [
+      "1卷"
+    ],
+    "firstBookId": 5226,
+    "scrollCount": 1,
+    "has0a": false
+  },
+  {
+    "partNum": 909,
+    "title": "佛說宿命智陀羅尼",
+    "subid": 1018,
+    "bookIds": [
+      5227
+    ],
+    "scrollLabels": [
+      "1卷"
+    ],
+    "firstBookId": 5227,
+    "scrollCount": 1,
+    "has0a": false
+  },
+  {
+    "partNum": 910,
+    "title": "佛說慈氏菩薩陀羅尼",
+    "subid": 1019,
+    "bookIds": [
+      5228
+    ],
+    "scrollLabels": [
+      "1卷"
+    ],
+    "firstBookId": 5228,
+    "scrollCount": 1,
+    "has0a": false
+  },
+  {
+    "partNum": 911,
+    "title": "佛說虚空藏菩薩陀羅尼",
+    "subid": 1020,
+    "bookIds": [
+      5229
+    ],
+    "scrollLabels": [
+      "1卷"
+    ],
+    "firstBookId": 5229,
+    "scrollCount": 1,
+    "has0a": false
+  },
+  {
+    "partNum": 912,
+    "title": "寳授菩薩菩提行經",
+    "subid": 1021,
+    "bookIds": [
+      5230
+    ],
+    "scrollLabels": [
+      "1卷"
+    ],
+    "firstBookId": 5230,
+    "scrollCount": 1,
+    "has0a": false
+  },
+  {
+    "partNum": 913,
+    "title": "佛說延壽妙門陀羅尼經",
+    "subid": 1022,
+    "bookIds": [
+      5231
+    ],
+    "scrollLabels": [
+      "1卷"
+    ],
+    "firstBookId": 5231,
+    "scrollCount": 1,
+    "has0a": false
+  },
+  {
+    "partNum": 914,
+    "title": "一切如來名號陀羅尼經",
+    "subid": 1023,
+    "bookIds": [
+      5232
+    ],
+    "scrollLabels": [
+      "1卷"
+    ],
+    "firstBookId": 5232,
+    "scrollCount": 1,
+    "has0a": false
+  },
+  {
+    "partNum": 915,
+    "title": "佛說息除賊難陀羅尼經",
+    "subid": 1024,
+    "bookIds": [
+      5233
+    ],
+    "scrollLabels": [
+      "1卷"
+    ],
+    "firstBookId": 5233,
+    "scrollCount": 1,
+    "has0a": false
+  },
+  {
+    "partNum": 916,
+    "title": "佛說法身經",
+    "subid": 1025,
+    "bookIds": [
+      5234
+    ],
+    "scrollLabels": [
+      "1卷"
+    ],
+    "firstBookId": 5234,
+    "scrollCount": 1,
+    "has0a": false
+  },
+  {
+    "partNum": 917,
+    "title": "信佛功德經",
+    "subid": 1026,
+    "bookIds": [
+      5235
+    ],
+    "scrollLabels": [
+      "1卷"
+    ],
+    "firstBookId": 5235,
+    "scrollCount": 1,
+    "has0a": false
+  },
+  {
+    "partNum": 918,
+    "title": "佛說解夏經",
+    "subid": 1027,
+    "bookIds": [
+      5236
+    ],
+    "scrollLabels": [
+      "1卷"
+    ],
+    "firstBookId": 5236,
+    "scrollCount": 1,
+    "has0a": false
+  },
+  {
+    "partNum": 919,
+    "title": "佛說帝釋所問經",
+    "subid": 1028,
+    "bookIds": [
+      5237
+    ],
+    "scrollLabels": [
+      "1卷"
+    ],
+    "firstBookId": 5237,
+    "scrollCount": 1,
+    "has0a": false
+  },
+  {
+    "partNum": 920,
+    "title": "佛說未曽有正法經",
+    "subid": 1029,
+    "bookIds": [
+      5238,
+      5239,
+      5240,
+      5241,
+      5242,
+      5243
+    ],
+    "scrollLabels": [
+      "1卷",
+      "2卷",
+      "3卷",
+      "4卷",
+      "5卷",
+      "6卷"
+    ],
+    "firstBookId": 5238,
+    "scrollCount": 6,
+    "has0a": false
+  },
+  {
+    "partNum": 921,
+    "title": "佛說大方廣善巧方便經",
+    "subid": 1030,
+    "bookIds": [
+      5244,
+      5245,
+      5246,
+      5247
+    ],
+    "scrollLabels": [
+      "1卷",
+      "2卷",
+      "3卷",
+      "4卷"
+    ],
+    "firstBookId": 5244,
+    "scrollCount": 4,
+    "has0a": false
+  },
+  {
+    "partNum": 922,
+    "title": "佛母出生三法藏般若波羅蜜多經",
+    "subid": 1031,
+    "bookIds": [
+      5248,
+      5249,
+      5250,
+      5251,
+      5252,
+      5253,
+      5254,
+      5255,
+      5256,
+      5257,
+      5258,
+      5259,
+      5260,
+      5261,
+      5262,
+      5263,
+      5264,
+      5265,
+      5266,
+      5267,
+      5268,
+      5269,
+      5270,
+      5271,
+      5272
+    ],
+    "scrollLabels": [
+      "1卷",
+      "2卷",
+      "3卷",
+      "4卷",
+      "5卷",
+      "6卷",
+      "7卷",
+      "8卷",
+      "9卷",
+      "10卷",
+      "11卷",
+      "12卷",
+      "13卷",
+      "14卷",
+      "15卷",
+      "16卷",
+      "17卷",
+      "18卷",
+      "19卷",
+      "20卷",
+      "21卷",
+      "22卷",
+      "23卷",
+      "24卷",
+      "25卷"
+    ],
+    "firstBookId": 5248,
+    "scrollCount": 25,
+    "has0a": false
+  },
+  {
+    "partNum": 923,
+    "title": "佛說決定義經",
+    "subid": 1032,
+    "bookIds": [
+      5273
+    ],
+    "scrollLabels": [
+      "1卷"
+    ],
+    "firstBookId": 5273,
+    "scrollCount": 1,
+    "has0a": false
+  },
+  {
+    "partNum": 924,
+    "title": "佛說護國經",
+    "subid": 1033,
+    "bookIds": [
+      5274
+    ],
+    "scrollLabels": [
+      "1卷"
+    ],
+    "firstBookId": 5274,
+    "scrollCount": 1,
+    "has0a": false
+  },
+  {
+    "partNum": 925,
+    "title": "佛說分别布施經",
+    "subid": 1034,
+    "bookIds": [
+      5275
+    ],
+    "scrollLabels": [
+      "1卷"
+    ],
+    "firstBookId": 5275,
+    "scrollCount": 1,
+    "has0a": false
+  },
+  {
+    "partNum": 926,
+    "title": "佛說分别縁生經",
+    "subid": 1035,
+    "bookIds": [
+      5276
+    ],
+    "scrollLabels": [
+      "1卷"
+    ],
+    "firstBookId": 5276,
+    "scrollCount": 1,
+    "has0a": false
+  },
+  {
+    "partNum": 927,
+    "title": "佛說法印經",
+    "subid": 1036,
+    "bookIds": [
+      5277
+    ],
+    "scrollLabels": [
+      "1卷"
+    ],
+    "firstBookId": 5277,
+    "scrollCount": 1,
+    "has0a": false
+  },
+  {
+    "partNum": 928,
+    "title": "佛說大生義經",
+    "subid": 1037,
+    "bookIds": [
+      5278
+    ],
+    "scrollLabels": [
+      "1卷"
+    ],
+    "firstBookId": 5278,
+    "scrollCount": 1,
+    "has0a": false
+  },
+  {
+    "partNum": 929,
+    "title": "佛說發菩提心破諸魔經",
+    "subid": 1038,
+    "bookIds": [
+      5279,
+      5280
+    ],
+    "scrollLabels": [
+      "1卷",
+      "2卷"
+    ],
+    "firstBookId": 5279,
+    "scrollCount": 2,
+    "has0a": false
+  },
+  {
+    "partNum": 930,
+    "title": "佛說聖佛母般若波羅蜜多經",
+    "subid": 1039,
+    "bookIds": [
+      5281
+    ],
+    "scrollLabels": [
+      "1卷"
+    ],
+    "firstBookId": 5281,
+    "scrollCount": 1,
+    "has0a": false
+  },
+  {
+    "partNum": 931,
+    "title": "佛說大乗不思議神通境界經",
+    "subid": 1040,
+    "bookIds": [
+      5282,
+      5283,
+      5284
+    ],
+    "scrollLabels": [
+      "1卷",
+      "2卷",
+      "3卷"
+    ],
+    "firstBookId": 5282,
+    "scrollCount": 3,
+    "has0a": false
+  },
+  {
+    "partNum": 932,
+    "title": "佛說給孤長者女得度因縁經",
+    "subid": 1041,
+    "bookIds": [
+      5285,
+      5286,
+      5287
+    ],
+    "scrollLabels": [
+      "1卷",
+      "2卷",
+      "3卷"
+    ],
+    "firstBookId": 5285,
+    "scrollCount": 3,
+    "has0a": false
+  },
+  {
+    "partNum": 933,
+    "title": "佛說大集法門經",
+    "subid": 1042,
+    "bookIds": [
+      5288,
+      5289
+    ],
+    "scrollLabels": [
+      "1卷",
+      "2卷"
+    ],
+    "firstBookId": 5288,
+    "scrollCount": 2,
+    "has0a": false
+  },
+  {
+    "partNum": 934,
+    "title": "佛說光明童子因縁經",
+    "subid": 1043,
+    "bookIds": [
+      5290,
+      5291,
+      5292,
+      5293
+    ],
+    "scrollLabels": [
+      "1卷",
+      "2卷",
+      "3卷",
+      "4卷"
+    ],
+    "firstBookId": 5290,
+    "scrollCount": 4,
+    "has0a": false
+  },
+  {
+    "partNum": 935,
+    "title": "佛說寳帶陀羅尼經",
+    "subid": 1044,
+    "bookIds": [
+      5294
+    ],
+    "scrollLabels": [
+      "1卷"
+    ],
+    "firstBookId": 5294,
+    "scrollCount": 1,
+    "has0a": false
+  },
+  {
+    "partNum": 936,
+    "title": "佛說金身陀羅尼經",
+    "subid": 1045,
+    "bookIds": [
+      5295
+    ],
+    "scrollLabels": [
+      "1卷"
+    ],
+    "firstBookId": 5295,
+    "scrollCount": 1,
+    "has0a": false
+  },
+  {
+    "partNum": 937,
+    "title": "佛說入無分别法門經",
+    "subid": 1046,
+    "bookIds": [
+      5296
+    ],
+    "scrollLabels": [
+      "1卷"
+    ],
+    "firstBookId": 5296,
+    "scrollCount": 1,
+    "has0a": false
+  },
+  {
+    "partNum": 938,
+    "title": "佛說淨意優婆塞所問經",
+    "subid": 1047,
+    "bookIds": [
+      5297
+    ],
+    "scrollLabels": [
+      "1卷"
+    ],
+    "firstBookId": 5297,
+    "scrollCount": 1,
+    "has0a": false
+  },
+  {
+    "partNum": 939,
+    "title": "佛說金剛場莊嚴般若波羅蜜多教中一分",
+    "subid": 1048,
+    "bookIds": [
+      5298
+    ],
+    "scrollLabels": [
+      "1卷"
+    ],
+    "firstBookId": 5298,
+    "scrollCount": 1,
+    "has0a": false
+  },
+  {
+    "partNum": 940,
+    "title": "佛說息諍因縁經",
+    "subid": 1049,
+    "bookIds": [
+      5299
+    ],
+    "scrollLabels": [
+      "1卷"
+    ],
+    "firstBookId": 5299,
+    "scrollCount": 1,
+    "has0a": false
+  },
+  {
+    "partNum": 941,
+    "title": "佛說初分說經",
+    "subid": 1050,
+    "bookIds": [
+      5300,
+      5301
+    ],
+    "scrollLabels": [
+      "1卷",
+      "2卷"
+    ],
+    "firstBookId": 5300,
+    "scrollCount": 2,
+    "has0a": false
+  },
+  {
+    "partNum": 942,
+    "title": "佛說無畏授所問大乘經",
+    "subid": 1051,
+    "bookIds": [
+      5302,
+      5303,
+      5304
+    ],
+    "scrollLabels": [
+      "1卷",
+      "2卷",
+      "3卷"
+    ],
+    "firstBookId": 5302,
+    "scrollCount": 3,
+    "has0a": false
+  },
+  {
+    "partNum": 943,
+    "title": "佛說月喻經",
+    "subid": 1052,
+    "bookIds": [
+      5305
+    ],
+    "scrollLabels": [
+      "1卷"
+    ],
+    "firstBookId": 5305,
+    "scrollCount": 1,
+    "has0a": false
+  },
+  {
+    "partNum": 944,
+    "title": "佛說醫喻經",
+    "subid": 1053,
+    "bookIds": [
+      5306
+    ],
+    "scrollLabels": [
+      "1卷"
+    ],
+    "firstBookId": 5306,
+    "scrollCount": 1,
+    "has0a": false
+  },
+  {
+    "partNum": 945,
+    "title": "佛說灌頂王喻經",
+    "subid": 1054,
+    "bookIds": [
+      5307
+    ],
+    "scrollLabels": [
+      "1卷"
+    ],
+    "firstBookId": 5307,
+    "scrollCount": 1,
+    "has0a": false
+  },
+  {
+    "partNum": 946,
+    "title": "佛說尼拘陀梵志經",
+    "subid": 1055,
+    "bookIds": [
+      5308,
+      5309
+    ],
+    "scrollLabels": [
+      "1卷",
+      "2卷"
+    ],
+    "firstBookId": 5308,
+    "scrollCount": 2,
+    "has0a": false
+  },
+  {
+    "partNum": 947,
+    "title": "佛說白衣金幢二婆羅門縁起經",
+    "subid": 1056,
+    "bookIds": [
+      5310,
+      5311,
+      5312
+    ],
+    "scrollLabels": [
+      "1卷",
+      "2卷",
+      "3卷"
+    ],
+    "firstBookId": 5310,
+    "scrollCount": 3,
+    "has0a": false
+  },
+  {
+    "partNum": 948,
+    "title": "佛說福力太子因縁經",
+    "subid": 1057,
+    "bookIds": [
+      5313,
+      5314,
+      5315
+    ],
+    "scrollLabels": [
+      "1卷",
+      "2卷",
+      "3卷"
+    ],
+    "firstBookId": 5313,
+    "scrollCount": 3,
+    "has0a": false
+  },
+  {
+    "partNum": 949,
+    "title": "佛說身毛喜豎經",
+    "subid": 1058,
+    "bookIds": [
+      5316,
+      5317,
+      5318
+    ],
+    "scrollLabels": [
+      "1卷",
+      "2卷",
+      "3卷"
+    ],
+    "firstBookId": 5316,
+    "scrollCount": 3,
+    "has0a": false
+  },
+  {
+    "partNum": 950,
+    "title": "大乗本生心地觀經",
+    "subid": 1059,
+    "bookIds": [
+      5319,
+      5320,
+      5321,
+      5322,
+      5323,
+      5324,
+      5325,
+      5326,
+      5327
+    ],
+    "scrollLabels": [
+      "0a卷",
+      "1卷",
+      "2卷",
+      "3卷",
+      "4卷",
+      "5卷",
+      "6卷",
+      "7卷",
+      "8卷"
+    ],
+    "firstBookId": 5319,
+    "scrollCount": 9,
+    "has0a": true
+  },
+  {
+    "partNum": 951,
+    "title": "佛說出生無邊門陀羅尼經",
+    "subid": 1060,
+    "bookIds": [
+      5328
+    ],
+    "scrollLabels": [
+      "1卷"
+    ],
+    "firstBookId": 5328,
+    "scrollCount": 1,
+    "has0a": false
+  },
+  {
+    "partNum": 952,
+    "title": "一切如來心祕宻全身舍利寳篋印陀羅尼經",
+    "subid": 1061,
+    "bookIds": [
+      5329
+    ],
+    "scrollLabels": [
+      "1卷"
+    ],
+    "firstBookId": 5329,
+    "scrollCount": 1,
+    "has0a": false
+  },
+  {
+    "partNum": 953,
+    "title": "佛說大吉祥天女十二名號經",
+    "subid": 1062,
+    "bookIds": [
+      5330
+    ],
+    "scrollLabels": [
+      "1卷"
+    ],
+    "firstBookId": 5330,
+    "scrollCount": 1,
+    "has0a": false
+  },
+  {
+    "partNum": 954,
+    "title": "佛說大吉祥天女十二契一百八名無垢大乗經",
+    "subid": 1063,
+    "bookIds": [
+      5331
+    ],
+    "scrollLabels": [
+      "1卷"
+    ],
+    "firstBookId": 5331,
+    "scrollCount": 1,
+    "has0a": false
+  },
+  {
+    "partNum": 955,
+    "title": "佛說一切如來金剛壽命陀羅尼經",
+    "subid": 1064,
+    "bookIds": [
+      5332
+    ],
+    "scrollLabels": [
+      "1卷"
+    ],
+    "firstBookId": 5332,
+    "scrollCount": 1,
+    "has0a": false
+  },
+  {
+    "partNum": 956,
+    "title": "佛說穰麌梨童女經",
+    "subid": 1065,
+    "bookIds": [
+      5333
+    ],
+    "scrollLabels": [
+      "1卷"
+    ],
+    "firstBookId": 5333,
+    "scrollCount": 1,
+    "has0a": false
+  },
+  {
+    "partNum": 957,
+    "title": "佛說雨寳陀羅尼經",
+    "subid": 1066,
+    "bookIds": [
+      5334
+    ],
+    "scrollLabels": [
+      "1卷"
+    ],
+    "firstBookId": 5334,
+    "scrollCount": 1,
+    "has0a": false
+  },
+  {
+    "partNum": 958,
+    "title": "慈氏菩薩所說大乗縁生稻[卄/幹]喻經",
+    "subid": 1067,
+    "bookIds": [
+      5335
+    ],
+    "scrollLabels": [
+      "1卷"
+    ],
+    "firstBookId": 5335,
+    "scrollCount": 1,
+    "has0a": false
+  },
+  {
+    "partNum": 959,
+    "title": "佛說除蓋障菩薩所問經",
+    "subid": 1068,
+    "bookIds": [
+      5336,
+      5337,
+      5338,
+      5339,
+      5340,
+      5341,
+      5342,
+      5343,
+      5344,
+      5345,
+      5346,
+      5347,
+      5348,
+      5349,
+      5350,
+      5351,
+      5352,
+      5353,
+      5354,
+      5355
+    ],
+    "scrollLabels": [
+      "1卷",
+      "2卷",
+      "3卷",
+      "4卷",
+      "5卷",
+      "6卷",
+      "7卷",
+      "8卷",
+      "9卷",
+      "10卷",
+      "11卷",
+      "12卷",
+      "13卷",
+      "14卷",
+      "15卷",
+      "16卷",
+      "17卷",
+      "18卷",
+      "19卷",
+      "20卷"
+    ],
+    "firstBookId": 5336,
+    "scrollCount": 20,
+    "has0a": false
+  },
+  {
+    "partNum": 960,
+    "title": "仁王護國般若波羅蜜多經",
+    "subid": 1069,
+    "bookIds": [
+      5356,
+      5357,
+      5358
+    ],
+    "scrollLabels": [
+      "0a卷",
+      "1卷",
+      "2卷"
+    ],
+    "firstBookId": 5356,
+    "scrollCount": 3,
+    "has0a": true
+  },
+  {
+    "partNum": 961,
+    "title": "穢跡金剛說神通大滿陀羅尼法術靈要門經",
+    "subid": 1070,
+    "bookIds": [
+      5359
+    ],
+    "scrollLabels": [
+      "1卷"
+    ],
+    "firstBookId": 5359,
+    "scrollCount": 1,
+    "has0a": false
+  },
+  {
+    "partNum": 962,
+    "title": "穢跡金剛法禁百變法門經",
+    "subid": 1071,
+    "bookIds": [
+      5360
+    ],
+    "scrollLabels": [
+      "1卷"
+    ],
+    "firstBookId": 5360,
+    "scrollCount": 1,
+    "has0a": false
+  },
+  {
+    "partNum": 963,
+    "title": "佛說大乗大方廣佛冠經",
+    "subid": 1072,
+    "bookIds": [
+      5361,
+      5362
+    ],
+    "scrollLabels": [
+      "1卷",
+      "2卷"
+    ],
+    "firstBookId": 5361,
+    "scrollCount": 2,
+    "has0a": false
+  },
+  {
+    "partNum": 964,
+    "title": "佛說八種長養功德經",
+    "subid": 1073,
+    "bookIds": [
+      5363
+    ],
+    "scrollLabels": [
+      "1卷"
+    ],
+    "firstBookId": 5363,
+    "scrollCount": 1,
+    "has0a": false
+  },
+  {
+    "partNum": 965,
+    "title": "大雲輪請雨經",
+    "subid": 1074,
+    "bookIds": [
+      5364,
+      5365
+    ],
+    "scrollLabels": [
+      "1卷",
+      "2卷"
+    ],
+    "firstBookId": 5364,
+    "scrollCount": 2,
+    "has0a": false
+  },
+  {
+    "partNum": 966,
+    "title": "大乗密嚴經",
+    "subid": 1075,
+    "bookIds": [
+      5366,
+      5367,
+      5368,
+      5369
+    ],
+    "scrollLabels": [
+      "0a卷",
+      "1卷",
+      "2卷",
+      "3卷"
+    ],
+    "firstBookId": 5366,
+    "scrollCount": 4,
+    "has0a": true
+  },
+  {
+    "partNum": 967,
+    "title": "佛說大集會正法經",
+    "subid": 1076,
+    "bookIds": [
+      5370,
+      5371,
+      5372,
+      5373,
+      5374
+    ],
+    "scrollLabels": [
+      "1卷",
+      "2卷",
+      "3卷",
+      "4卷",
+      "5卷"
+    ],
+    "firstBookId": 5370,
+    "scrollCount": 5,
+    "has0a": false
+  },
+  {
+    "partNum": 968,
+    "title": "葉衣觀自在菩薩經",
+    "subid": 1077,
+    "bookIds": [
+      5375
+    ],
+    "scrollLabels": [
+      "1卷"
+    ],
+    "firstBookId": 5375,
+    "scrollCount": 1,
+    "has0a": false
+  },
+  {
+    "partNum": 969,
+    "title": "毗沙門天王經",
+    "subid": 1078,
+    "bookIds": [
+      5376
+    ],
+    "scrollLabels": [
+      "1卷"
+    ],
+    "firstBookId": 5376,
+    "scrollCount": 1,
+    "has0a": false
+  },
+  {
+    "partNum": 970,
+    "title": "文殊問經字母品",
+    "subid": 1079,
+    "bookIds": [
+      5377
+    ],
+    "scrollLabels": [
+      "1卷"
+    ],
+    "firstBookId": 5377,
+    "scrollCount": 1,
+    "has0a": false
+  },
+  {
+    "partNum": 971,
+    "title": "海意菩薩所問淨印法門經",
+    "subid": 1080,
+    "bookIds": [
+      5378,
+      5379,
+      5380,
+      5381,
+      5382,
+      5383,
+      5384,
+      5385,
+      5386
+    ],
+    "scrollLabels": [
+      "1卷",
+      "2卷",
+      "3卷",
+      "4卷",
+      "5卷",
+      "6卷",
+      "7卷",
+      "8卷",
+      "9卷"
+    ],
+    "firstBookId": 5378,
+    "scrollCount": 9,
+    "has0a": false
+  },
+  {
+    "partNum": 972,
+    "title": "佛說如幻三摩地無量印法門經",
+    "subid": 1081,
+    "bookIds": [
+      5387,
+      5388,
+      5389
+    ],
+    "scrollLabels": [
+      "1卷",
+      "2卷",
+      "3卷"
+    ],
+    "firstBookId": 5387,
+    "scrollCount": 3,
+    "has0a": false
+  },
+  {
+    "partNum": 973,
+    "title": "守護國界主陀羅尼經",
+    "subid": 1082,
+    "bookIds": [
+      5390,
+      5391,
+      5392,
+      5393,
+      5394,
+      5395,
+      5396,
+      5397,
+      5398,
+      5399
+    ],
+    "scrollLabels": [
+      "1卷",
+      "2卷",
+      "3卷",
+      "4卷",
+      "5卷",
+      "6卷",
+      "7卷",
+      "8卷",
+      "9卷",
+      "10卷"
+    ],
+    "firstBookId": 5390,
+    "scrollCount": 10,
+    "has0a": false
+  },
+  {
+    "partNum": 974,
+    "title": "佛說三十五佛名禮懴文",
+    "subid": 1083,
+    "bookIds": [
+      5400
+    ],
+    "scrollLabels": [
+      "1卷"
+    ],
+    "firstBookId": 5400,
+    "scrollCount": 1,
+    "has0a": false
+  },
+  {
+    "partNum": 975,
+    "title": "觀自在菩薩說普賢陀羅尼經",
+    "subid": 1084,
+    "bookIds": [
+      5401
+    ],
+    "scrollLabels": [
+      "1卷"
+    ],
+    "firstBookId": 5401,
+    "scrollCount": 1,
+    "has0a": false
+  },
+  {
+    "partNum": 976,
+    "title": "佛說八大菩薩曼荼羅經",
+    "subid": 1085,
+    "bookIds": [
+      5402
+    ],
+    "scrollLabels": [
+      "1卷"
+    ],
+    "firstBookId": 5402,
+    "scrollCount": 1,
+    "has0a": false
+  },
+  {
+    "partNum": 977,
+    "title": "佛說能淨一切眼疾病陀羅尼經",
+    "subid": 1086,
+    "bookIds": [
+      5403
+    ],
+    "scrollLabels": [
+      "1卷"
+    ],
+    "firstBookId": 5403,
+    "scrollCount": 1,
+    "has0a": false
+  },
+  {
+    "partNum": 978,
+    "title": "佛說除一切疾病陀羅尼經",
+    "subid": 1087,
+    "bookIds": [
+      5404
+    ],
+    "scrollLabels": [
+      "1卷"
+    ],
+    "firstBookId": 5404,
+    "scrollCount": 1,
+    "has0a": false
+  },
+  {
+    "partNum": 979,
+    "title": "佛說救拔焰口餓鬼陀羅尼經",
+    "subid": 1088,
+    "bookIds": [
+      5405
+    ],
+    "scrollLabels": [
+      "1卷"
+    ],
+    "firstBookId": 5405,
+    "scrollCount": 1,
+    "has0a": false
+  },
+  {
+    "partNum": 980,
+    "title": "瑜伽集要救阿難陀羅尼焰口儀軌經",
+    "subid": 1089,
+    "bookIds": [
+      5406
+    ],
+    "scrollLabels": [
+      "1卷"
+    ],
+    "firstBookId": 5406,
+    "scrollCount": 1,
+    "has0a": false
+  },
+  {
+    "partNum": 981,
+    "title": "佛說蟻喻經",
+    "subid": 1090,
+    "bookIds": [
+      5407
+    ],
+    "scrollLabels": [
+      "1卷"
+    ],
+    "firstBookId": 5407,
+    "scrollCount": 1,
+    "has0a": false
+  },
+  {
+    "partNum": 982,
+    "title": "聖觀自在菩薩不空王秘宻心陀羅尼",
+    "subid": 1091,
+    "bookIds": [
+      5408
+    ],
+    "scrollLabels": [
+      "1卷"
+    ],
+    "firstBookId": 5408,
+    "scrollCount": 1,
+    "has0a": false
+  },
+  {
+    "partNum": 983,
+    "title": "佛說勝軍王所問經",
+    "subid": 1092,
+    "bookIds": [
+      5409
+    ],
+    "scrollLabels": [
+      "1卷"
+    ],
+    "firstBookId": 5409,
+    "scrollCount": 1,
+    "has0a": false
+  },
+  {
+    "partNum": 984,
+    "title": "佛說輪王七寳經",
+    "subid": 1093,
+    "bookIds": [
+      5410
+    ],
+    "scrollLabels": [
+      "1卷"
+    ],
+    "firstBookId": 5410,
+    "scrollCount": 1,
+    "has0a": false
+  },
+  {
+    "partNum": 985,
+    "title": "佛說園生樹經",
+    "subid": 1094,
+    "bookIds": [
+      5411
+    ],
+    "scrollLabels": [
+      "1卷"
+    ],
+    "firstBookId": 5411,
+    "scrollCount": 1,
+    "has0a": false
+  },
+  {
+    "partNum": 986,
+    "title": "佛說了義般若波羅蜜多經",
+    "subid": 1095,
+    "bookIds": [
+      5412
+    ],
+    "scrollLabels": [
+      "1卷"
+    ],
+    "firstBookId": 5412,
+    "scrollCount": 1,
+    "has0a": false
+  },
+  {
+    "partNum": 987,
+    "title": "佛說大方廣未曽有經善巧方便品",
+    "subid": 1096,
+    "bookIds": [
+      5413
+    ],
+    "scrollLabels": [
+      "1卷"
+    ],
+    "firstBookId": 5413,
+    "scrollCount": 1,
+    "has0a": false
+  },
+  {
+    "partNum": 988,
+    "title": "佛說大堅固婆羅門縁起經",
+    "subid": 1097,
+    "bookIds": [
+      5414,
+      5415
+    ],
+    "scrollLabels": [
+      "1卷",
+      "2卷"
+    ],
+    "firstBookId": 5414,
+    "scrollCount": 2,
+    "has0a": false
+  },
+  {
+    "partNum": 989,
+    "title": "佛說巨力長者所問大乗經",
+    "subid": 1098,
+    "bookIds": [
+      5416,
+      5417,
+      5418
+    ],
+    "scrollLabels": [
+      "1卷",
+      "2卷",
+      "3卷"
+    ],
+    "firstBookId": 5416,
+    "scrollCount": 3,
+    "has0a": false
+  },
+  {
+    "partNum": 990,
+    "title": "佛說妙吉祥菩薩所問大乗法螺經",
+    "subid": 1099,
+    "bookIds": [
+      5419
+    ],
+    "scrollLabels": [
+      "1卷"
+    ],
+    "firstBookId": 5419,
+    "scrollCount": 1,
+    "has0a": false
+  },
+  {
+    "partNum": 991,
+    "title": "佛說四品法門經",
+    "subid": 1100,
+    "bookIds": [
+      5420
+    ],
+    "scrollLabels": [
+      "1卷"
+    ],
+    "firstBookId": 5420,
+    "scrollCount": 1,
+    "has0a": false
+  },
+  {
+    "partNum": 992,
+    "title": "佛說八大菩薩經",
+    "subid": 1101,
+    "bookIds": [
+      5421
+    ],
+    "scrollLabels": [
+      "1卷"
+    ],
+    "firstBookId": 5421,
+    "scrollCount": 1,
+    "has0a": false
+  },
+  {
+    "partNum": 993,
+    "title": "佛說施一切無畏陀羅尼經",
+    "subid": 1102,
+    "bookIds": [
+      5422
+    ],
+    "scrollLabels": [
+      "1卷"
+    ],
+    "firstBookId": 5422,
+    "scrollCount": 1,
+    "has0a": false
+  },
+  {
+    "partNum": 994,
+    "title": "聖八千頌般若波羅蜜多一百八名眞實圎義陀羅尼經",
+    "subid": 1103,
+    "bookIds": [
+      5423
+    ],
+    "scrollLabels": [
+      "1卷"
+    ],
+    "firstBookId": 5423,
+    "scrollCount": 1,
+    "has0a": false
+  },
+  {
+    "partNum": 995,
+    "title": "佛說一髻尊陀羅尼經",
+    "subid": 1104,
+    "bookIds": [
+      5424
+    ],
+    "scrollLabels": [
+      "1卷"
+    ],
+    "firstBookId": 5424,
+    "scrollCount": 1,
+    "has0a": false
+  },
+  {
+    "partNum": 996,
+    "title": "金剛摧碎陀羅尼",
+    "subid": 1105,
+    "bookIds": [
+      5425
+    ],
+    "scrollLabels": [
+      "1卷"
+    ],
+    "firstBookId": 5425,
+    "scrollCount": 1,
+    "has0a": false
+  },
+  {
+    "partNum": 997,
+    "title": "不空罥索毘盧遮那佛大灌頂光眞言經",
+    "subid": 1106,
+    "bookIds": [
+      5426
+    ],
+    "scrollLabels": [
+      "1卷"
+    ],
+    "firstBookId": 5426,
+    "scrollCount": 1,
+    "has0a": false
+  },
+  {
+    "partNum": 998,
+    "title": "地藏菩薩本願經",
+    "subid": 1107,
+    "bookIds": [
+      5427,
+      5428
+    ],
+    "scrollLabels": [
+      "1卷",
+      "2卷"
+    ],
+    "firstBookId": 5427,
+    "scrollCount": 2,
+    "has0a": false
+  },
+  {
+    "partNum": 999,
+    "title": "大乘理趣六波羅蜜多經",
+    "subid": 1108,
+    "bookIds": [
+      5429,
+      5430,
+      5431,
+      5432,
+      5433,
+      5434,
+      5435,
+      5436,
+      5437,
+      5438,
+      5439
+    ],
+    "scrollLabels": [
+      "0a卷",
+      "1卷",
+      "2卷",
+      "3卷",
+      "4卷",
+      "5卷",
+      "6卷",
+      "7卷",
+      "8卷",
+      "9卷",
+      "10卷"
+    ],
+    "firstBookId": 5429,
+    "scrollCount": 11,
+    "has0a": true
+  },
+  {
+    "partNum": 1000,
+    "title": "佛說大乗菩薩藏正法經",
+    "subid": 1109,
+    "bookIds": [
+      5440,
+      5441,
+      5442,
+      5443,
+      5444,
+      5445,
+      5446,
+      5447,
+      5448,
+      5449,
+      5450,
+      5451,
+      5452,
+      5453,
+      5454,
+      5455,
+      5456,
+      5457,
+      5458,
+      5459,
+      5460,
+      5461,
+      5462,
+      5463,
+      5464,
+      5465,
+      5466,
+      5467,
+      5468,
+      5469,
+      5470,
+      5471,
+      5472,
+      5473,
+      5474,
+      5475,
+      5476,
+      5477,
+      5478,
+      5479
+    ],
+    "scrollLabels": [
+      "1卷",
+      "2卷",
+      "3卷",
+      "4卷",
+      "5卷",
+      "6卷",
+      "7卷",
+      "8卷",
+      "9卷",
+      "10卷",
+      "11卷",
+      "12卷",
+      "13卷",
+      "14卷",
+      "15卷",
+      "16卷",
+      "17卷",
+      "18卷",
+      "19卷",
+      "20卷",
+      "21卷",
+      "22卷",
+      "23卷",
+      "24卷",
+      "25卷",
+      "26卷",
+      "27卷",
+      "28卷",
+      "29卷",
+      "30卷",
+      "31卷",
+      "32卷",
+      "33卷",
+      "34卷",
+      "35卷",
+      "36卷",
+      "37卷",
+      "38卷",
+      "39卷",
+      "40卷"
+    ],
+    "firstBookId": 5440,
+    "scrollCount": 40,
+    "has0a": false
+  },
+  {
+    "partNum": 1001,
+    "title": "佛爲優塡王說王法政論經",
+    "subid": 1110,
+    "bookIds": [
+      5480
+    ],
+    "scrollLabels": [
+      "1卷"
+    ],
+    "firstBookId": 5480,
+    "scrollCount": 1,
+    "has0a": false
+  },
+  {
+    "partNum": 1002,
+    "title": "佛說五大施經",
+    "subid": 1111,
+    "bookIds": [
+      5481
+    ],
+    "scrollLabels": [
+      "1卷"
+    ],
+    "firstBookId": 5481,
+    "scrollCount": 1,
+    "has0a": false
+  },
+  {
+    "partNum": 1003,
+    "title": "佛說無畏陀羅尼經",
+    "subid": 1112,
+    "bookIds": [
+      5482
+    ],
+    "scrollLabels": [
+      "1卷"
+    ],
+    "firstBookId": 5482,
+    "scrollCount": 1,
+    "has0a": false
+  },
+  {
+    "partNum": 1004,
+    "title": "佛說大威德金輪佛頂熾盛光如來消除一切災難陀羅尼經",
+    "subid": 1113,
+    "bookIds": [
+      5483
+    ],
+    "scrollLabels": [
+      "1卷"
+    ],
+    "firstBookId": 5483,
+    "scrollCount": 1,
+    "has0a": false
+  },
+  {
+    "partNum": 1005,
+    "title": "佛說熾盛光大威德消災吉祥陀羅尼經",
+    "subid": 1114,
+    "bookIds": [
+      5484,
+      5485
+    ],
+    "scrollLabels": [
+      "0a卷",
+      "1卷"
+    ],
+    "firstBookId": 5484,
+    "scrollCount": 2,
+    "has0a": true
+  },
+  {
+    "partNum": 1006,
+    "title": "佛說頂生王因縁經",
+    "subid": 1115,
+    "bookIds": [
+      5486,
+      5487,
+      5488,
+      5489,
+      5490,
+      5491
+    ],
+    "scrollLabels": [
+      "1卷",
+      "2卷",
+      "3卷",
+      "4卷",
+      "5卷",
+      "6卷"
+    ],
+    "firstBookId": 5486,
+    "scrollCount": 6,
+    "has0a": false
+  },
+  {
+    "partNum": 1007,
+    "title": "佛說大乗隨轉宣說諸法經",
+    "subid": 1116,
+    "bookIds": [
+      5492,
+      5493,
+      5494
+    ],
+    "scrollLabels": [
+      "1卷",
+      "2卷",
+      "3卷"
+    ],
+    "firstBookId": 5492,
+    "scrollCount": 3,
+    "has0a": false
+  },
+  {
+    "partNum": 1008,
+    "title": "佛說大乗入諸佛境界智光明莊嚴經",
+    "subid": 1117,
+    "bookIds": [
+      5495,
+      5496,
+      5497,
+      5498,
+      5499
+    ],
+    "scrollLabels": [
+      "1卷",
+      "2卷",
+      "3卷",
+      "4卷",
+      "5卷"
+    ],
+    "firstBookId": 5495,
+    "scrollCount": 5,
+    "has0a": false
+  },
+  {
+    "partNum": 1009,
+    "title": "佛說大乗智印經",
+    "subid": 1118,
+    "bookIds": [
+      5500,
+      5501,
+      5502,
+      5503,
+      5504
+    ],
+    "scrollLabels": [
+      "1卷",
+      "2卷",
+      "3卷",
+      "4卷",
+      "5卷"
+    ],
+    "firstBookId": 5500,
+    "scrollCount": 5,
+    "has0a": false
+  },
+  {
+    "partNum": 1010,
+    "title": "佛說法乗義決定經",
+    "subid": 1119,
+    "bookIds": [
+      5505,
+      5506,
+      5507
+    ],
+    "scrollLabels": [
+      "1卷",
+      "2卷",
+      "3卷"
+    ],
+    "firstBookId": 5505,
+    "scrollCount": 3,
+    "has0a": false
+  },
+  {
+    "partNum": 1011,
+    "title": "佛說大白傘蓋緫持陀羅尼",
+    "subid": 1120,
+    "bookIds": [
+      5508
+    ],
+    "scrollLabels": [
+      "1卷"
+    ],
+    "firstBookId": 5508,
+    "scrollCount": 1,
+    "has0a": false
+  },
+  {
+    "partNum": 1012,
+    "title": "佛說一切如來眞實攝大乗現證三昧大教王經",
+    "subid": 1121,
+    "bookIds": [
+      5509,
+      5510,
+      5511,
+      5512,
+      5513,
+      5514,
+      5515,
+      5516,
+      5517,
+      5518,
+      5519,
+      5520,
+      5521,
+      5522,
+      5523,
+      5524,
+      5525,
+      5526,
+      5527,
+      5528,
+      5529,
+      5530,
+      5531,
+      5532,
+      5533,
+      5534,
+      5535,
+      5536,
+      5537,
+      5538
+    ],
+    "scrollLabels": [
+      "1卷",
+      "2卷",
+      "3卷",
+      "4卷",
+      "5卷",
+      "6卷",
+      "7卷",
+      "8卷",
+      "9卷",
+      "10卷",
+      "11卷",
+      "12卷",
+      "13卷",
+      "14卷",
+      "15卷",
+      "16卷",
+      "17卷",
+      "18卷",
+      "19卷",
+      "20卷",
+      "21卷",
+      "22卷",
+      "23卷",
+      "24卷",
+      "25卷",
+      "26卷",
+      "27卷",
+      "28卷",
+      "29卷",
+      "30卷"
+    ],
+    "firstBookId": 5509,
+    "scrollCount": 30,
+    "has0a": false
+  },
+  {
+    "partNum": 1013,
+    "title": "一切如來大祕密王未曽有最上微妙大曼拏羅經",
+    "subid": 1122,
+    "bookIds": [
+      5539,
+      5540,
+      5541,
+      5542,
+      5543
+    ],
+    "scrollLabels": [
+      "1卷",
+      "2卷",
+      "3卷",
+      "4卷",
+      "5卷"
+    ],
+    "firstBookId": 5539,
+    "scrollCount": 5,
+    "has0a": false
+  },
+  {
+    "partNum": 1014,
+    "title": "出生一切如來法眼徧照大力明王經",
+    "subid": 1123,
+    "bookIds": [
+      5544,
+      5545
+    ],
+    "scrollLabels": [
+      "1卷",
+      "2卷"
+    ],
+    "firstBookId": 5544,
+    "scrollCount": 2,
+    "has0a": false
+  },
+  {
+    "partNum": 1015,
+    "title": "金剛頂一切如來眞實攝大乗現證大敎王經",
+    "subid": 1124,
+    "bookIds": [
+      5546,
+      5547,
+      5548
+    ],
+    "scrollLabels": [
+      "1卷",
+      "2卷",
+      "3卷"
+    ],
+    "firstBookId": 5546,
+    "scrollCount": 3,
+    "has0a": false
+  },
+  {
+    "partNum": 1016,
+    "title": "阿唎多羅陀羅尼阿嚕力經",
+    "subid": 1125,
+    "bookIds": [
+      5549
+    ],
+    "scrollLabels": [
+      "1卷"
+    ],
+    "firstBookId": 5549,
+    "scrollCount": 1,
+    "has0a": false
+  },
+  {
+    "partNum": 1017,
+    "title": "佛說瑜伽大敎王經",
+    "subid": 1126,
+    "bookIds": [
+      5550,
+      5551,
+      5552,
+      5553,
+      5554
+    ],
+    "scrollLabels": [
+      "1卷",
+      "2卷",
+      "3卷",
+      "4卷",
+      "5卷"
+    ],
+    "firstBookId": 5550,
+    "scrollCount": 5,
+    "has0a": false
+  },
+  {
+    "partNum": 1018,
+    "title": "一字竒特佛頂經",
+    "subid": 1127,
+    "bookIds": [
+      5555,
+      5556,
+      5557
+    ],
+    "scrollLabels": [
+      "1卷",
+      "2卷",
+      "3卷"
+    ],
+    "firstBookId": 5555,
+    "scrollCount": 3,
+    "has0a": false
+  },
+  {
+    "partNum": 1019,
+    "title": "菩提場所說一字頂輪王經",
+    "subid": 1128,
+    "bookIds": [
+      5558,
+      5559,
+      5560,
+      5561,
+      5562
+    ],
+    "scrollLabels": [
+      "1卷",
+      "2卷",
+      "3卷",
+      "4卷",
+      "5卷"
+    ],
+    "firstBookId": 5558,
+    "scrollCount": 5,
+    "has0a": false
+  },
+  {
+    "partNum": 1020,
+    "title": "菩提場莊嚴陀羅尼經",
+    "subid": 1129,
+    "bookIds": [
+      5563
+    ],
+    "scrollLabels": [
+      "1卷"
+    ],
+    "firstBookId": 5563,
+    "scrollCount": 1,
+    "has0a": false
+  },
+  {
+    "partNum": 1021,
+    "title": "佛說祕宻相經",
+    "subid": 1130,
+    "bookIds": [
+      5564,
+      5565,
+      5566
+    ],
+    "scrollLabels": [
+      "1卷",
+      "2卷",
+      "3卷"
+    ],
+    "firstBookId": 5564,
+    "scrollCount": 3,
+    "has0a": false
+  },
+  {
+    "partNum": 1022,
+    "title": "佛說一切如來金剛三業最上祕宻大教王經",
+    "subid": 1131,
+    "bookIds": [
+      5567,
+      5568,
+      5569,
+      5570,
+      5571,
+      5572,
+      5573
+    ],
+    "scrollLabels": [
+      "1卷",
+      "2卷",
+      "3卷",
+      "4卷",
+      "5卷",
+      "6卷",
+      "7卷"
+    ],
+    "firstBookId": 5567,
+    "scrollCount": 7,
+    "has0a": false
+  },
+  {
+    "partNum": 1023,
+    "title": "大寳廣博樓閣善住祕宻陀羅尼經",
+    "subid": 1132,
+    "bookIds": [
+      5574,
+      5575,
+      5576
+    ],
+    "scrollLabels": [
+      "1卷",
+      "2卷",
+      "3卷"
+    ],
+    "firstBookId": 5574,
+    "scrollCount": 3,
+    "has0a": false
+  },
+  {
+    "partNum": 1024,
+    "title": "佛說祕宻三昧大教王經",
+    "subid": 1133,
+    "bookIds": [
+      5577,
+      5578,
+      5579,
+      5580
+    ],
+    "scrollLabels": [
+      "1卷",
+      "2卷",
+      "3卷",
+      "4卷"
+    ],
+    "firstBookId": 5577,
+    "scrollCount": 4,
+    "has0a": false
+  },
+  {
+    "partNum": 1025,
+    "title": "佛說無二平等最上瑜伽大教王經",
+    "subid": 1134,
+    "bookIds": [
+      5581,
+      5582,
+      5583,
+      5584,
+      5585,
+      5586
+    ],
+    "scrollLabels": [
+      "1卷",
+      "2卷",
+      "3卷",
+      "4卷",
+      "5卷",
+      "6卷"
+    ],
+    "firstBookId": 5581,
+    "scrollCount": 6,
+    "has0a": false
+  },
+  {
+    "partNum": 1026,
+    "title": "佛說金剛手菩薩降伏一切部多大教王經",
+    "subid": 1135,
+    "bookIds": [
+      5587,
+      5588,
+      5589
+    ],
+    "scrollLabels": [
+      "1卷",
+      "2卷",
+      "3卷"
+    ],
+    "firstBookId": 5587,
+    "scrollCount": 3,
+    "has0a": false
+  },
+  {
+    "partNum": 1027,
+    "title": "聖妙吉祥眞實名經",
+    "subid": 1136,
+    "bookIds": [
+      5590,
+      5591
+    ],
+    "scrollLabels": [
+      "0a卷",
+      "1卷"
+    ],
+    "firstBookId": 5590,
+    "scrollCount": 2,
+    "has0a": true
+  },
+  {
+    "partNum": 1028,
+    "title": "金剛頂瑜伽理趣般若經",
+    "subid": 1137,
+    "bookIds": [
+      5592
+    ],
+    "scrollLabels": [
+      "1卷"
+    ],
+    "firstBookId": 5592,
+    "scrollCount": 1,
+    "has0a": false
+  },
+  {
+    "partNum": 1029,
+    "title": "大樂金剛不空眞實三麽耶般若波羅蜜多理趣經",
+    "subid": 1138,
+    "bookIds": [
+      5593
+    ],
+    "scrollLabels": [
+      "1卷"
+    ],
+    "firstBookId": 5593,
+    "scrollCount": 1,
+    "has0a": false
+  },
+  {
+    "partNum": 1030,
+    "title": "佛說佛母般若波羅蜜多大明觀想儀軌經",
+    "subid": 1139,
+    "bookIds": [
+      5594
+    ],
+    "scrollLabels": [
+      "1卷"
+    ],
+    "firstBookId": 5594,
+    "scrollCount": 1,
+    "has0a": false
+  },
+  {
+    "partNum": 1031,
+    "title": "金剛頂瑜伽念珠經",
+    "subid": 1140,
+    "bookIds": [
+      5595
+    ],
+    "scrollLabels": [
+      "1卷"
+    ],
+    "firstBookId": 5595,
+    "scrollCount": 1,
+    "has0a": false
+  },
+  {
+    "partNum": 1032,
+    "title": "佛說最上根本大樂金剛不空三昧大教王經",
+    "subid": 1141,
+    "bookIds": [
+      5596,
+      5597,
+      5598,
+      5599,
+      5600,
+      5601,
+      5602,
+      5603
+    ],
+    "scrollLabels": [
+      "0a卷",
+      "1卷",
+      "2卷",
+      "3卷",
+      "4卷",
+      "5卷",
+      "6卷",
+      "7卷"
+    ],
+    "firstBookId": 5596,
+    "scrollCount": 8,
+    "has0a": true
+  },
+  {
+    "partNum": 1033,
+    "title": "佛說最上祕宻那拏天經",
+    "subid": 1142,
+    "bookIds": [
+      5604,
+      5605,
+      5606
+    ],
+    "scrollLabels": [
+      "1卷",
+      "2卷",
+      "3卷"
+    ],
+    "firstBookId": 5604,
+    "scrollCount": 3,
+    "has0a": false
+  },
+  {
+    "partNum": 1034,
+    "title": "金剛峯樓閣一切瑜伽瑜祇經",
+    "subid": 1143,
+    "bookIds": [
+      5607,
+      5608
+    ],
+    "scrollLabels": [
+      "1卷",
+      "2卷"
+    ],
+    "firstBookId": 5607,
+    "scrollCount": 2,
+    "has0a": false
+  },
+  {
+    "partNum": 1035,
+    "title": "佛說妙吉祥最勝根本大教經",
+    "subid": 1144,
+    "bookIds": [
+      5609,
+      5610,
+      5611
+    ],
+    "scrollLabels": [
+      "1卷",
+      "2卷",
+      "3卷"
+    ],
+    "firstBookId": 5609,
+    "scrollCount": 3,
+    "has0a": false
+  },
+  {
+    "partNum": 1036,
+    "title": "妙吉祥平等祕密最上觀門大教王經",
+    "subid": 1145,
+    "bookIds": [
+      5612,
+      5613,
+      5614,
+      5615,
+      5616
+    ],
+    "scrollLabels": [
+      "1卷",
+      "2卷",
+      "3卷",
+      "4卷",
+      "5卷"
+    ],
+    "firstBookId": 5612,
+    "scrollCount": 5,
+    "has0a": false
+  },
+  {
+    "partNum": 1037,
+    "title": "普徧光明焰鬘清淨熾盛如意寳印心無能勝大明王大隨求陀羅尼經",
+    "subid": 1146,
+    "bookIds": [
+      5617,
+      5618
+    ],
+    "scrollLabels": [
+      "1卷",
+      "2卷"
+    ],
+    "firstBookId": 5617,
+    "scrollCount": 2,
+    "has0a": false
+  },
+  {
+    "partNum": 1038,
+    "title": "佛說如來不思議祕宻大乗經",
+    "subid": 1147,
+    "bookIds": [
+      5619,
+      5620,
+      5621,
+      5622,
+      5623,
+      5624,
+      5625,
+      5626,
+      5627,
+      5628,
+      5629,
+      5630,
+      5631,
+      5632,
+      5633,
+      5634,
+      5635,
+      5636,
+      5637,
+      5638
+    ],
+    "scrollLabels": [
+      "1卷",
+      "2卷",
+      "3卷",
+      "4卷",
+      "5卷",
+      "6卷",
+      "7卷",
+      "8卷",
+      "9卷",
+      "10卷",
+      "11卷",
+      "12卷",
+      "13卷",
+      "14卷",
+      "15卷",
+      "16卷",
+      "17卷",
+      "18卷",
+      "19卷",
+      "20卷"
+    ],
+    "firstBookId": 5619,
+    "scrollCount": 20,
+    "has0a": false
+  },
+  {
+    "partNum": 1039,
+    "title": "大乗瑜伽金剛性海曼殊室利千臂千鉢大教王經",
+    "subid": 1148,
+    "bookIds": [
+      5639,
+      5640,
+      5641,
+      5642,
+      5643,
+      5644,
+      5645,
+      5646,
+      5647,
+      5648,
+      5649
+    ],
+    "scrollLabels": [
+      "0a卷",
+      "1卷",
+      "2卷",
+      "3卷",
+      "4卷",
+      "5卷",
+      "6卷",
+      "7卷",
+      "8卷",
+      "9卷",
+      "10卷"
+    ],
+    "firstBookId": 5639,
+    "scrollCount": 11,
+    "has0a": true
+  },
+  {
+    "partNum": 1040,
+    "title": "佛說聖寳藏神儀軌經",
+    "subid": 1149,
+    "bookIds": [
+      5650,
+      5651
+    ],
+    "scrollLabels": [
+      "1卷",
+      "2卷"
+    ],
+    "firstBookId": 5650,
+    "scrollCount": 2,
+    "has0a": false
+  },
+  {
+    "partNum": 1041,
+    "title": "佛說寳藏神大明曼拏羅儀軌經",
+    "subid": 1150,
+    "bookIds": [
+      5652,
+      5653
+    ],
+    "scrollLabels": [
+      "1卷",
+      "2卷"
+    ],
+    "firstBookId": 5652,
+    "scrollCount": 2,
+    "has0a": false
+  },
+  {
+    "partNum": 1042,
+    "title": "金剛恐怖集會方廣軌儀觀自在菩薩三世最勝心明王經",
+    "subid": 1151,
+    "bookIds": [
+      5654
+    ],
+    "scrollLabels": [
+      "1卷"
+    ],
+    "firstBookId": 5654,
+    "scrollCount": 1,
+    "has0a": false
+  },
+  {
+    "partNum": 1043,
+    "title": "金剛恐怖集會方廣軌儀觀自在菩薩三世最勝心明王大威力烏樞瑟摩明王經",
+    "subid": 1152,
+    "bookIds": [
+      5655,
+      5656,
+      5657
+    ],
+    "scrollLabels": [
+      "1卷",
+      "2卷",
+      "3卷"
+    ],
+    "firstBookId": 5655,
+    "scrollCount": 3,
+    "has0a": false
+  },
+  {
+    "partNum": 1044,
+    "title": "佛說大乗觀想曼拏羅淨諸惡趣經",
+    "subid": 1153,
+    "bookIds": [
+      5658,
+      5659
+    ],
+    "scrollLabels": [
+      "1卷",
+      "2卷"
+    ],
+    "firstBookId": 5658,
+    "scrollCount": 2,
+    "has0a": false
+  },
+  {
+    "partNum": 1045,
+    "title": "佛說大方廣曼殊室利經觀自在多羅菩薩儀軌經",
+    "subid": 1155,
+    "bookIds": [
+      5660
+    ],
+    "scrollLabels": [
+      "1卷"
+    ],
+    "firstBookId": 5660,
+    "scrollCount": 1,
+    "has0a": false
+  },
+  {
+    "partNum": 1046,
+    "title": "佛說一切佛攝相應大教王經聖觀自在菩薩念誦儀軌經",
+    "subid": 1158,
+    "bookIds": [
+      5661
+    ],
+    "scrollLabels": [
+      "1卷"
+    ],
+    "firstBookId": 5661,
+    "scrollCount": 1,
+    "has0a": false
+  },
+  {
+    "partNum": 1047,
+    "title": "瑜伽金剛頂經釋字母品",
+    "subid": 1161,
+    "bookIds": [
+      5662
+    ],
+    "scrollLabels": [
+      "1卷"
+    ],
+    "firstBookId": 5662,
+    "scrollCount": 1,
+    "has0a": false
+  },
+  {
+    "partNum": 1048,
+    "title": "佛說一切如來安像三昧儀軌經",
+    "subid": 1163,
+    "bookIds": [
+      5663
+    ],
+    "scrollLabels": [
+      "1卷"
+    ],
+    "firstBookId": 5663,
+    "scrollCount": 1,
+    "has0a": false
+  },
+  {
+    "partNum": 1049,
+    "title": "文殊師利菩薩根本大教王金翅鳥王品",
+    "subid": 1167,
+    "bookIds": [
+      5664
+    ],
+    "scrollLabels": [
+      "1卷"
+    ],
+    "firstBookId": 5664,
+    "scrollCount": 1,
+    "has0a": false
+  },
+  {
+    "partNum": 1050,
+    "title": "十一面觀自在菩薩心宻言念誦儀軌經",
+    "subid": 1170,
+    "bookIds": [
+      5665,
+      5666,
+      5667
+    ],
+    "scrollLabels": [
+      "1卷",
+      "2卷",
+      "3卷"
+    ],
+    "firstBookId": 5665,
+    "scrollCount": 3,
+    "has0a": false
+  },
+  {
+    "partNum": 1051,
+    "title": "大方廣菩薩藏文殊師利根本儀軌經",
+    "subid": 1173,
+    "bookIds": [
+      5668,
+      5669,
+      5670,
+      5671,
+      5672,
+      5673,
+      5674,
+      5675,
+      5676,
+      5677,
+      5678,
+      5679,
+      5680,
+      5681,
+      5682,
+      5683,
+      5684,
+      5685,
+      5686,
+      5687
+    ],
+    "scrollLabels": [
+      "1卷",
+      "2卷",
+      "3卷",
+      "4卷",
+      "5卷",
+      "6卷",
+      "7卷",
+      "8卷",
+      "9卷",
+      "10卷",
+      "11卷",
+      "12卷",
+      "13卷",
+      "14卷",
+      "15卷",
+      "16卷",
+      "17卷",
+      "18卷",
+      "19卷",
+      "20卷"
+    ],
+    "firstBookId": 5668,
+    "scrollCount": 20,
+    "has0a": false
+  },
+  {
+    "partNum": 1052,
+    "title": "佛說持明藏瑜伽大教尊那菩薩大明成就儀軌經",
+    "subid": 1176,
+    "bookIds": [
+      5688,
+      5689,
+      5690,
+      5691
+    ],
+    "scrollLabels": [
+      "1卷",
+      "2卷",
+      "3卷",
+      "4卷"
+    ],
+    "firstBookId": 5688,
+    "scrollCount": 4,
+    "has0a": false
+  },
+  {
+    "partNum": 1053,
+    "title": "佛說金剛香菩薩大明成就儀軌經",
+    "subid": 1179,
+    "bookIds": [
+      5692,
+      5693,
+      5694
+    ],
+    "scrollLabels": [
+      "1卷",
+      "2卷",
+      "3卷"
+    ],
+    "firstBookId": 5692,
+    "scrollCount": 3,
+    "has0a": false
+  },
+  {
+    "partNum": 1054,
+    "title": "金剛薩埵說頻那夜迦天成就儀軌經",
+    "subid": 1184,
+    "bookIds": [
+      5695,
+      5696,
+      5697,
+      5698
+    ],
+    "scrollLabels": [
+      "1卷",
+      "2卷",
+      "3卷",
+      "4卷"
+    ],
+    "firstBookId": 5695,
+    "scrollCount": 4,
+    "has0a": false
+  },
+  {
+    "partNum": 1055,
+    "title": "佛說大悲空智金剛大教王儀軌經",
+    "subid": 1186,
+    "bookIds": [
+      5699,
+      5700,
+      5701,
+      5702,
+      5703
+    ],
+    "scrollLabels": [
+      "1卷",
+      "2卷",
+      "3卷",
+      "4卷",
+      "5卷"
+    ],
+    "firstBookId": 5699,
+    "scrollCount": 5,
+    "has0a": false
+  },
+  {
+    "partNum": 1056,
+    "title": "佛說幻化網大瑜伽教十忿怒明王大明觀想儀軌經",
+    "subid": 1189,
+    "bookIds": [
+      5704
+    ],
+    "scrollLabels": [
+      "1卷"
+    ],
+    "firstBookId": 5704,
+    "scrollCount": 1,
+    "has0a": false
+  },
+  {
+    "partNum": 1057,
+    "title": "佛說妙吉祥瑜伽大教金剛陪囉嚩輪觀想成就儀軌經",
+    "subid": 1192,
+    "bookIds": [
+      5705
+    ],
+    "scrollLabels": [
+      "1卷"
+    ],
+    "firstBookId": 5705,
+    "scrollCount": 1,
+    "has0a": false
+  },
+  {
+    "partNum": 1058,
+    "title": "底哩三昧耶不動尊威怒王使者念誦法",
+    "subid": 1194,
+    "bookIds": [
+      5706
+    ],
+    "scrollLabels": [
+      "1卷"
+    ],
+    "firstBookId": 5706,
+    "scrollCount": 1,
+    "has0a": false
+  },
+  {
+    "partNum": 1059,
+    "title": "聖迦柅忿怒金剛童子菩薩成就儀軌經",
+    "subid": 1195,
+    "bookIds": [
+      5707,
+      5708,
+      5709
+    ],
+    "scrollLabels": [
+      "1卷",
+      "2卷",
+      "3卷"
+    ],
+    "firstBookId": 5707,
+    "scrollCount": 3,
+    "has0a": false
+  },
+  {
+    "partNum": 1060,
+    "title": "七佛讃唄伽陀",
+    "subid": 1197,
+    "bookIds": [
+      5710
+    ],
+    "scrollLabels": [
+      "1卷"
+    ],
+    "firstBookId": 5710,
+    "scrollCount": 1,
+    "has0a": false
+  },
+  {
+    "partNum": 1061,
+    "title": "佛三身讃",
+    "subid": 1200,
+    "bookIds": [
+      5711
+    ],
+    "scrollLabels": [
+      "1卷"
+    ],
+    "firstBookId": 5711,
+    "scrollCount": 1,
+    "has0a": false
+  },
+  {
+    "partNum": 1062,
+    "title": "佛一百八名讃經",
+    "subid": 1204,
+    "bookIds": [
+      5712
+    ],
+    "scrollLabels": [
+      "1卷"
+    ],
+    "firstBookId": 5712,
+    "scrollCount": 1,
+    "has0a": false
+  },
+  {
+    "partNum": 1063,
+    "title": "聖救度佛母二十一種禮讃經",
+    "subid": 1206,
+    "bookIds": [
+      5713,
+      5714
+    ],
+    "scrollLabels": [
+      "0a卷",
+      "1卷"
+    ],
+    "firstBookId": 5713,
+    "scrollCount": 2,
+    "has0a": true
+  },
+  {
+    "partNum": 1064,
+    "title": "佛說一切如來頂輪王一百八名讃經",
+    "subid": 1207,
+    "bookIds": [
+      5715
+    ],
+    "scrollLabels": [
+      "1卷"
+    ],
+    "firstBookId": 5715,
+    "scrollCount": 1,
+    "has0a": false
+  },
+  {
+    "partNum": 1065,
+    "title": "讃法界頌",
+    "subid": 1208,
+    "bookIds": [
+      5716
+    ],
+    "scrollLabels": [
+      "1卷"
+    ],
+    "firstBookId": 5716,
+    "scrollCount": 1,
+    "has0a": false
+  },
+  {
+    "partNum": 1066,
+    "title": "八大靈塔梵讃",
+    "subid": 1209,
+    "bookIds": [
+      5717
+    ],
+    "scrollLabels": [
+      "1卷"
+    ],
+    "firstBookId": 5717,
+    "scrollCount": 1,
+    "has0a": false
+  },
+  {
+    "partNum": 1067,
+    "title": "三身梵讃",
+    "subid": 1210,
+    "bookIds": [
+      5718
+    ],
+    "scrollLabels": [
+      "1卷"
+    ],
+    "firstBookId": 5718,
+    "scrollCount": 1,
+    "has0a": false
+  },
+  {
+    "partNum": 1068,
+    "title": "佛說文殊師利一百八名梵讃",
+    "subid": 1211,
+    "bookIds": [
+      5719
+    ],
+    "scrollLabels": [
+      "1卷"
+    ],
+    "firstBookId": 5719,
+    "scrollCount": 1,
+    "has0a": false
+  },
+  {
+    "partNum": 1069,
+    "title": "曼殊室利菩薩吉祥伽陀",
+    "subid": 1212,
+    "bookIds": [
+      5720
+    ],
+    "scrollLabels": [
+      "1卷"
+    ],
+    "firstBookId": 5720,
+    "scrollCount": 1,
+    "has0a": false
+  },
+  {
+    "partNum": 1070,
+    "title": "聖金剛手菩薩一百八名梵讃",
+    "subid": 1213,
+    "bookIds": [
+      5721
+    ],
+    "scrollLabels": [
+      "1卷"
+    ],
+    "firstBookId": 5721,
+    "scrollCount": 1,
+    "has0a": false
+  },
+  {
+    "partNum": 1071,
+    "title": "聖觀自在菩薩功徳讃",
+    "subid": 1214,
+    "bookIds": [
+      5722,
+      5723,
+      5724
+    ],
+    "scrollLabels": [
+      "0a卷",
+      "0b卷",
+      "1卷"
+    ],
+    "firstBookId": 5722,
+    "scrollCount": 3,
+    "has0a": true
+  },
+  {
+    "partNum": 1072,
+    "title": "讃觀世音菩薩頌",
+    "subid": 1215,
+    "bookIds": [
+      5725
+    ],
+    "scrollLabels": [
+      "1卷"
+    ],
+    "firstBookId": 5725,
+    "scrollCount": 1,
+    "has0a": false
+  },
+  {
+    "partNum": 1073,
+    "title": "佛說聖觀自在菩薩梵讃",
+    "subid": 1216,
+    "bookIds": [
+      5726
+    ],
+    "scrollLabels": [
+      "1卷"
+    ],
+    "firstBookId": 5726,
+    "scrollCount": 1,
+    "has0a": false
+  },
+  {
+    "partNum": 1074,
+    "title": "聖多羅菩薩梵讃",
+    "subid": 1217,
+    "bookIds": [
+      5727
+    ],
+    "scrollLabels": [
+      "1卷"
+    ],
+    "firstBookId": 5727,
+    "scrollCount": 1,
+    "has0a": false
+  },
+  {
+    "partNum": 1075,
+    "title": "事師法五十頌",
+    "subid": 1218,
+    "bookIds": [
+      5728
+    ],
+    "scrollLabels": [
+      "1卷"
+    ],
+    "firstBookId": 5728,
+    "scrollCount": 1,
+    "has0a": false
+  },
+  {
+    "partNum": 1076,
+    "title": "揵椎梵讃",
+    "subid": 1219,
+    "bookIds": [
+      5729
+    ],
+    "scrollLabels": [
+      "1卷"
+    ],
+    "firstBookId": 5729,
+    "scrollCount": 1,
+    "has0a": false
+  }
+]

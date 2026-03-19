@@ -349,8 +349,8 @@ const App: React.FC = () => {
                 <thead className="bg-[#fcfaf7]">
                   <tr className="text-xs uppercase tracking-widest text-[#8b7355] font-bold">
                     <th className="p-5 border-b border-[#ede3d4]">卷编号</th>
-                    <th className="p-5 border-b border-[#ede3d4]">名称</th>
-                    <th className="p-5 border-b border-[#ede3d4]">状态</th>
+                    <th className="p-5 border-b border-[#ede3d4] w-64">名称</th>
+                    <th className="p-5 border-b border-[#ede3d4] w-32">状态</th>
                     <th className="p-5 border-b border-[#ede3d4]">在线阅读</th>
                     <th className="p-5 border-b border-[#ede3d4] text-center">是否完成</th>
                     <th className="p-5 border-b border-[#ede3d4] text-center">操作</th>
@@ -360,7 +360,7 @@ const App: React.FC = () => {
                   {filteredVolumes.map((vol) => (
                     <tr key={vol.id} className={`transition-colors group ${vol.status === VolumeStatus.CLAIMED ? 'bg-[#fdfbf7]' : 'hover:bg-[#fdfbf7]'}`}>
                       <td className="p-5 font-mono font-bold text-[#5c4033]">{vol.volumeNumber}</td>
-                      <td className="p-5 font-bold text-[#5c4033] serif-title text-lg">{vol.volumeTitle}</td>
+                      <td className="p-5 font-bold text-[#5c4033] serif-title max-w-[16rem] truncate" title={vol.volumeTitle}>{vol.volumeTitle}</td>
                       <td className="p-5">{getStatusBadge(vol)}</td>
                       <td className="p-5">
                         <button
