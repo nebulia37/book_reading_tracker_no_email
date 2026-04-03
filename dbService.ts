@@ -1,7 +1,7 @@
 import { Volume, VolumeStatus, ClaimRequest } from './types';
 import { INITIAL_VOLUMES } from './data';
 
-const DB_KEY = 'longzang_tripitaka_volumes_v15';
+const DB_KEY = 'longzang_tripitaka_volumes_v17';
 const API_BASE_URL = import.meta.env.DEV
   ? 'http://localhost:3001'
   : import.meta.env.VITE_API_URL;
